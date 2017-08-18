@@ -14,7 +14,6 @@ export class AppComponent implements OnInit {
   options;
   data;
   rawdata;
-  listami;
   form: FormGroup;
   @ViewChild('nvd3') nvd3;
 
@@ -62,7 +61,6 @@ export class AppComponent implements OnInit {
   }
 
   submit(form) {
-    console.log(form);
     this.appService.getStats(form.uri, form.lix, form.wc).subscribe(val => {this.rawdata = val;
       var listami = [];
       JSON.parse(this.rawdata._body).forEach((val) => {
@@ -72,9 +70,11 @@ export class AppComponent implements OnInit {
         listami.push(JSON.parse(`{"key": ${key},"value": ${value}}`));
       });
       this.data=listami;
+      //this.nvd3.chart.update()
+
     });
-     this.title = 'Data for: '+form.uri+', lix: '+form.lix+' wc: '+form.wc;
-    //this.nvd3.chart.update()
+
+    this.title = 'Data for: '+form.uri+', lix: '+form.lix+' wc: '+form.wc;
   }
 
 }
