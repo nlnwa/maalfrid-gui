@@ -22,9 +22,7 @@ COPY . /usr/src/app
 
 RUN cd /usr/src/app \
 && node_modules/@angular/cli/bin/ng build --prod \
-&& cp -r /usr/src/app/dist /usr/share/nginx/html
-
-RUN ls -l /usr/share/nginx/html
+&& cp -r /usr/src/app/dist/* /usr/share/nginx/html/
 
 RUN /usr/src/app/setEnv.sh
 
