@@ -2,4 +2,4 @@
 
 /usr/src/app/setEnv.sh
 
-exec nginx -g daemon off
+exec nginx -g "daemon off;"
