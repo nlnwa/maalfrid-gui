@@ -12,7 +12,10 @@ export class AppService {
   }
 
   getStats(url, lix, wc) {
+    console.log("HttpRequest: "+`${this.API_URL}/${url}/${lix}/${wc}`);
     return this.http.get(`${this.API_URL}/${url}/${lix}/${wc}`); ///url/${url}/lix/${lix}/wc/${wc}`);
+
+
     //return JSON.parse('[{"key": "Norsk bokmål","value": 40},{"key": "Norsk nynorsk","value": 60}]')
   }
 
