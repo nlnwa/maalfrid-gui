@@ -21,7 +21,8 @@ ENV PROXY_ADDR host:port
 
 RUN cd /usr/src/app \
 && node_modules/@angular/cli/bin/ng build --prod \
-&& cp -r /usr/src/app/dist/* /usr/share/nginx/html/ \
-&& /usr/src/app/setEnv.sh
+&& cp -r /usr/src/app/dist/* /usr/share/nginx/html/
 
 EXPOSE 80
+
+CMD ["/usr/src/app/run.sh"]
