@@ -5,3 +5,9 @@
 .mdl-button__ripple-container {
   margin: auto;
 }
+
+.querytime {
+  opacity: 0.5;
+  padding: 0px 0px 0px 16px;
+
+}

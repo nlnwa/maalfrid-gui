@@ -10,11 +10,18 @@ declare let d3: any;
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = '';
+  title;
   options;
+  count;
+  wc;
+  lix;
+  queryTime;
+  lngdata;
   data;
+  perc;
   rawdata;
-  form: FormGroup;
+  leftform: FormGroup;
+  rightform: FormGroup;
   @ViewChild('nvd3') nvd3;
 
 
@@ -24,10 +31,17 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.form = this.fb.group({
-      uri: '',
+    this.leftform = this.fb.group({
+      url: '',
       lix: '',
       wc: '',
+      cc: '',
+      lwc: '',
+      sc: '',
+    });
+    this.rightform = this.fb.group({
+      lngurl: '',
+      code: '',
     });
 
     this.options = {
@@ -56,26 +70,41 @@ export class AppComponent implements OnInit {
       }
     };
     this.data = '';
-
   }
 
-  submit(form) {
-    console.log("GetStats: uri:" +form.uri +', lix: '+ form.lix +', wc: '+ form.wc);
-    this.appService.getStats(form.uri, form.lix, form.wc).subscribe(val => {this.rawdata = val;
-      var listami = [];
-      JSON.parse(this.rawdata._body).forEach((val) => {
-        var string = JSON.stringify(val).replace('{','').replace('}','').split(":");
-        var key=string[0];
-        var value=string[1];
-        listami.push(JSON.parse(`{"key": ${key},"value": ${value}}`));
-      });
-      this.data=listami;
+
+  getStats(form) {
+    var startTime = new Date().getTime();
+    this.appService.getStats(form).subscribe(val => {
+      this.rawdata = val;
+      var datalist = [];
+      var stats = JSON.parse(this.rawdata._body);
+      if (stats.total > 0) {
+        var splitted = (JSON.stringify(stats.count).replace('{', '').replace('}', '').split(","));
+        splitted.forEach((val) => {
+          var key = (val.split(":")[0]);
+          var value = (val.split(":")[1]);
+          datalist.push(JSON.parse(`{"key": ${key},"value": ${(parseInt(value) / stats.total * 100)}}`));
+        });
+      }
+      else {
+        var datalist = [];
+      }
+      this.queryTime = (new Date().getTime() - startTime);
+      this.data = datalist;
+      this.count = stats.total;
+      this.perc = (stats.count);
 
       //this.nvd3.chart.update()
     });
-  /*this.data=this.appService.getStats(form.uri, form.lix, form.wc);
+  }
 
-    this.title = 'Data for: '+form.uri+', lix: '+form.lix+' wc: '+form.wc;*/
+  getLang(form) {
+    console.log(form);
+    this.appService.getLang(form).subscribe(val => {
+      var potet = val;
+      this.lngdata = JSON.parse(potet._body);
+    })
   }
 
 }
