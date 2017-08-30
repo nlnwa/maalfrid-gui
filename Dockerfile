@@ -17,12 +17,12 @@ RUN cd /usr/src/app \
 
 COPY . /usr/src/app
 
-ENV PROXY_ADDR host:port
-
 RUN cd /usr/src/app \
 && node_modules/@angular/cli/bin/ng build --prod \
 && cp -r /usr/src/app/dist/* /usr/share/nginx/html/
 
-EXPOSE 80
+ENV PROXY_ADDR localhost:3002
 
-CMD ["/usr/src/app/run.sh"]
+CMD envsubst '${PROXY_ADDR}'< /usr/src/app/nginx/default.conf > /etc/nginx/conf.d/default.conf \
+&& cat /etc/nginx/conf.d/default.conf \
+&& nginx -g "daemon off;"
