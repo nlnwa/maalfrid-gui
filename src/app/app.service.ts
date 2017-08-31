@@ -27,13 +27,10 @@ export class AppService {
     params.set('lwc', form.lwc);
     params.set('sc', form.sc);
 
-    console.log(`${this.API_URL+'stats'}`, {search: params});
-    return this.http.get(`${this.API_URL}stats`,
+    console.log(`${this.API_URL}/stats`, {search: params});
+    return this.http.get(`${this.API_URL}/stats`,
                          {search: params})
       .timeoutWith(20000, Observable.throw(new Error('Timeout')));
-
-    //.timeout(2000, new Error('delay exceeded'));;
-    //return JSON.parse('{"stats": [{"NOB": 0.9245283018867925},{"DAN": 0.009433962264150943},{"ENG": 0.02830188679245283},{"NNO": 0.02830188679245283},{"SCO": 0.009433962264150943}],"count": 106}')
   }
 
 
@@ -42,8 +39,8 @@ export class AppService {
     params.set('code', form.code);
     params.set('url', form.lngurl);
 
-    console.log(`${this.API_URL+'language'}`, {search: params});
-    return this.http.get(`${this.API_URL}language`,
+    console.log(`${this.API_URL}/language`, {search: params});
+    return this.http.get(`${this.API_URL}/language`,
                          {search: params})
       .timeoutWith(20000, Observable.throw(new Error('Timeout')));
   }
