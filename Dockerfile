@@ -23,6 +23,5 @@ RUN cd /usr/src/app \
 
 ENV PROXY_ADDR localhost:3002
 
-CMD envsubst '${PROXY_ADDR}'< /usr/src/app/nginx/default.conf > /etc/nginx/conf.d/default.conf \
-&& cat /etc/nginx/conf.d/default.conf \
+CMD envsubst '${PROXY_ADDR}' < /usr/src/app/nginx/default.conf > /etc/nginx/conf.d/default.conf \
 && nginx -g "daemon off;"
