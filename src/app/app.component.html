@@ -1,6 +1,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.4/nv.d3.min.css"/>
 
+<div id="progress" [hidden]="!loading"
+     class="mdl-cell mdl-cell--12-col mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
 <div class="mdl-grid">
+
   <div class="mdl-cell mdl-cell--4-col">
 
     <form [formGroup]="leftform" (keyup.enter)=getStats(leftform.value)>
@@ -39,16 +42,20 @@
       </div>
     </form>
 
+
     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-            (click)="getStats(leftform.value)">Submit
+            (click)="getStats(leftform.value)">Vis språkfordeling
     </button>
+    <br/>
+    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+            (click)="setLanguage(leftform.value)">Detekter språk
+    </button>
+
 
     <ul *ngIf="data?.length > 0" class="demo-list-item mdl-list">
       <label class="center-block">
         <li class="mdl-list__item">
-    <span class="mdl-list__item-primary-content">
-    Totalt antall URL'er med i beregningen: {{count}}
-    </span>
+          <span class="mdl-list__item-primary-content">Totalt antall URL'er med i beregningen: {{count}}</span>
         </li>
       </label>
       <li *ngIf="perc.NOB" class="mdl-list__item">
@@ -64,9 +71,9 @@
       <span class="mdl-textfield querytime">Spørringen tok {{queryTime}} millisekund.</span>
 
     </ul>
-    <div>
-      <nvd3 #nvd3 [options]="options" [data]="data"></nvd3>
-    </div>
+
+    <nvd3 #nvd3 [options]="options" [data]="data"></nvd3>
+
   </div>
 
   <div class="mdl-cell mdl-cell--6-col">
@@ -89,11 +96,11 @@
     </form>
 
     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="getLang(rightform.value)">
-      Submit
+      Vis URI'er med språkkode
     </button>
 
-    <ul *ngIf="lngdata" class="list-item mdl-list">
-      <li *ngFor="let link of lngdata" class="mdl-list__item">
+    <ul *ngIf="lngdata" class="mdl-list">
+      <li *ngFor="let link of lngdata" class="mdl-list__item ">
         <a href="{{link}}">{{link}}</a>
       </li>
     </ul>

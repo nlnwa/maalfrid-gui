@@ -19,6 +19,7 @@ export class AppComponent implements OnInit {
   lngdata;
   data;
   perc;
+  loading;
   leftform: FormGroup;
   rightform: FormGroup;
   @ViewChild('nvd3') nvd3;
@@ -69,6 +70,7 @@ export class AppComponent implements OnInit {
       }
     };
     this.data = '';
+    this.loading = false;
   }
 
 
@@ -86,24 +88,45 @@ export class AppComponent implements OnInit {
   }
 
 
-  getStats(form) {
-    const startTime = new Date().getTime();
-
-    this.appService.getStats(form).subscribe(result => {
-      const stats = JSON.parse(result._body);
-      this.data = this.processStats(stats);
-      this.queryTime = (new Date().getTime() - startTime);
-      this.count = stats.total;
-      this.perc = (stats.count);
+  setLanguage(form) {
+    this.loading = true;
+    this.appService.setLanguage(form).subscribe(result => {
+      this.loading = false;
+      alert(result._body);
+    }, error => {
+      this.loading = false;
+      alert(error);
     });
   }
 
 
+  getStats(form) {
+    const startTime = new Date().getTime();
+    this.loading = true;
+
+    this.appService.getStats(form).subscribe(result => {
+      const stats = result.json();
+      this.data = this.processStats(stats);
+      this.queryTime = (new Date().getTime() - startTime);
+      this.count = stats.total;
+      this.perc = (stats.count);
+    }, error => {
+      this.loading = false;
+      alert(error);
+    }, () =>
+      this.loading = false);
+  }
+
+
   getLang(form) {
-    console.log(form);
+    this.loading = true;
     this.appService.getLang(form).subscribe(result => {
-      this.lngdata = JSON.parse(result._body);
-    });
+      this.lngdata = result.json();
+    }, error => {
+      this.loading = false;
+      alert(error);
+    }, () =>
+      this.loading = false);
   }
 }
 

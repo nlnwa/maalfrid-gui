@@ -9,12 +9,17 @@ import {environment} from '../environments/environment';
 @Injectable()
 export class AppService {
 
-  private API_URL: string = environment.API_URL;
-
+  private readonly API_URL: string = environment.API_URL;
 
   constructor(private http: Http) {
   }
 
+  setLanguage(form) {
+    return this.http.post(
+      `${this.API_URL}/detect`,
+      { url: form.url })
+      .timeoutWith(30000, Observable.throw(new Error('Timeout')));
+  }
 
   getStats(form) {
     const params: URLSearchParams = new URLSearchParams();
