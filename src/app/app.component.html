@@ -37,9 +37,10 @@
           </label>
         </div>
       </div>
-
     </form>
-    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="getStats(leftform.value)">Submit
+
+    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+            (click)="getStats(leftform.value)">Submit
     </button>
 
     <ul *ngIf="data?.length > 0" class="demo-list-item mdl-list">
@@ -66,8 +67,8 @@
     <div>
       <nvd3 #nvd3 [options]="options" [data]="data"></nvd3>
     </div>
-
   </div>
+
   <div class="mdl-cell mdl-cell--6-col">
     <form [formGroup]="rightform" (keyup.enter)=getLang(rightform.value)>
 
@@ -86,8 +87,11 @@
         </div>
       </div>
     </form>
-    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="getLang(rightform.value)">Submit
+
+    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="getLang(rightform.value)">
+      Submit
     </button>
+
     <ul *ngIf="lngdata" class="list-item mdl-list">
       <li *ngFor="let link of lngdata" class="mdl-list__item">
         <a href="{{link}}">{{link}}</a>

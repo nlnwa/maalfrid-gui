@@ -1,16 +1,15 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import {HttpModule} from '@angular/http';
 
 import {AppService} from '../app/app.service';
-import { NvD3Module } from 'ng2-nvd3';
+import {NvD3Module} from 'ng2-nvd3';
 
 
-
-import { AppComponent } from './app.component';
+import {AppComponent} from './app.component';
 import 'd3';
-import 'nvd3'
+import 'nvd3';
 
 
 @NgModule({
@@ -27,4 +26,5 @@ import 'nvd3'
   providers: [AppService],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

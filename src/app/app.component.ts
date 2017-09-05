@@ -1,7 +1,8 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {FormGroup, FormBuilder} from "@angular/forms";
-import {AppService} from "./app.service";
-declare let d3: any;
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {FormGroup, FormBuilder} from '@angular/forms';
+import {AppService} from './app.service';
+
+declare const d3: any;
 
 
 @Component({
@@ -10,7 +11,6 @@ declare let d3: any;
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title;
   options;
   count;
   wc;
@@ -19,7 +19,6 @@ export class AppComponent implements OnInit {
   lngdata;
   data;
   perc;
-  rawdata;
   leftform: FormGroup;
   rightform: FormGroup;
   @ViewChild('nvd3') nvd3;
@@ -73,39 +72,38 @@ export class AppComponent implements OnInit {
   }
 
 
+  processStats(stats) {
+    const data = [];
+    if (stats.total > 0) {
+      for (const key in stats.count) {
+        if (stats.count.hasOwnProperty(key)) {
+          const value = parseInt(stats.count[key], 10) / stats.total * 100;
+          data.push({key, value});
+        }
+      }
+    }
+    return data;
+  }
+
+
   getStats(form) {
-    var startTime = new Date().getTime();
-    this.appService.getStats(form).subscribe(val => {
-      this.rawdata = val;
-      var datalist = [];
-      var stats = JSON.parse(this.rawdata._body);
-      if (stats.total > 0) {
-        var splitted = (JSON.stringify(stats.count).replace('{', '').replace('}', '').split(","));
-        splitted.forEach((val) => {
-          var key = (val.split(":")[0]);
-          var value = (val.split(":")[1]);
-          datalist.push(JSON.parse(`{"key": ${key},"value": ${(parseInt(value) / stats.total * 100)}}`));
-        });
-      }
-      else {
-        var datalist = [];
-      }
+    const startTime = new Date().getTime();
+
+    this.appService.getStats(form).subscribe(result => {
+      const stats = JSON.parse(result._body);
+      this.data = this.processStats(stats);
       this.queryTime = (new Date().getTime() - startTime);
-      this.data = datalist;
       this.count = stats.total;
       this.perc = (stats.count);
-
-      //this.nvd3.chart.update()
     });
   }
 
+
   getLang(form) {
     console.log(form);
-    this.appService.getLang(form).subscribe(val => {
-      var potet = val;
-      this.lngdata = JSON.parse(potet._body);
-    })
+    this.appService.getLang(form).subscribe(result => {
+      this.lngdata = JSON.parse(result._body);
+    });
   }
-
 }
 
