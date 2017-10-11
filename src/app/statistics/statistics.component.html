@@ -1,0 +1,15 @@
+<form #statisticsForm="ngForm" (ngSubmit)="onSubmit()">
+  <div fxLayout="column">
+    <div>
+      <mat-form-field>
+        <input matInput [(ngModel)]="model.url" name="url" placeholder="URL">
+      </mat-form-field>
+    </div>
+    <button mat-raised-button type="submit">Vis språkfordeling</button>
+  </div>
+</form>
+
+<ng-container *ngIf="data">
+  <nvd3 [options]="options" [data]="data"></nvd3>
+</ng-container>
+
