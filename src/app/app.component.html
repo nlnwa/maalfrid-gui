@@ -1,110 +1,12 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.4/nv.d3.min.css"/>
+<mat-toolbar color="primary">
+  <h1>Målfrid</h1>
+</mat-toolbar>
 
-<div id="progress" [hidden]="!loading"
-     class="mdl-cell mdl-cell--12-col mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
-<div class="mdl-grid">
+<mat-sidenav-container>
+  <mat-sidenav>
+  </mat-sidenav>
 
-  <div class="mdl-cell mdl-cell--4-col">
-
-    <form [formGroup]="leftform" (keyup.enter)=getStats(leftform.value)>
-      <div class="mdl-textfield mdl-js-textfield">
-
-        <div class="form-group">
-          <label class="center-block">URL:
-            <input class="mdl-textfield__input" formControlName="url">
-          </label>
-        </div>
-        <div class="form-group">
-          <label class="center-block">Lesbarhetsindeks:
-            <input class="mdl-textfield__input" formControlName="lix">
-          </label>
-        </div>
-        <div class="form-group">
-          <label class="center-block">Antall ord:
-            <input class="mdl-textfield__input" formControlName="wc">
-          </label>
-        </div>
-        <div class="form-group">
-          <label class="center-block">Antall tegn:
-            <input class="mdl-textfield__input" formControlName="cc">
-          </label>
-        </div>
-        <div class="form-group">
-          <label class="center-block">Antall lange ord:
-            <input class="mdl-textfield__input" formControlName="lwc">
-          </label>
-        </div>
-        <div class="form-group">
-          <label class="center-block">Antall setninger:
-            <input class="mdl-textfield__input" formControlName="sc">
-          </label>
-        </div>
-      </div>
-    </form>
-
-
-    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-            (click)="getStats(leftform.value)">Vis språkfordeling
-    </button>
-    <br/>
-    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-            (click)="setLanguage(leftform.value)">Detekter språk
-    </button>
-
-
-    <ul *ngIf="data?.length > 0" class="demo-list-item mdl-list">
-      <label class="center-block">
-        <li class="mdl-list__item">
-          <span class="mdl-list__item-primary-content">Totalt antall URL'er med i beregningen: {{count}}</span>
-        </li>
-      </label>
-      <li *ngIf="perc.NOB" class="mdl-list__item">
-      <span class="mdl-list__item-primary-content">
-        Norsk Bokmål: {{perc.NOB}}
-      </span>
-      </li>
-      <li *ngIf="perc.NNO" class="mdl-list__item">
-      <span class="mdl-list__item-primary-content">
-        Norsk Nynorsk: {{perc.NNO}}
-      </span>
-      </li>
-      <span class="mdl-textfield querytime">Spørringen tok {{queryTime}} millisekund.</span>
-
-    </ul>
-
-    <nvd3 #nvd3 [options]="options" [data]="data"></nvd3>
-
-  </div>
-
-  <div class="mdl-cell mdl-cell--6-col">
-    <form [formGroup]="rightform" (keyup.enter)=getLang(rightform.value)>
-
-      <div class="mdl-textfield mdl-js-textfield">
-
-        <div class="form-group">
-          <label class="center-block">URL:
-            <input class="mdl-textfield__input" formControlName="lngurl">
-          </label>
-        </div>
-
-        <div class="form-group">
-          <label class="center-block">Språkkode:
-            <input class="mdl-textfield__input" formControlName="code">
-          </label>
-        </div>
-      </div>
-    </form>
-
-    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" (click)="getLang(rightform.value)">
-      Vis URI'er med språkkode
-    </button>
-
-    <ul *ngIf="lngdata" class="mdl-list">
-      <li *ngFor="let link of lngdata" class="mdl-list__item ">
-        <a href="{{link}}">{{link}}</a>
-      </li>
-    </ul>
-
-  </div>
-
-</div>
+  <main class="mat-typography">
+    <router-outlet></router-outlet>
+  </main>
+</mat-sidenav-container>
