@@ -1,6 +1,6 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { VeidemannService } from './veidemann-service.service';
+import { VeidemannService } from './veidemann.service';
 
 describe('VeidemannService', () => {
   beforeEach(() => {

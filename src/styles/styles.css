@@ -12,3 +12,10 @@ html, body {
 .fill-space {
   flex: 1 1 auto;
 }
+.container {
+  padding: 1em 24px;
+}
+
+.icon-header {
+  margin-right: 16px;
+}

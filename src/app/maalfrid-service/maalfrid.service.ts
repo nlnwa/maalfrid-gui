@@ -4,7 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/timeoutWith';
 import 'rxjs/add/observable/throw';
 import {environment} from '../../environments/environment';
-import {HttpUtil} from '../commons/HttpUtil';
+import {createQueryParams} from '../commons/util';
 
 @Injectable()
 export class MaalfridService {
@@ -15,23 +15,31 @@ export class MaalfridService {
   }
 
   setLanguage(query) {
-    const params = HttpUtil.getParams(query);
+    const params = createQueryParams(query);
     return this.http.get(
       `${this.API_URL}/detect`,
       {params})
       .timeoutWith(30000, Observable.throw(new Error('Timeout')));
   }
 
-  getStats(query) {
-    const params = HttpUtil.getParams(query);
-    return this.http.get(`${this.API_URL}/stats`,
+  getExecutions(query) {
+    const params = createQueryParams(query);
+    return this.http.get(
+      `${this.API_URL}/executions`,
+      {params})
+      .timeoutWith(30000, Observable.throw(new Error('Timeout')));
+  }
+
+  getStatistic(query) {
+    const params = createQueryParams(query);
+    return this.http.get(`${this.API_URL}/statistic`,
       {params})
       .timeoutWith(20000, Observable.throw(new Error('Timeout')));
   }
 
 
   getLang(query) {
-    const params = HttpUtil.getParams(query);
+    const params = createQueryParams(query);
     return this.http.get(
       `${this.API_URL}/language`,
       {params})
