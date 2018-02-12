@@ -59,11 +59,14 @@ function stripDirectionalityCharacters(str: string) {
 
 @Injectable()
 export class MomentDateAdapter extends DateAdapter<Moment> {
-
   constructor(@Optional() @Inject(MAT_DATE_LOCALE) matDateLocale: string) {
     super();
     super.setLocale(matDateLocale);
     moment.locale(this.locale);
+  }
+
+  invalid(): moment.Moment {
+    return moment.invalid();
   }
 
   getYear(date: Moment): number {
