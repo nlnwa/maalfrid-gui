@@ -3,14 +3,19 @@ import {Item} from '../list-database';
 import {DataSource} from '@angular/cdk/collections';
 
 export abstract class BaseListComponent {
+  dataSource: DataSource<any>;
+  displayedColumns = ['id', 'name', 'description'];
+
   @Output()
   protected rowClick = new EventEmitter<Item | Item[]>();
-  protected dataSource: DataSource<any>;
-  protected displayedColumns = ['id', 'name', 'description'];
   protected multiSelect = false;
   protected selectedItems: Set<Item> = new Set();
 
-  protected onRowClick(item: Item) {
+  trackById(index: number, item: Item) {
+    return item.id;
+  }
+
+  onRowClick(item: Item) {
     if (this.multiSelect) {
       if (this.selectedItems.has(item)) {
         this.selectedItems.delete(item);
@@ -25,11 +30,8 @@ export abstract class BaseListComponent {
     }
   }
 
-  protected isSelected(item: Item) {
+  isSelected(item: Item) {
     return this.selectedItems.has(item);
   }
 
-  protected trackById(index: number, item: Item) {
-    return item.id;
-  }
 }
