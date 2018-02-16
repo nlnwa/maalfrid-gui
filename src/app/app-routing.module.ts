@@ -1,11 +1,11 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {StatisticsComponent} from './statistics/statistics.component';
+import {StatisticsComponent} from './core/statistics/statistics.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/statistics',
+    redirectTo: 'statistics',
     pathMatch: 'full'
   },
   {

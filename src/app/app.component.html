@@ -1,5 +1,14 @@
 <mat-toolbar color="accent">
   <h1>Målfrid</h1>
+  <span fxFlex fxFlexFill></span>
+  <a color="primary" mat-raised-button (click)="onLogin()" *ngIf="!name">
+    <mat-icon>person</mat-icon>
+    <ng-container i18n="@@toolbarLogon">Logg på</ng-container>
+  </a>
+  <a color="primary" mat-raised-button (click)="onLogout()" *ngIf="name">
+    <mat-icon>person</mat-icon>
+    <ng-container i18n="@@toolbarLogon">Logg av</ng-container>
+  </a>
 </mat-toolbar>
 
 <main class="mat-typography">

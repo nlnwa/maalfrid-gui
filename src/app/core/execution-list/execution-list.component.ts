@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from '@angular/core';
-import {BaseListComponent} from '../base-list/base-list.component';
-import {ListDataSource} from '../commons/list-datasource';
-import {Database, Item, ListDatabase} from '../commons/list-database';
+import {BaseListComponent} from '../../shared/list/base-list/base-list.component';
+import {ListDataSource} from '../../shared/list/list-datasource';
+import {Database, Item, ListDatabase} from '../../shared/list/list-database';
 import * as moment from 'moment';
 
 @Component({
@@ -40,7 +40,7 @@ import * as moment from 'moment';
         </mat-row>
       </mat-table>
     </div>`,
-  styleUrls: ['../base-list/base-list.component.css'],
+  styleUrls: ['../../shared/list/base-list/base-list.component.css'],
   providers: [ListDatabase, {provide: Database, useClass: ListDatabase}],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core';
 import {MaalfridService} from '../maalfrid-service/maalfrid.service';
 import 'rxjs/add/operator/do';
-import {CrawlJob, Seed} from '../commons/models/config.model';
+import {CrawlJob, Seed} from '../../shared/models/config.model';
 import {options} from './charts';
 import {Interval} from '../interval/interval.component';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';

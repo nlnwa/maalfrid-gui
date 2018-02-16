@@ -15,10 +15,12 @@ import {
   MatTableModule,
   MatToolbarModule
 } from '@angular/material';
-import {MomentDateAdapter} from './commons/moment-date-adapter';
-import {MOMENT_DATE_FORMATS} from './commons/moment-date-formats';
+import {FlexLayoutModule} from '@angular/flex-layout';
+import {MomentDateAdapter} from './datetime/moment-date-adapter';
+import {MOMENT_DATE_FORMATS} from './datetime/moment-date-formats';
 
 const modules = [
+  FlexLayoutModule,
   MatToolbarModule,
   MatSidenavModule,
   MatProgressBarModule,

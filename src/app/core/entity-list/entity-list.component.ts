@@ -1,21 +1,22 @@
-import {Component, OnInit} from '@angular/core';
-import {BaseListComponent} from '../base-list/base-list.component';
-import {ListDataSource} from '../commons/list-datasource';
-import {Database, ListDatabase} from '../commons/list-database';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {BaseListComponent} from '../../shared/list/base-list/base-list.component';
+import {ListDataSource} from '../../shared/list/list-datasource';
+import {Database, Item, ListDatabase} from '../../shared/list/list-database';
 import {VeidemannService} from '../veidemann-service/veidemann.service';
+import {Entity} from '../../shared/models/config.model';
 
 @Component({
-  selector: 'app-crawljob-list',
+  selector: 'app-entity-list',
   template: `
     <div>
-      <mat-toolbar>
-        <mat-icon class="icon-header">work</mat-icon>
-        Jobb
+      <mat-toolbar color="primary">
+        <mat-icon class="icon-header">business</mat-icon>
+        {{ selected || 'Entitet' }}
       </mat-toolbar>
       <mat-table [dataSource]="dataSource"
                  [trackBy]="trackById">
         <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef>CrawlJob</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef>Entitet</mat-header-cell>
           <mat-cell *matCellDef="let row">{{row.meta.name}}</mat-cell>
         </ng-container>
 
@@ -37,22 +38,35 @@ import {VeidemannService} from '../veidemann-service/veidemann.service';
         </mat-row>
       </mat-table>
     </div>`,
-  styleUrls: ['../base-list/base-list.component.css'],
-  providers: [ListDatabase, {provide: Database, useClass: ListDatabase}]
+  styleUrls: ['../../shared/list/base-list/base-list.component.css'],
+  providers: [ListDatabase, {provide: Database, useClass: ListDatabase}],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CrawljobListComponent extends BaseListComponent implements OnInit {
+export class EntityListComponent extends BaseListComponent implements OnInit {
   constructor(private database: Database,
               private veidemannService: VeidemannService) {
     super();
-    this.displayedColumns = ['name'];
+    this.displayedColumns = ['name', 'description'];
     this.dataSource = new ListDataSource(database);
   }
 
+  get selected(): string {
+    if (this.selectedItems.size > 0) {
+      return (this.selectedItems.values().next().value as any).meta.name;
+    }
+  }
+
   ngOnInit(): void {
-    this.veidemannService.getCrawlJobs().subscribe((entities) => {
+    const query = {
+      selector: JSON.stringify({
+        label: [{key: 'Group', value: 'Språkrådet'}]
+      })
+    };
+    this.veidemannService.getEntities(query).subscribe((entities) => {
       this.database.items = entities;
     });
   }
+
 }
 
 

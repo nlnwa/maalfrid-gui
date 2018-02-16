@@ -3,13 +3,13 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/timeoutWith';
 import 'rxjs/add/observable/throw';
-import {environment} from '../../environments/environment';
-import {createQueryParams} from '../commons/util';
+import {environment} from '../../../environments/environment';
+import {createQueryParams} from '../../shared/http/util';
 
 @Injectable()
 export class MaalfridService {
 
-  private readonly API_URL: string = environment.MAALFRID_API_GATEWAY_URL;
+  private readonly API_URL: string = environment.maalfridApiGateway;
 
   constructor(private http: HttpClient) {
   }

@@ -1,0 +1,6 @@
+{
+  "auth": {
+    "issuer": "https://nettarkivet.nb.no/dex",
+    "requireHttps": true
+  }
+}

@@ -1,9 +1,9 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {BaseListComponent} from '../base-list/base-list.component';
-import {Entity} from '../commons/models/config.model';
+import {BaseListComponent} from '../../shared/list/base-list/base-list.component';
+import {Entity} from '../../shared/models/config.model';
 import {VeidemannService} from '../veidemann-service/veidemann.service';
-import {Database, ListDatabase} from '../commons/list-database';
-import {ListDataSource} from '../commons/list-datasource';
+import {Database, ListDatabase} from '../../shared/list/list-database';
+import {ListDataSource} from '../../shared/list/list-datasource';
 
 
 @Component({
@@ -44,7 +44,7 @@ import {ListDataSource} from '../commons/list-datasource';
         </mat-row>
       </mat-table>
     </div>`,
-  styleUrls: ['../base-list/base-list.component.css'],
+  styleUrls: ['../../shared/list/base-list/base-list.component.css'],
   providers: [{provide: Database, useClass: ListDatabase}],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

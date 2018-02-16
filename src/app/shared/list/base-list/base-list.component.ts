@@ -1,5 +1,5 @@
 import {EventEmitter, Output} from '@angular/core';
-import {Item} from '../commons/list-database';
+import {Item} from '../list-database';
 import {DataSource} from '@angular/cdk/collections';
 
 export abstract class BaseListComponent {

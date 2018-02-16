@@ -1,15 +1,15 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {CrawlJob, Entity, Seed} from '../commons/models/config.model';
-import {ListReply} from '../commons/models/controller.model';
-import {environment} from '../../environments/environment';
+import {CrawlJob, Entity, Seed} from '../../shared/models/config.model';
+import {ListReply} from '../../shared/models/controller.model';
+import {environment} from '../../../environments/environment';
 import 'rxjs/add/operator/map';
-import {createQueryParams} from '../commons/util';
+import {createQueryParams} from '../../shared/http/util';
 
 @Injectable()
 export class VeidemannService {
 
-  private readonly URL = environment.VEIDEMANN_API_GATEWAY_URL;
+  private readonly URL = environment.apiGateway;
 
   constructor(private http: HttpClient) { }
 
