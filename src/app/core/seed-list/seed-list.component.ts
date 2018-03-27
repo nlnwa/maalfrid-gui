@@ -76,9 +76,9 @@ export class SeedListComponent extends BaseListComponent {
     this._entity = entity;
     this.veidemannService.getSeeds(entity).subscribe((seeds) => {
       this.database.items = seeds;
-/*      if (seeds.length) {
+      if (seeds.length > 0) {
         this.onRowClick(seeds[0]);
-      }*/
+      }
     });
   }
 }

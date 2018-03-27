@@ -1,40 +1,43 @@
-<div fxLayout="column">
-  <div fxFlex fxLayout="row" fxLayoutWrap>
-    <app-entity-list fxFlex (rowClick)="seedList.entity=$event"></app-entity-list>
-    <app-seed-list fxFlex #seedList (rowClick)="onSelectSeed($event)"></app-seed-list>
-    <app-interval (intervalSet)="onInterval($event)"></app-interval>
-    <app-execution-list fxFlex [executions]="executions | async"
-                        (rowClick)="onSelectExecution($event)"></app-execution-list>
-  </div>
-  <mat-toolbar fxFlex color="primary">Statistikk
-    <div *ngIf="queryTime" fxFlex fxLayout="row" class="container" fxLayoutAlign="space-around">
-      <div>
-        <mat-icon class="icon-header">timer</mat-icon>
-        {{queryTime}} ms
-      </div>
-    </div>
-  </mat-toolbar>
-
-  <div>
-    <div fxFlex fxLayout="row">
-      <div class="container" fxFlex *ngIf="totalData">
-        <mat-toolbar>Totalt</mat-toolbar>
-        <nvd3 [options]="pieChartOptions" [data]="totalData"></nvd3>
-      </div>
-      <div class="container" fxFlex *ngIf="perExecutionData">
-        <mat-toolbar>Per innhøsting</mat-toolbar>
-        <nvd3 [options]="multiBarChartOptions" [data]="perExecutionData"></nvd3>
-      </div>
-    </div>
-  </div>
+<div fxLayout="column" fxLayoutAlign="flex-start stretch">
   <div fxFlex fxLayout="row">
-    <div class="container" fxFlex *ngIf="nobData">
-      <mat-toolbar>Bokmål</mat-toolbar>
-      <nvd3 [options]="pieChartOptions" [data]="nobData"></nvd3>
+    <!-- Entity list -->
+    <app-entity-list fxFlex="1 1 33%" (rowClick)="seedList.entity=$event"></app-entity-list>
+
+
+    <div fxFlex="2 2 auto" fxLayout="column">
+      <div fxFlex="20%" fxLayout="row">
+        <app-seed-list fxFlex="2 2 auto" #seedList (rowClick)="onSelectSeed($event)"></app-seed-list>
+        <app-interval fxFlex (intervalSet)="onInterval($event)"></app-interval>
+        <app-execution-list fxFlex="2 2 auto" [executions]="executions | async"
+                            (rowClick)="onSelectExecution($event)"></app-execution-list>
+      </div>
+
+      <mat-toolbar color="primary">Statistikk</mat-toolbar>
+
+      <div fxLayout="row">
+        <div fxFlex *ngIf="totalData">
+          <mat-toolbar>Totalt</mat-toolbar>
+          <nvd3 [options]="pieChartOptions" [data]="totalData"></nvd3>
+        </div>
+        <div fxFlex *ngIf="perExecutionData">
+          <mat-toolbar>Per innhøsting</mat-toolbar>
+          <nvd3 [options]="multiBarChartOptions" [data]="perExecutionData"></nvd3>
+        </div>
+      </div>
+
+
+      <div fxLayout="row">
+        <div fxFlex *ngIf="nobData">
+          <mat-toolbar>Bokmål</mat-toolbar>
+          <nvd3 [options]="pieChartOptions" [data]="nobData"></nvd3>
+        </div>
+        <div fxFlex *ngIf="nnoData">
+          <mat-toolbar>Nynorsk</mat-toolbar>
+          <nvd3 [options]="pieChartOptions" [data]="nnoData"></nvd3>
+        </div>
+      </div>
+
     </div>
-    <div class="container" fxFlex *ngIf="nnoData">
-      <mat-toolbar>Nynorsk</mat-toolbar>
-      <nvd3 [options]="pieChartOptions" [data]="nnoData"></nvd3>
-    </div>
+
   </div>
 </div>

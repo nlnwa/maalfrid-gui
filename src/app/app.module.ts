@@ -12,6 +12,7 @@ import {CoreModule} from './core/core.module';
 import {SharedModule} from './shared/shared.module';
 import {OAuthModule} from 'angular-oauth2-oidc';
 import {ApplicationErrorHandler, ErrorService} from './error';
+import {VeidemannService} from './core/veidemann-service/veidemann.service';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import {ApplicationErrorHandler, ErrorService} from './error';
     AuthService,
     RoleService,
     ErrorService,
-    {provide: APP_INITIALIZER, useFactory: (conf: AppConfig) => () => conf.load(), deps: [AppConfig, AuthService], multi: true},
+    VeidemannService,
+    {provide: APP_INITIALIZER, useFactory: (conf: AppConfig) => () => conf.load(), deps: [AppConfig], multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},
     {provide: ErrorHandler, useClass: ApplicationErrorHandler},
   ],

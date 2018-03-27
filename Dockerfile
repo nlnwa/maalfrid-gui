@@ -5,7 +5,7 @@ ARG DEPLOY_URL=/maalfrid
 
 COPY package.json yarn.lock /usr/src/app/
 WORKDIR /usr/src/app
-RUN yarn install && yarn cache clean
+RUN yarn install
 
 COPY . .
 RUN node_modules/@angular/cli/bin/ng build --target=production --base-href ${BASE_HREF} --deploy-url ${DEPLOY_URL}

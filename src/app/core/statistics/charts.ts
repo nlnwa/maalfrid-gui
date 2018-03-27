@@ -5,7 +5,7 @@ export const options = {
   pieChart: {
     chart: {
       type: 'pieChart',
-      height: 400,
+      // height: 400,
       x: function (d) {
         return d.key;
       },
@@ -31,7 +31,7 @@ export const options = {
     chart: {
       type: 'multiBarChart',
       stacked: true,
-      height: 500,
+      // height: 500,
       margin: {
         top: 30,
         right: 75,

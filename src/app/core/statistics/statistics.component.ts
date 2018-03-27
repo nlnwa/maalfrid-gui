@@ -1,10 +1,10 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core';
 import {MaalfridService} from '../maalfrid-service/maalfrid.service';
-import 'rxjs/add/operator/do';
 import {CrawlJob, Seed} from '../../shared/models/config.model';
 import {options} from './charts';
 import {Interval} from '../interval/interval.component';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {RoleService} from '../../auth/role.service';
 
 @Component({
   selector: 'app-statistics',
@@ -21,7 +21,6 @@ export class StatisticsComponent {
   pieChartOptions: any;
   multiBarChartOptions: any;
 
-  queryTime: number;
   total: number;
 
   interval: any;
@@ -31,10 +30,17 @@ export class StatisticsComponent {
   executions: BehaviorSubject<any> = new BehaviorSubject([]);
 
   constructor(private maalfridService: MaalfridService,
-              private changeDetectorRef: ChangeDetectorRef) {
+              private changeDetectorRef: ChangeDetectorRef,
+              private roleService: RoleService) {
 
     this.pieChartOptions = options.pieChart;
     this.multiBarChartOptions = options.multiBarChart;
+  }
+
+  get canRead(): boolean {
+    return this.roleService.isReadonly() ||
+      this.roleService.isAdmin() ||
+      this.roleService.isCurator();
   }
 
   onSelectSeed(seed: Seed) {
@@ -55,7 +61,6 @@ export class StatisticsComponent {
   }
 
   onSelectExecution(executions: any) {
-    this.queryTime = 0;
     this.total = 0;
     this.totalData = null;
     this.perExecutionData = null;
@@ -71,16 +76,10 @@ export class StatisticsComponent {
   }
 
   private getStatistics(executions) {
-    this.queryTime = null;
     this.total = 0;
-    const startTime = new Date().getTime();
 
-    this.maalfridService.getStatistic({
-      execution_id: executions.map((execution) => execution.id)
-    })
-      .do(() => this.queryTime = (new Date().getTime() - startTime))
+    this.maalfridService.getStatistic({execution_id: executions.map((execution) => execution.id)})
       .subscribe(stats => {
-        console.log('gotStatistics');
         this.perExecutionData = this.getMultiBarChartData(executions, stats);
         this.totalData = this.getPieChartData(this.perExecutionData);
         this.nobData = this.getLanguageData(stats, 'NOB');
@@ -101,7 +100,6 @@ export class StatisticsComponent {
         .startOf('day')
         .toJSON(),
     })
-      .map((reply) => reply.value)
       .subscribe((executions) => {
         this.executions.next(executions);
       });
@@ -115,7 +113,7 @@ export class StatisticsComponent {
   private getLanguageData(stats, language) {
     let short = 0;
     let long = 0;
-    stats.value.forEach((execution) => {
+    stats.forEach((execution) => {
       execution.some((statistic) => {
         if (statistic.language === language) {
           short += statistic.short;
@@ -132,7 +130,7 @@ export class StatisticsComponent {
 
   private getMultiBarChartData(executions, stats) {
     const data = {};
-    stats.value.forEach((execution, index) => {
+    stats.forEach((execution, index) => {
       const total = execution.reduce((acc, curr) => acc + curr.total, 0);
       execution.forEach((statistic) => {
         const value = [executions[index].endTime, statistic.total];

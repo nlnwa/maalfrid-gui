@@ -1,15 +1,15 @@
 export const environment = {
   production: true,
-  maalfridApiGateway: '/maalfrid/api',
-  apiGateway: '/api',
-  config: '/maalfrid/assets/config/environment.json',
-  auth: {
-
+  version: require('../../package.json').version,
+  configUrl: '/maalfrid/assets/config/environment.json',
+  apiUrl: '/maalfrid/api',
+  apiGatewayUrl: '/api',
+  authConfig: {
     // Url of the Identity Provider
     issuer: '',
 
     // URL of the SPA to redirect the user to after login
-    redirectUri: window.location.origin + '/statistics',
+    redirectUri: window.location.origin + '/maalfrid/statistics',
 
     // The SPA's id. The SPA is registered with this id at the auth-server
     clientId: 'maalfrid-gui',
@@ -18,5 +18,6 @@ export const environment = {
     // The first three are defined by OIDC. The 4th is a usecase-specific one
     scope: 'openid profile email groups offline_access audience:server:client_id:veidemann-api',
 
-    requireHttps: false
-  },};
+    requireHttps: true
+  },
+};

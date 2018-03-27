@@ -1,37 +1,44 @@
 import {Injectable} from '@angular/core';
-import {AuthConfig, JwksValidationHandler, OAuthService} from 'angular-oauth2-oidc';
+import {JwksValidationHandler, OAuthService} from 'angular-oauth2-oidc';
 import {RoleService} from './role.service';
+import {AppConfig} from '../app.config';
 
 @Injectable()
 export class AuthService {
 
-  constructor(private oauthService: OAuthService, private roleService: RoleService) {
+  constructor(private oauthService: OAuthService, private appConfig: AppConfig, private roleService: RoleService) {
   }
 
-  public get name() {
-    const claims = this.oauthService.getIdentityClaims();
-    return claims ? claims['name'] : null;
+  get claims() {
+    return this.oauthService.getIdentityClaims();
   }
 
-  public login() {
+  get name() {
+    return this.claims ? this.claims['name'] : null;
+  }
+
+  get email() {
+    return this.claims ? this.claims['email'] : null;
+  }
+
+  get groups() {
+    return this.claims ? this.claims['groups'] : null;
+  }
+
+  login() {
     this.oauthService.initImplicitFlow();
   }
 
-  public logout() {
+  logout() {
     this.oauthService.logOut();
-    this.roleService.resetRoles();
+    this.roleService.fetchRoles();
   }
 
-  public configure(auth: AuthConfig): Promise<any> {
-    if (auth && auth.issuer !== '') {
-      this.oauthService.configure(auth);
-      this.oauthService.tokenValidationHandler = new JwksValidationHandler();
-      return this.oauthService.loadDiscoveryDocumentAndTryLogin()
-        .then(() => this.roleService.fetchRoles())
-        .catch(() => Promise.resolve());
-    } else {
-      console.log('No idp issuer configured so authentication is not possible.');
-      return Promise.resolve();
-    }
+  configure(): Promise<any> {
+    this.oauthService.configure(this.appConfig.environment.authConfig);
+    this.oauthService.tokenValidationHandler = new JwksValidationHandler();
+    return this.oauthService.loadDiscoveryDocumentAndTryLogin()
+      .then(() => this.roleService.fetchRoles())
+      .catch(() => this.roleService.fetchRoles());
   }
 }

@@ -4,11 +4,6 @@ import {StatisticsComponent} from './core/statistics/statistics.component';
 
 const routes: Routes = [
   {
-    path: '',
-    redirectTo: 'statistics',
-    pathMatch: 'full'
-  },
-  {
     path: 'statistics',
     component: StatisticsComponent
   },

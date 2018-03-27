@@ -52,19 +52,13 @@ export class EntityListComponent extends BaseListComponent implements OnInit {
 
   get selected(): string {
     if (this.selectedItems.size > 0) {
-      return (this.selectedItems.values().next().value as any).meta.name;
+      return (this.selectedItems.values().next().value as any).meta.description;
     }
   }
 
   ngOnInit(): void {
-    const query = {
-      selector: JSON.stringify({
-        label: [{key: 'Group', value: 'Språkrådet'}]
-      })
-    };
-    this.veidemannService.getEntities(query).subscribe((entities) => {
-      this.database.items = entities;
-    });
+    const query = { label_selector: 'Group:Språkrådet' };
+    this.veidemannService.getEntities(query).subscribe((entities) => this.database.items = entities);
   }
 
 }

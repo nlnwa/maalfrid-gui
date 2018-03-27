@@ -1,28 +1,22 @@
-import {environment} from '../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Role, RoleList} from '../shared/models/config.model';
+import {AppConfig} from '../app.config';
 
 @Injectable()
 export class RoleService {
 
-  private readonly URL: string = `${environment.apiGateway}/roles`;
+  private readonly URL: string = this.appConfig.environment.apiGatewayUrl + '/control/activeroles';
 
-  private roles: Role[] = [Role.ANY];
+  private roles: Role[] = [];
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private appConfig: AppConfig) {
   }
 
-  public resetRoles() {
-    this.roles = [Role.ANY];
-  }
-
-  public fetchRoles() {
-    this.http.get<RoleList>(this.URL)
-      .map(res => res.role.map(role => Role[role]))
-      .subscribe(roles => {
-        this.roles = roles;
-      });
+  public fetchRoles(): Promise<Role[]> {
+    return this.http.get<RoleList>(this.URL).toPromise()
+      .then(reply => reply.role.map(role => Role[role]))
+      .then(roles => this.roles = roles);
   }
 
   public getRoles(): Role[] {
@@ -42,9 +36,6 @@ export class RoleService {
   }
 
   private isRole(role: Role) {
-    if (!environment.production && environment.auth.issuer === '') {
-      return true;
-    }
     return this.roles.includes(role);
   }
 }

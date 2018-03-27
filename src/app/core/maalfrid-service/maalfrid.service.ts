@@ -1,48 +1,29 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/timeoutWith';
 import 'rxjs/add/observable/throw';
-import {environment} from '../../../environments/environment';
 import {createQueryParams} from '../../shared/http/util';
+import {AppConfig} from '../../app.config';
+import {MaalfridReply} from '../../shared/models/maalfrid.model';
+import {Observable} from 'rxjs/Observable';
 
 @Injectable()
 export class MaalfridService {
 
-  private readonly API_URL: string = environment.maalfridApiGateway;
+  private readonly API_URL: string = this.appConfig.environment.apiUrl;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private appConfig: AppConfig) {
   }
 
-  setLanguage(query) {
+  getExecutions(query): Observable<any[]> {
     const params = createQueryParams(query);
-    return this.http.get(
-      `${this.API_URL}/detect`,
-      {params})
-      .timeoutWith(30000, Observable.throw(new Error('Timeout')));
+    return this.http.get<MaalfridReply>(`${this.API_URL}/executions`, {params})
+      .map(reply => reply.value || []);
   }
 
-  getExecutions(query) {
+  getStatistic(query): Observable<any[]> {
     const params = createQueryParams(query);
-    return this.http.get(
-      `${this.API_URL}/executions`,
-      {params})
-      .timeoutWith(30000, Observable.throw(new Error('Timeout')));
-  }
-
-  getStatistic(query) {
-    const params = createQueryParams(query);
-    return this.http.get(`${this.API_URL}/statistic`,
-      {params})
-      .timeoutWith(20000, Observable.throw(new Error('Timeout')));
-  }
-
-
-  getLang(query) {
-    const params = createQueryParams(query);
-    return this.http.get(
-      `${this.API_URL}/language`,
-      {params})
-      .timeoutWith(20000, Observable.throw(new Error('Timeout')));
+    return this.http.get<MaalfridReply>(`${this.API_URL}/statistic`, {params})
+      .map(reply => reply.value || []);
   }
 }
