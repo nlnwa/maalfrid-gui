@@ -1,0 +1,17 @@
+.app-container {
+  height: 100%;
+}
+
+main {
+overflow: hidden;
+}
+
+.app-version {
+  font-family: monospace;
+}
+
+.app-footer {
+  color: white;
+  padding: 12px;
+  background: #3f51b5;
+}

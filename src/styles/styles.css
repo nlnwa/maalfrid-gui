@@ -1,21 +1,25 @@
-html, body, app-root, md-sidenav-container {
-  margin: 0;
-  width: 100%;
+html, body, app-root {
   height: 100%;
-}
-
-html, body {
   margin: 0;
   padding: 0;
 }
 
-.fill-space {
-  flex: 1 1 auto;
+body {
+  background: black;
 }
+
+/*
+  Don't squash toolbars
+ */
+
+.app-toolbar {
+  min-height: 64px;
+}
+
 .container {
   padding: 1em 24px;
 }
 
 .icon-header {
-  margin-right: 16px;
+  margin-right: 8px;
 }

@@ -1,50 +1,43 @@
-import {NgModule} from '@angular/core';
+import {APP_INITIALIZER, ErrorHandler, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {FormsModule} from '@angular/forms';
-import {HttpClientModule} from '@angular/common/http';
-import {FlexLayoutModule} from '@angular/flex-layout';
-import {MaterialModule} from './material.module';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 
-import {NvD3Module} from 'ng2-nvd3';
-import 'd3';
-import 'nvd3';
-
-import {StatisticsComponent} from './statistics/statistics.component';
-import {MaalfridService} from './maalfrid-service/maalfrid.service';
-import {EntityListComponent} from './entity-list/entity-list.component';
-import {SeedListComponent} from './seed-list/seed-list.component';
-import {VeidemannService} from './veidemann-service/veidemann.service';
-import {ExecutionListComponent} from './execution-list/execution-list';
-import {CrawljobListComponent} from './crawljob-list/crawljob-list.component';
-import {IntervalComponent} from './interval/interval.component';
+import {AppConfig} from './app.config';
+import {AuthService, RoleService, TokenInterceptor} from './auth';
+import {CoreModule} from './core/core.module';
+import {SharedModule} from './shared/shared.module';
+import {OAuthModule} from 'angular-oauth2-oidc';
+import {ApplicationErrorHandler, ErrorService} from './error';
+import {VeidemannService} from './core/veidemann-service/veidemann.service';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    StatisticsComponent,
-    EntityListComponent,
-    SeedListComponent,
-    ExecutionListComponent,
-    CrawljobListComponent,
-    IntervalComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    FormsModule,
     HttpClientModule,
-    MaterialModule,
     AppRoutingModule,
-    NvD3Module,
-    FlexLayoutModule,
+    SharedModule,
+    OAuthModule.forRoot(),
+    CoreModule.forRoot(),
   ],
   providers: [
-    MaalfridService,
-    VeidemannService
+    AppConfig,
+    AuthService,
+    RoleService,
+    ErrorService,
+    VeidemannService,
+    {provide: APP_INITIALIZER, useFactory: (conf: AppConfig) => () => conf.load(), deps: [AppConfig], multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},
+    {provide: ErrorHandler, useClass: ApplicationErrorHandler},
   ],
   bootstrap: [AppComponent]
 })

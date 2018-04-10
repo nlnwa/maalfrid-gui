@@ -1,12 +1,12 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {StatisticsComponent} from './statistics/statistics.component';
+import {StatisticsComponent} from './core/statistics/statistics.component';
+import {HomeComponent} from './home/home.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/statistics',
-    pathMatch: 'full'
+    component: HomeComponent
   },
   {
     path: 'statistics',
