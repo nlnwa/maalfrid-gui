@@ -11,8 +11,7 @@ import {environment} from '../environments/environment';
 export class AppComponent {
 
   constructor(private authService: AuthService, private router: Router) {
-    this.authService.configure()
-      .then(() => router.navigate(['/statistics']));
+    this.authService.configure();
   }
 
   get version(): string {
@@ -33,5 +32,6 @@ export class AppComponent {
 
   onLogout() {
     this.authService.logout();
+    this.router.navigate(['/']);
   }
 }

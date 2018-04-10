@@ -1,0 +1,7 @@
+.entity-container {
+  height: 100%;
+}
+.entity-list-table {
+  overflow-y: scroll;
+}
+

@@ -7,11 +7,11 @@ import * as moment from 'moment';
 @Component({
   selector: 'app-execution-list',
   template: `
-    <div>
+    <section>
       <mat-toolbar color="primary">
         <mat-icon class="icon-header">event</mat-icon>
         Innhøstinger
-        <span class="fill-space"></span>
+        <span fxFlex></span>
         <button mat-raised-button (click)="onSelectAll()" color="accent">Velg alle</button>
       </mat-toolbar>
       <mat-table [dataSource]="dataSource"
@@ -39,7 +39,7 @@ import * as moment from 'moment';
                  (click)="onRowClick(row)">
         </mat-row>
       </mat-table>
-    </div>`,
+    </section>`,
   styleUrls: ['../../shared/list/base-list/base-list.component.css'],
   providers: [ListDatabase, {provide: Database, useClass: ListDatabase}],
   changeDetection: ChangeDetectionStrategy.OnPush

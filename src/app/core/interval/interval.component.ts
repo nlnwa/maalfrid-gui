@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import * as moment from 'moment';
 import {Moment} from 'moment';
+import {MatDatepickerInputEvent} from '@angular/material/datepicker/typings/datepicker-input';
 
 export class Interval {
   start: Moment;
@@ -10,7 +11,7 @@ export class Interval {
 @Component({
   selector: 'app-interval',
   template: `
-    <div>
+    <section>
       <mat-toolbar color="primary">
         <mat-icon class="icon-header">schedule</mat-icon>
         Intervall
@@ -21,21 +22,21 @@ export class Interval {
                  [ngModel]="interval.start"
                  [matDatepicker]="startTime"
                  placeholder="Start"
-                 (dateChange)="onStartDateChange()">
+                 (dateChange)="onStartDateChange($event)">
           <mat-datepicker-toggle matSuffix [for]="startTime"></mat-datepicker-toggle>
         </mat-input-container>
-        <mat-datepicker #startTime></mat-datepicker>
+        <mat-datepicker #startTime [startView]="startView"></mat-datepicker>
         <mat-input-container>
           <input matInput
                  [ngModel]="interval.end"
                  [matDatepicker]="endTimePicker"
                  placeholder="Slutt"
-                 (dateChange)="onEndDateChange()">
+                 (dateChange)="onEndDateChange($event)">
           <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
         </mat-input-container>
-        <mat-datepicker #endTimePicker></mat-datepicker>
+        <mat-datepicker #endTimePicker [startView]="startView"></mat-datepicker>
       </div>
-    </div>`,
+    </section>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IntervalComponent implements OnInit {
@@ -43,21 +44,26 @@ export class IntervalComponent implements OnInit {
   @Output()
   intervalSet = new EventEmitter<Interval>();
 
+  startView = 'year';
+
   interval: Interval = {
-    start: moment().startOf('month'),
+    start: moment().startOf('year'),
     end: moment().endOf('month'),
   };
 
 
   ngOnInit(): void {
+    console.log('init', this.interval);
     this.intervalSet.emit(this.interval);
   }
 
-  onStartDateChange() {
+  onStartDateChange(event: MatDatepickerInputEvent<Moment>) {
+    this.interval.start = event.value;
     this.intervalSet.emit(this.interval);
   }
 
-  onEndDateChange() {
+  onEndDateChange(event: MatDatepickerInputEvent<Moment>) {
+    this.interval.end = event.value;
     this.intervalSet.emit(this.interval);
   }
 }

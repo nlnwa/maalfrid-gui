@@ -13,10 +13,12 @@ import {SharedModule} from './shared/shared.module';
 import {OAuthModule} from 'angular-oauth2-oidc';
 import {ApplicationErrorHandler, ErrorService} from './error';
 import {VeidemannService} from './core/veidemann-service/veidemann.service';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,

@@ -7,7 +7,7 @@ import {VeidemannService} from './veidemann-service/veidemann.service';
 import {CrawlJobListComponent} from './crawljob-list/crawljob-list.component';
 import {EntityListComponent} from './entity-list/entity-list.component';
 import {ExecutionListComponent} from './execution-list/execution-list.component';
-import {IntervalComponent} from './interval/interval.component';
+import {IntervalComponent} from './interval';
 import {SeedListComponent} from './seed-list/seed-list.component';
 import {SharedModule} from '../shared/shared.module';
 
@@ -23,7 +23,7 @@ import 'nvd3';
     ExecutionListComponent,
     IntervalComponent,
     SeedListComponent,
-    StatisticsComponent
+    StatisticsComponent,
   ],
   imports: [
     SharedModule,

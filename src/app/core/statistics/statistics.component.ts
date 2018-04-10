@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/co
 import {MaalfridService} from '../maalfrid-service/maalfrid.service';
 import {CrawlJob, Seed} from '../../shared/models/config.model';
 import {options} from './charts';
-import {Interval} from '../interval/interval.component';
+import {Interval} from '../interval';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {RoleService} from '../../auth/role.service';
 
@@ -23,7 +23,7 @@ export class StatisticsComponent {
 
   total: number;
 
-  interval: any;
+  interval: Interval;
   seed: Seed;
   job: CrawlJob;
 
@@ -35,12 +35,6 @@ export class StatisticsComponent {
 
     this.pieChartOptions = options.pieChart;
     this.multiBarChartOptions = options.multiBarChart;
-  }
-
-  get canRead(): boolean {
-    return this.roleService.isReadonly() ||
-      this.roleService.isAdmin() ||
-      this.roleService.isCurator();
   }
 
   onSelectSeed(seed: Seed) {
@@ -66,6 +60,11 @@ export class StatisticsComponent {
     this.perExecutionData = null;
     if (executions.length > 0) {
       this.getStatistics(executions);
+    } else {
+      this.perExecutionData = [];
+      this.totalData = [];
+      this.nobData = [];
+      this.nnoData = [];
     }
   }
 
@@ -102,6 +101,8 @@ export class StatisticsComponent {
     })
       .subscribe((executions) => {
         this.executions.next(executions);
+
+        this.changeDetectorRef.markForCheck();
       });
   }
 
@@ -124,8 +125,10 @@ export class StatisticsComponent {
         }
       });
     });
-
-    return [ {key: 'Korte tekster', value: short}, {key: 'Lange tekster', value: long} ];
+    if (short === 0 && long === 0) {
+      return [];
+    }
+    return [{key: 'Korte tekster', value: short}, {key: 'Lange tekster', value: long}];
   }
 
   private getMultiBarChartData(executions, stats) {

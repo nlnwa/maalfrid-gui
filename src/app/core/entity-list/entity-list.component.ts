@@ -1,19 +1,18 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {BaseListComponent} from '../../shared/list/base-list/base-list.component';
 import {ListDataSource} from '../../shared/list/list-datasource';
-import {Database, Item, ListDatabase} from '../../shared/list/list-database';
+import {Database, ListDatabase} from '../../shared/list/list-database';
 import {VeidemannService} from '../veidemann-service/veidemann.service';
-import {Entity} from '../../shared/models/config.model';
 
 @Component({
   selector: 'app-entity-list',
   template: `
-    <div>
-      <mat-toolbar color="primary">
+    <section class="entity-container" fxLayout="column">
+      <mat-toolbar class="app-toolbar" color="primary">
         <mat-icon class="icon-header">business</mat-icon>
         {{ selected || 'Entitet' }}
       </mat-toolbar>
-      <mat-table [dataSource]="dataSource"
+      <mat-table class="entity-list-table" [dataSource]="dataSource"
                  [trackBy]="trackById">
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef>Entitet</mat-header-cell>
@@ -37,8 +36,8 @@ import {Entity} from '../../shared/models/config.model';
                  (click)="onRowClick(row)">
         </mat-row>
       </mat-table>
-    </div>`,
-  styleUrls: ['../../shared/list/base-list/base-list.component.css'],
+    </section>`,
+  styleUrls: ['entity-list.component.css', '../../shared/list/base-list/base-list.component.css'],
   providers: [ListDatabase, {provide: Database, useClass: ListDatabase}],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -57,7 +56,7 @@ export class EntityListComponent extends BaseListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const query = { label_selector: 'Group:Språkrådet' };
+    const query = {label_selector: 'Group:Språkrådet'};
     this.veidemannService.getEntities(query).subscribe((entities) => this.database.items = entities);
   }
 

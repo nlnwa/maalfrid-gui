@@ -1,43 +1,41 @@
-<div fxLayout="column" fxLayoutAlign="flex-start stretch">
-  <div fxFlex fxLayout="row">
-    <!-- Entity list -->
-    <app-entity-list fxFlex="1 1 33%" (rowClick)="seedList.entity=$event"></app-entity-list>
+<section class="statistics-container" fxLayout="row">
+
+  <!-- Entity list -->
+  <app-entity-list class="app-entity-list" fxFlex="25%" (rowClick)="seedList.entity=$event"></app-entity-list>
 
 
-    <div fxFlex="2 2 auto" fxLayout="column">
-      <div fxFlex="20%" fxLayout="row">
-        <app-seed-list fxFlex="2 2 auto" #seedList (rowClick)="onSelectSeed($event)"></app-seed-list>
-        <app-interval fxFlex (intervalSet)="onInterval($event)"></app-interval>
-        <app-execution-list fxFlex="2 2 auto" [executions]="executions | async"
-                            (rowClick)="onSelectExecution($event)"></app-execution-list>
+  <div fxFlex="grow" fxLayout="column">
+    <div class="statistics-selection" fxFlex="20%" fxLayout="row">
+      <app-seed-list fxFlex="2 2 auto" #seedList (rowClick)="onSelectSeed($event)"></app-seed-list>
+      <app-interval (intervalSet)="onInterval($event)"></app-interval>
+      <app-execution-list fxFlex="2 2 auto" [executions]="executions | async"
+                          (rowClick)="onSelectExecution($event)"></app-execution-list>
+    </div>
+
+    <mat-toolbar class="app-toolbar" color="primary">Statistikk</mat-toolbar>
+
+    <div fxFlex="grow" fxLayout="row">
+      <div fxFlex fxLayout="column" *ngIf="totalData">
+        <mat-toolbar class="app-toolbar">Totalt</mat-toolbar>
+        <nvd3 fxFlex="grow" class="chart" [options]="pieChartOptions" [data]="totalData"></nvd3>
       </div>
-
-      <mat-toolbar color="primary">Statistikk</mat-toolbar>
-
-      <div fxLayout="row">
-        <div fxFlex *ngIf="totalData">
-          <mat-toolbar>Totalt</mat-toolbar>
-          <nvd3 [options]="pieChartOptions" [data]="totalData"></nvd3>
-        </div>
-        <div fxFlex *ngIf="perExecutionData">
-          <mat-toolbar>Per innhøsting</mat-toolbar>
-          <nvd3 [options]="multiBarChartOptions" [data]="perExecutionData"></nvd3>
-        </div>
+      <div fxFlex fxLayout="column" *ngIf="perExecutionData">
+        <mat-toolbar class="app-toolbar">Per innhøsting</mat-toolbar>
+        <nvd3 fxFlex="grow" class="chart" [options]="multiBarChartOptions" [data]="perExecutionData"></nvd3>
       </div>
+    </div>
 
 
-      <div fxLayout="row">
-        <div fxFlex *ngIf="nobData">
-          <mat-toolbar>Bokmål</mat-toolbar>
-          <nvd3 [options]="pieChartOptions" [data]="nobData"></nvd3>
-        </div>
-        <div fxFlex *ngIf="nnoData">
-          <mat-toolbar>Nynorsk</mat-toolbar>
-          <nvd3 [options]="pieChartOptions" [data]="nnoData"></nvd3>
-        </div>
+    <div fxFlex="grow" fxLayout="row">
+      <div fxFlex fxLayout="column" *ngIf="nobData">
+        <mat-toolbar class="app-toolbar">Bokmål</mat-toolbar>
+        <nvd3 fxFlex="grow" class="chart" [options]="pieChartOptions" [data]="nobData"></nvd3>
       </div>
-
+      <div fxFlex fxLayout="column" *ngIf="nnoData">
+        <mat-toolbar class="app-toolbar">Nynorsk</mat-toolbar>
+        <nvd3 fxFlex="grow" class="chart" [options]="pieChartOptions" [data]="nnoData"></nvd3>
+      </div>
     </div>
 
   </div>
-</div>
+</section>
