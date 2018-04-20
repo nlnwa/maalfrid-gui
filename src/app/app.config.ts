@@ -22,14 +22,12 @@ export class AppConfig {
    *
    * @returns {Promise<any>}
    */
-  load(): Promise<any> {
-    return this.http.get(environment.configUrl)
-      .toPromise()
-      .then(env => Object.assign(this._env, env))
-      .then(env => this.getOpenIdConnectIssuer()
+  async load(): Promise<any> {
+    const env = await this.http.get(environment.configUrl).toPromise()
+    Object.assign(this._env, env);
+    env.authConfig.issuer = await this.getOpenIdConnectIssuer();
         .then(issuer => {
           env.authConfig.issuer = issuer;
-          this._env = env;
         }));
   }
 

@@ -11,6 +11,7 @@ import {
   MatSidenavModule,
   MatTableModule,
   MatToolbarModule,
+  MatDividerModule,
 } from '@angular/material';
 
 import {FlexLayoutModule} from '@angular/flex-layout';
@@ -31,6 +32,7 @@ const modules = [
   MatProgressSpinnerModule,
   MatDatepickerModule,
   MatMomentDateModule,
+  MatDividerModule,
 ];
 
 @NgModule({

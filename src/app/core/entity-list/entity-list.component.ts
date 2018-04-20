@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {BaseListComponent} from '../../shared/list/base-list/base-list.component';
 import {ListDataSource} from '../../shared/list/list-datasource';
 import {Database, ListDatabase} from '../../shared/list/list-database';
-import {VeidemannService} from '../veidemann-service/veidemann.service';
+import {MaalfridService} from '../maalfrid-service/maalfrid.service';
 
 @Component({
   selector: 'app-entity-list',
@@ -43,7 +43,7 @@ import {VeidemannService} from '../veidemann-service/veidemann.service';
 })
 export class EntityListComponent extends BaseListComponent implements OnInit {
   constructor(private database: Database,
-              private veidemannService: VeidemannService) {
+              private maalfridService: MaalfridService) {
     super();
     this.displayedColumns = ['name', 'description'];
     this.dataSource = new ListDataSource(database);
@@ -56,8 +56,7 @@ export class EntityListComponent extends BaseListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const query = {label_selector: 'Group:Språkrådet'};
-    this.veidemannService.getEntities(query).subscribe((entities) => this.database.items = entities);
+    this.maalfridService.getEntities().subscribe((entities) => this.database.items = entities);
   }
 
 }

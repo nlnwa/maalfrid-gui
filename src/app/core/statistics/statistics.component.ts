@@ -4,7 +4,6 @@ import {CrawlJob, Seed} from '../../shared/models/config.model';
 import {options} from './charts';
 import {Interval} from '../interval';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {RoleService} from '../../auth/role.service';
 
 @Component({
   selector: 'app-statistics',
@@ -30,8 +29,7 @@ export class StatisticsComponent {
   executions: BehaviorSubject<any> = new BehaviorSubject([]);
 
   constructor(private maalfridService: MaalfridService,
-              private changeDetectorRef: ChangeDetectorRef,
-              private roleService: RoleService) {
+              private changeDetectorRef: ChangeDetectorRef) {
 
     this.pieChartOptions = options.pieChart;
     this.multiBarChartOptions = options.multiBarChart;

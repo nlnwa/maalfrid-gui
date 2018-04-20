@@ -19,6 +19,7 @@
         <mat-toolbar class="app-toolbar">Totalt</mat-toolbar>
         <nvd3 fxFlex="grow" class="chart" [options]="pieChartOptions" [data]="totalData"></nvd3>
       </div>
+      <mat-divider [vertical]="true"></mat-divider>
       <div fxFlex fxLayout="column" *ngIf="perExecutionData">
         <mat-toolbar class="app-toolbar">Per innhøsting</mat-toolbar>
         <nvd3 fxFlex="grow" class="chart" [options]="multiBarChartOptions" [data]="perExecutionData"></nvd3>
@@ -31,6 +32,7 @@
         <mat-toolbar class="app-toolbar">Bokmål</mat-toolbar>
         <nvd3 fxFlex="grow" class="chart" [options]="pieChartOptions" [data]="nobData"></nvd3>
       </div>
+      <mat-divider [vertical]="true"></mat-divider>
       <div fxFlex fxLayout="column" *ngIf="nnoData">
         <mat-toolbar class="app-toolbar">Nynorsk</mat-toolbar>
         <nvd3 fxFlex="grow" class="chart" [options]="pieChartOptions" [data]="nnoData"></nvd3>

@@ -3,8 +3,6 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import {StatisticsComponent} from './statistics/statistics.component';
 import {MaalfridService} from './maalfrid-service/maalfrid.service';
-import {VeidemannService} from './veidemann-service/veidemann.service';
-import {CrawlJobListComponent} from './crawljob-list/crawljob-list.component';
 import {EntityListComponent} from './entity-list/entity-list.component';
 import {ExecutionListComponent} from './execution-list/execution-list.component';
 import {IntervalComponent} from './interval';
@@ -18,7 +16,6 @@ import 'nvd3';
 @NgModule({
   declarations: [
     StatisticsComponent,
-    CrawlJobListComponent,
     EntityListComponent,
     ExecutionListComponent,
     IntervalComponent,
@@ -41,7 +38,6 @@ export class CoreModule {
       ngModule: CoreModule,
       providers: [
         MaalfridService,
-        VeidemannService
       ],
     };
   }
