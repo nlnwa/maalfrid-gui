@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MatDatepickerInputEvent} from '@angular/material/datepicker/typings/datepicker-input';
 import {Moment} from 'moment';
-import moment = require('moment');
+import * as moment from 'moment';
 
 export class Interval {
   start: Moment;
