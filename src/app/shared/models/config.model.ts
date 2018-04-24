@@ -221,7 +221,7 @@ export class IpRange {
 }
 
 export class LogLevels {
-  log_level: LogLevel[]
+  log_level: LogLevel[];
 }
 
 export class LogLevel {

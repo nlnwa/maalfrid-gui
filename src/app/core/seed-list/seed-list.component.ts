@@ -1,9 +1,9 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {BaseListComponent} from '../../shared/list/base-list/base-list.component';
 import {Entity} from '../../shared/models/config.model';
-import {VeidemannService} from '../veidemann-service/veidemann.service';
 import {Database, ListDatabase} from '../../shared/list/list-database';
 import {ListDataSource} from '../../shared/list/list-datasource';
+import {MaalfridService} from '../maalfrid-service/maalfrid.service';
 
 
 @Component({
@@ -53,7 +53,7 @@ export class SeedListComponent extends BaseListComponent {
   private _entity: Entity;
 
   constructor(private database: Database,
-              private veidemannService: VeidemannService) {
+              private maalfridService: MaalfridService) {
     super();
     this.displayedColumns = ['name'];
     this.dataSource = new ListDataSource(database);
@@ -74,7 +74,7 @@ export class SeedListComponent extends BaseListComponent {
   @Input()
   set entity(entity: Entity) {
     this._entity = entity;
-    this.veidemannService.getSeeds(entity).subscribe((seeds) => {
+    this.maalfridService.getSeeds(entity).subscribe((seeds) => {
       this.database.items = seeds;
       if (seeds.length > 0) {
         this.onRowClick(seeds[0]);

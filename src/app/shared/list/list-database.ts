@@ -24,6 +24,10 @@ export class ListDatabase extends Database {
     this.dataChange.next(items);
   }
 
+  get isEmpty() {
+    return this.dataSet.size < 1;
+  }
+
   reset() {
     this.dataSet.clear();
     this.items = [];
@@ -40,9 +44,6 @@ export class ListDatabase extends Database {
     this.items = copy;
   }
 
-  isEmpty() {
-    return this.dataSet.size < 1;
-  }
 
 }
 

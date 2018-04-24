@@ -12,17 +12,18 @@ export const options = {
         return d.value;
       },
       showLabels: true,
-      duration: 100,
+      labelType: 'percent',
       labelThreshold: 0.01,
       labelSunbeamLayout: false,
-      legend: {
-        margin: {
-          top: 10,
-          right: 15,
-          bottom: 5,
-          left: 0
-        }
-      }
+      duration: 100,
+      // legend: {
+      //   margin: {
+      //     top: 10,
+      //     right: 15,
+      //     bottom: 5,
+      //     left: 0
+      //   }
+      // }
     }
   }
   ,
@@ -31,9 +32,8 @@ export const options = {
       type: 'multiBarChart',
       stacked: false,
       margin: {
-        top: 30,
-        right: 75,
-        bottom: 50,
+        top: 75,
+        bottom: 75,
         left: 75
       },
       x: (d) => d[0],

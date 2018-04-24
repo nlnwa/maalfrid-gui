@@ -1,12 +1,14 @@
 import {Injectable} from '@angular/core';
 import {JwksValidationHandler, OAuthService} from 'angular-oauth2-oidc';
-import {RoleService} from './role.service';
 import {AppConfig} from '../app.config';
+import {RoleService} from './role.service';
 
 @Injectable()
 export class AuthService {
 
-  constructor(private oauthService: OAuthService, private appConfig: AppConfig, private roleService: RoleService) {
+  constructor(private appConfig: AppConfig, private oauthService: OAuthService, private roleService: RoleService) {
+    this.oauthService.tokenValidationHandler = new JwksValidationHandler();
+    this.oauthService.configure(this.appConfig.authConfig);
   }
 
   get claims() {
@@ -25,6 +27,10 @@ export class AuthService {
     return this.claims ? this.claims['groups'] : null;
   }
 
+  get isLoggedIn() {
+    return this.oauthService.hasValidIdToken();
+  }
+
   login() {
     this.oauthService.initImplicitFlow();
   }
@@ -34,11 +40,12 @@ export class AuthService {
     this.roleService.fetchRoles();
   }
 
-  configure(): Promise<any> {
-    this.oauthService.configure(this.appConfig.environment.authConfig);
-    this.oauthService.tokenValidationHandler = new JwksValidationHandler();
-    return this.oauthService.loadDiscoveryDocumentAndTryLogin()
-      .then(() => this.roleService.fetchRoles())
-      .catch(() => this.roleService.fetchRoles());
+  async resolve() {
+    try {
+      await this.oauthService.loadDiscoveryDocumentAndTryLogin();
+    } catch (err) {}
+    finally {
+      return this.roleService.fetchRoles();
+    }
   }
 }

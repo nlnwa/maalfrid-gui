@@ -7,12 +7,11 @@ import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 
 import {AppConfig} from './app.config';
-import {AuthService, RoleService, TokenInterceptor} from './auth';
+import {AuthService, RoleService, TokenInterceptor, AuthGuard} from './auth';
 import {CoreModule} from './core/core.module';
 import {SharedModule} from './shared/shared.module';
 import {OAuthModule} from 'angular-oauth2-oidc';
 import {ApplicationErrorHandler, ErrorService} from './error';
-import {VeidemannService} from './core/veidemann-service/veidemann.service';
 import { HomeComponent } from './home/home.component';
 
 @NgModule({
@@ -33,8 +32,8 @@ import { HomeComponent } from './home/home.component';
     AppConfig,
     AuthService,
     RoleService,
+    AuthGuard,
     ErrorService,
-    VeidemannService,
     {provide: APP_INITIALIZER, useFactory: (conf: AppConfig) => () => conf.load(), deps: [AppConfig], multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},
     {provide: ErrorHandler, useClass: ApplicationErrorHandler},

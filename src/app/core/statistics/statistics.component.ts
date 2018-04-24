@@ -4,7 +4,6 @@ import {CrawlJob, Seed} from '../../shared/models/config.model';
 import {options} from './charts';
 import {Interval} from '../interval';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {RoleService} from '../../auth/role.service';
 
 @Component({
   selector: 'app-statistics',
@@ -30,9 +29,7 @@ export class StatisticsComponent {
   executions: BehaviorSubject<any> = new BehaviorSubject([]);
 
   constructor(private maalfridService: MaalfridService,
-              private changeDetectorRef: ChangeDetectorRef,
-              private roleService: RoleService) {
-
+              private changeDetectorRef: ChangeDetectorRef) {
     this.pieChartOptions = options.pieChart;
     this.multiBarChartOptions = options.multiBarChart;
   }
@@ -77,7 +74,7 @@ export class StatisticsComponent {
   private getStatistics(executions) {
     this.total = 0;
 
-    this.maalfridService.getStatistic({execution_id: executions.map((execution) => execution.id)})
+    this.maalfridService.getStatistic({execution_id: executions.map((execution) => execution.executionId)})
       .subscribe(stats => {
         this.perExecutionData = this.getMultiBarChartData(executions, stats);
         this.totalData = this.getPieChartData(this.perExecutionData);
@@ -101,7 +98,6 @@ export class StatisticsComponent {
     })
       .subscribe((executions) => {
         this.executions.next(executions);
-
         this.changeDetectorRef.markForCheck();
       });
   }
@@ -115,6 +111,9 @@ export class StatisticsComponent {
     let short = 0;
     let long = 0;
     stats.forEach((execution) => {
+      if (!(execution instanceof Array)) {
+        execution = [execution];
+      }
       execution.some((statistic) => {
         if (statistic.language === language) {
           short += statistic.short;
@@ -134,9 +133,12 @@ export class StatisticsComponent {
   private getMultiBarChartData(executions, stats) {
     const data = {};
     stats.forEach((execution, index) => {
-      const total = execution.reduce((acc, curr) => acc + curr.total, 0);
+      if (!(execution instanceof Array)) {
+        execution = [execution];
+      }
+      const total = execution.reduce((acc, curr) => acc + curr.count, 0);
       execution.forEach((statistic) => {
-        const value = [executions[index].endTime, statistic.total];
+        const value = [executions[index].endTime, total];
         if (!data.hasOwnProperty(statistic.language)) {
           data[statistic.language] = [value];
         } else {
