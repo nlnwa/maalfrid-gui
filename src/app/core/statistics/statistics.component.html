@@ -15,27 +15,34 @@
     <mat-toolbar class="app-toolbar" color="primary">Statistikk</mat-toolbar>
 
     <div fxFlex="grow" fxLayout="row">
+
       <div fxFlex fxLayout="column" *ngIf="totalData">
         <mat-toolbar class="app-toolbar">Totalt</mat-toolbar>
         <nvd3 fxFlex="grow" class="chart" [options]="pieChartOptions" [data]="totalData"></nvd3>
       </div>
+
       <mat-divider [vertical]="true"></mat-divider>
-      <div fxFlex fxLayout="column" *ngIf="perExecutionData">
-        <mat-toolbar class="app-toolbar">Per innhøsting</mat-toolbar>
-        <nvd3 fxFlex="grow" class="chart" [options]="multiBarChartOptions" [data]="perExecutionData"></nvd3>
-      </div>
-    </div>
 
 
-    <div fxFlex="grow" fxLayout="row">
       <div fxFlex fxLayout="column" *ngIf="nobData">
         <mat-toolbar class="app-toolbar">Bokmål</mat-toolbar>
         <nvd3 fxFlex="grow" class="chart" [options]="pieChartOptions" [data]="nobData"></nvd3>
       </div>
+
       <mat-divider [vertical]="true"></mat-divider>
+
       <div fxFlex fxLayout="column" *ngIf="nnoData">
         <mat-toolbar class="app-toolbar">Nynorsk</mat-toolbar>
         <nvd3 fxFlex="grow" class="chart" [options]="pieChartOptions" [data]="nnoData"></nvd3>
+      </div>
+
+    </div>
+
+
+    <div fxFlex="grow" fxLayout="row">
+      <div fxFlex fxLayout="column" *ngIf="perExecutionData">
+        <mat-toolbar class="app-toolbar">Per innhøsting</mat-toolbar>
+        <nvd3 fxFlex="grow" class="chart" [options]="multiBarChartOptions" [data]="perExecutionData"></nvd3>
       </div>
     </div>
 

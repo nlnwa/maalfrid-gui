@@ -4,7 +4,7 @@
       <h1>Målfrid</h1>
       <h2>Målformsidentifisering for statstenesta</h2>
     </div>
-    <div class="header-stats">
+    <div class="header-stats" *ngIf="isLoggedIn">
       <a mat-raised-button color="accent" [routerLink]="['/statistics']">Statistikk</a>
     </div>
   </section>

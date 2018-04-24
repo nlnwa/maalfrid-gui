@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
-import * as moment from 'moment';
-import {Moment} from 'moment';
 import {MatDatepickerInputEvent} from '@angular/material/datepicker/typings/datepicker-input';
+import {Moment} from 'moment';
+import moment = require('moment');
 
 export class Interval {
   start: Moment;
@@ -53,7 +53,6 @@ export class IntervalComponent implements OnInit {
 
 
   ngOnInit(): void {
-    console.log('init', this.interval);
     this.intervalSet.emit(this.interval);
   }
 

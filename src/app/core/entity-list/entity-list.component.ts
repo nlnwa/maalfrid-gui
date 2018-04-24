@@ -42,7 +42,7 @@ import {MaalfridService} from '../maalfrid-service/maalfrid.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EntityListComponent extends BaseListComponent implements OnInit {
-  constructor(private database: Database,
+  constructor(private database: ListDatabase,
               private maalfridService: MaalfridService) {
     super();
     this.displayedColumns = ['name', 'description'];
@@ -56,7 +56,7 @@ export class EntityListComponent extends BaseListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.maalfridService.getEntities().subscribe((entities) => this.database.items = entities);
+      this.maalfridService.getEntities().subscribe((entities) => this.database.items = entities);
   }
 
 }

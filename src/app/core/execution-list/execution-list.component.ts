@@ -7,19 +7,27 @@ import * as moment from 'moment';
 @Component({
   selector: 'app-execution-list',
   template: `
-    <section>
-      <mat-toolbar color="primary">
+    <style>
+      .execution-list__container {
+        height: 100%;
+      }
+      .execution-list-table {
+        overflow-y: scroll;
+      }
+    </style>
+    <section class="execution-list__container" fxLayout="column">
+      <mat-toolbar class="app-toolbar" color="primary">
         <mat-icon class="icon-header">event</mat-icon>
         Innhøstinger
         <span fxFlex></span>
         <button mat-raised-button (click)="onSelectAll()" color="accent">Velg alle</button>
       </mat-toolbar>
-      <mat-table [dataSource]="dataSource"
+      <mat-table class="execution-list-table"[dataSource]="dataSource"
                  [trackBy]="trackById">
 
-        <ng-container matColumnDef="id">
+        <ng-container matColumnDef="executionId">
           <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.id}}</mat-cell>
+          <mat-cell *matCellDef="let row">{{row.executionId}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="startTime">
