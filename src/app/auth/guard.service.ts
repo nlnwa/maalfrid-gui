@@ -6,13 +6,12 @@ import {Role} from '../shared/models/config.model';
 import {RoleService} from './role.service';
 
 @Injectable()
-export class GuardService implements CanActivate {
+export class AuthGuard implements CanActivate {
 
-  constructor(public roleService: RoleService) {
-  }
+  constructor(public roleService: RoleService) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    const allowedRoles = route.data.roles as Role[];
+    const allowedRoles = route.data.allowedRoles as Role[];
 
     for (const role of this.roleService.getRoles()) {
       if (allowedRoles.includes(role)) {
