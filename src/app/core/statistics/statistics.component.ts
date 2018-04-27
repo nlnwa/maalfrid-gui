@@ -1,9 +1,11 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, QueryList, ViewChildren} from '@angular/core';
 import {MaalfridService} from '../maalfrid-service/maalfrid.service';
 import {CrawlJob, Seed} from '../../shared/models/config.model';
-import {options} from './charts';
+import {chartOptions} from './charts';
 import {Interval} from '../interval';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+
+import * as moment from 'moment';
+import {NvD3Component} from 'ng2-nvd3';
 
 @Component({
   selector: 'app-statistics',
@@ -12,26 +14,23 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatisticsComponent {
-  totalData: any;
-  perExecutionData: any;
-  nobData: any;
-  nnoData: any;
+  @ViewChildren(NvD3Component) charts: QueryList<NvD3Component>;
 
-  pieChartOptions: any;
-  multiBarChartOptions: any;
-
-  total: number;
+  totalData: any[];
+  perExecutionData: any[];
+  shortTextData: any[];
+  longTextData: any[];
 
   interval: Interval;
   seed: Seed;
   job: CrawlJob;
 
-  executions: BehaviorSubject<any> = new BehaviorSubject([]);
-
   constructor(private maalfridService: MaalfridService,
               private changeDetectorRef: ChangeDetectorRef) {
-    this.pieChartOptions = options.pieChart;
-    this.multiBarChartOptions = options.multiBarChart;
+  }
+
+  get options() {
+    return chartOptions;
   }
 
   onSelectSeed(seed: Seed) {
@@ -39,30 +38,9 @@ export class StatisticsComponent {
     this.checkFulfillment();
   }
 
-  /*
-  onSelectCrawlJob(job: CrawlJob) {
-    this.job = job;
-    this.checkFulfillment();
-  }
-*/
-
   onInterval(interval: Interval) {
     this.interval = interval;
     this.checkFulfillment();
-  }
-
-  onSelectExecution(executions: any) {
-    this.total = 0;
-    this.totalData = null;
-    this.perExecutionData = null;
-    if (executions.length > 0) {
-      this.getStatistics(executions);
-    } else {
-      this.perExecutionData = [];
-      this.totalData = [];
-      this.nobData = [];
-      this.nnoData = [];
-    }
   }
 
   private checkFulfillment() {
@@ -71,18 +49,23 @@ export class StatisticsComponent {
     }
   }
 
-  private getStatistics(executions) {
-    this.total = 0;
+  onClickMultiBar() {
+    this.charts.last.clearElement();
+    this.charts.last.options = this.options.multiBar; // need this or else the toolip gets corrupted
+    this.charts.last.initChart(this.options.multiBar);
+  }
 
-    this.maalfridService.getStatistic({execution_id: executions.map((execution) => execution.executionId)})
-      .subscribe(stats => {
-        this.perExecutionData = this.getMultiBarChartData(executions, stats);
-        this.totalData = this.getPieChartData(this.perExecutionData);
-        this.nobData = this.getLanguageData(stats, 'NOB');
-        this.nnoData = this.getLanguageData(stats, 'NNO');
+  onClickStacked() {
+    this.charts.last.clearElement();
+    this.charts.last.options = this.options.stackedArea; // need this or else the toolip gets corrupted
+    this.charts.last.initChart(this.options.stackedArea);
+  }
 
-        this.changeDetectorRef.markForCheck();
-      });
+  private reset() {
+    this.perExecutionData = [];
+    this.totalData = [];
+    this.shortTextData = [];
+    this.longTextData = [];
   }
 
   private getExecutions() {
@@ -96,77 +79,91 @@ export class StatisticsComponent {
         .startOf('day')
         .toJSON(),
     })
-      .subscribe((executions) => {
-        this.executions.next(executions);
+      .subscribe((executions) => this.getStatistics(executions));
+  }
+
+  private getStatistics(executions) {
+    this.reset();
+    this.maalfridService.getStatistic({execution_id: executions.map((execution) => execution.executionId)})
+      .subscribe(stats => {
+        // const perLanguageData = this.getPerLanguageData(stats);
+        const perLanguageData = this.getPerLanguageData(executions, stats);
+
+        this.perExecutionData = Object.keys(perLanguageData).map((key) =>
+          ({
+            key,
+            values: perLanguageData[key],
+          }));
+
+        this.totalData = this.perExecutionData.map((o) => (
+          {
+            key: o.key,
+            value: o.values.reduce((acc, curr) => acc + curr[1], 0)
+          }));
+
+        this.shortTextData = Object.keys(perLanguageData)
+          .map((language) => ({
+            key: language,
+            value: perLanguageData[language].reduce((acc, curr) => acc + curr[2], 0)
+          }));
+
+        this.longTextData = Object.keys(perLanguageData)
+          .map((language) => ({
+            key: language,
+            value: perLanguageData[language].reduce((acc, curr) => acc + curr[3], 0),
+          }));
+
         this.changeDetectorRef.markForCheck();
       });
   }
 
-  private getPieChartData(perExecutionData) {
-    return perExecutionData.map((o) => ({key: o.key, value: o.values.reduce((acc, curr) => acc + curr[1], 0)}));
+  // Data sample:
+  // [
+  //   [ {count: 2, language: 'NOB', long: 2,...}, {count: 1, language: 'NNO', ...}],
+  //   [ {count: 0, language: 'FRA', ...}, ...]
+  // ]
+  private getSetOfLanguages(stats): Set<string> {
+    return stats.reduce((acc, curr) => {
+      // For each object of the inner array (curr) , add its language to the set (acc) and return the set
+      curr.forEach((stat) => acc.add(stat.language));
+      return acc;
+    }, new Set());
   }
 
-
-  private getLanguageData(stats, language) {
-    let short = 0;
-    let long = 0;
-    stats.forEach((execution) => {
-      if (!(execution instanceof Array)) {
-        execution = [execution];
-      }
-      execution.some((statistic) => {
-        if (statistic.language === language) {
-          short += statistic.short;
-          long += statistic.long;
-          return true; // break
-        } else {
-          return false; // continue
-        }
-      });
-    });
-    if (short === 0 && long === 0) {
-      return [];
-    }
-    return [{key: 'Korte tekster', value: short}, {key: 'Lange tekster', value: long}];
-  }
-
-  private getMultiBarChartData(executions, stats) {
+  /**
+   * Data samples:
+   *
+   * stats (Array(2)):
+   * [
+   *   [ {count: 2, language: 'NOB', long: 2,...}, {count: 1, language: 'NNO', ...}],
+   *   [ {count: 0, language: 'FRA', ...}, ...]
+   * ]
+   *
+   * executions (Array(2)):
+   * [
+   *   { endTime: "2018-04-19T01:04:29.043Z", ...},
+   *   {endTime: "2018-04-17T12:34:02.693Z", ...},
+   * ]
+   *
+   * @param executions
+   * @param stats
+   * @returns {{key: string; values: any}[]}
+   */
+  private getPerLanguageData(executions, stats) {
     const data = {};
-    stats.forEach((execution, index) => {
-      if (!(execution instanceof Array)) {
-        execution = [execution];
-      }
-      const total = execution.reduce((acc, curr) => acc + curr.count, 0);
-      execution.forEach((statistic) => {
-        const value = [executions[index].endTime, total];
-        if (!data.hasOwnProperty(statistic.language)) {
-          data[statistic.language] = [value];
-        } else {
-          data[statistic.language].push(value);
-        }
-      });
+    this.getSetOfLanguages(stats).forEach((language) => {
+      data[language] = stats
+        .map((stat, index) => {
+          // const totalCount = stat.reduce((acc, curr) => acc + curr.count, 0);
+          const date = moment(executions[index].endTime).unix();
+          const found = stat.find((element) => element.language === language);
+          return found
+            ? [date, found.count, found.short, found.long]
+            : [date, 0, 0, 0];
+        })
+        .sort((a, b) => a[0] - b[0]);
     });
-
-    // fill in totalData where an execution is missing an entry for
-    // a language another execution in the dataset has got
-    Object.keys(data).forEach((language) => {
-      if (data[language].length < executions.length) {
-        executions.forEach((execution, index) => {
-          const missingValue = [execution.endTime, 0];
-          if (!data[language][index]) {
-            data[language].push(missingValue);
-          } else if (data[language][index][0] !== execution.endTime) {
-            data[language].push(missingValue);
-          }
-        });
-      }
-    });
-
-    // convert to nvd3 totalData format
-    return Object.keys(data).map((key) => ({
-      key,
-      values: data[key],
-    }));
+    return data;
   }
 }
 
