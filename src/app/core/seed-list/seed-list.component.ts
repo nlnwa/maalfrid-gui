@@ -18,22 +18,9 @@ import {MaalfridService} from '../maalfrid-service/maalfrid.service';
                  [trackBy]="trackById">
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef>URL</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.meta.name}}</mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="description">
-          <mat-header-cell *matHeaderCellDef>Description</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.meta.description}}</mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="id">
-          <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.id}}</mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="scope">
-          <mat-header-cell *matHeaderCellDef>Sort friendly URI Reordering Transform</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.scope.surt_prefix}}</mat-cell>
+          <mat-cell *matCellDef="let row">
+            <a style="color: inherit;" target="_blank" href="{{row.meta.name}}">{{row.meta.name}}</a>
+          </mat-cell>
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

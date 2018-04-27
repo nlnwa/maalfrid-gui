@@ -7,12 +7,12 @@ import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 
 import {AppConfig} from './app.config';
-import {AuthService, RoleService, TokenInterceptor, AuthGuard} from './auth';
+import {AuthGuard, AuthService, RoleService, TokenInterceptor} from './auth';
 import {CoreModule} from './core/core.module';
 import {SharedModule} from './shared/shared.module';
 import {OAuthModule} from 'angular-oauth2-oidc';
 import {ApplicationErrorHandler, ErrorService} from './error';
-import { HomeComponent } from './home/home.component';
+import {HomeComponent} from './home/home.component';
 
 @NgModule({
   declarations: [

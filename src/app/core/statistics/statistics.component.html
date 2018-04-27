@@ -5,44 +5,43 @@
 
 
   <div fxFlex="grow" fxLayout="column">
-    <div class="statistics-selection" fxFlex="20%" fxLayout="row">
+    <div class="statistics-selection" fxFlex="15%" fxLayout="row">
       <app-seed-list fxFlex="2 2 auto" #seedList (rowClick)="onSelectSeed($event)"></app-seed-list>
       <app-interval (intervalSet)="onInterval($event)"></app-interval>
-      <app-execution-list fxFlex="2 2 auto" [executions]="executions | async"
-                          (rowClick)="onSelectExecution($event)"></app-execution-list>
     </div>
 
     <mat-toolbar class="app-toolbar" color="primary">Statistikk</mat-toolbar>
 
-    <div fxFlex="grow" fxLayout="row">
-
+    <div fxFlex="25%" fxLayout="row">
       <div fxFlex fxLayout="column" *ngIf="totalData">
-        <mat-toolbar class="app-toolbar">Totalt</mat-toolbar>
-        <nvd3 fxFlex="grow" class="chart" [options]="pieChartOptions" [data]="totalData"></nvd3>
+        <mat-toolbar class="app-toolbar">Alle tekster</mat-toolbar>
+        <nvd3 fxFlex="grow" class="chart" [options]="options.pie" [data]="totalData"></nvd3>
       </div>
 
       <mat-divider [vertical]="true"></mat-divider>
 
-
-      <div fxFlex fxLayout="column" *ngIf="nobData">
-        <mat-toolbar class="app-toolbar">Bokmål</mat-toolbar>
-        <nvd3 fxFlex="grow" class="chart" [options]="pieChartOptions" [data]="nobData"></nvd3>
+      <div fxFlex fxLayout="column" *ngIf="shortTextData">
+        <mat-toolbar class="app-toolbar">Korte tekster</mat-toolbar>
+        <nvd3 fxFlex="grow" class="chart" [options]="options.pie" [data]="shortTextData"></nvd3>
       </div>
 
       <mat-divider [vertical]="true"></mat-divider>
 
-      <div fxFlex fxLayout="column" *ngIf="nnoData">
-        <mat-toolbar class="app-toolbar">Nynorsk</mat-toolbar>
-        <nvd3 fxFlex="grow" class="chart" [options]="pieChartOptions" [data]="nnoData"></nvd3>
+      <div fxFlex fxLayout="column" *ngIf="longTextData">
+        <mat-toolbar class="app-toolbar">Lange tekster</mat-toolbar>
+        <nvd3 fxFlex="grow" class="chart" [options]="options.pie" [data]="longTextData"></nvd3>
       </div>
-
     </div>
 
 
-    <div fxFlex="grow" fxLayout="row">
-      <div fxFlex fxLayout="column" *ngIf="perExecutionData">
-        <mat-toolbar class="app-toolbar">Per innhøsting</mat-toolbar>
-        <nvd3 fxFlex="grow" class="chart" [options]="multiBarChartOptions" [data]="perExecutionData"></nvd3>
+    <div fxFlex="grow" fxLayout="column">
+      <div fxFlex="grow" fxLayout="column" *ngIf="perExecutionData">
+        <mat-toolbar class="app-toolbar">Per innhøsting
+          <span fxFlex></span>
+          <button mat-raised-button class="app-toolbar__button" (click)="onClickMultiBar()">multibar</button>
+          <button mat-raised-button class="app-toolbar__button" (click)="onClickStacked()">stacked</button>
+        </mat-toolbar>
+        <nvd3 fxFlex="grow" class="chart" [options]="options.multiBar" [data]="perExecutionData"></nvd3>
       </div>
     </div>
 

@@ -2,18 +2,18 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {StatisticsComponent} from './core/statistics/statistics.component';
 import {HomeComponent} from './home/home.component';
-import {AppResolver} from './app.resolver';
-import {AuthGuard} from './auth';
+import {AuthGuard, AuthService, RoleService} from './auth';
 import {Role} from './shared/models/config.model';
+
 
 const routes: Routes = [
   {
     path: '',
-    resolve: { AppResolver },
+    resolve: {AuthService},
     children: [
       {
         path: '',
-        component: HomeComponent
+        component: HomeComponent,
       },
       {
         path: 'statistics',
@@ -21,22 +21,19 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
           allowedRoles: [Role.READONLY, Role.ADMIN, Role.CURATOR],
-        }
+        },
       },
-    ]
-  }
+    ],
+  },
+
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes),
   ],
   exports: [
     RouterModule,
   ],
-  providers: [
-    AppResolver
-  ],
 })
-export class AppRoutingModule {
-}
+export class AppRoutingModule {}
