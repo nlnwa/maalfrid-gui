@@ -11,8 +11,13 @@ export class Interval {
 @Component({
   selector: 'app-interval',
   template: `
-    <section>
-      <mat-toolbar color="primary">
+    <style>
+      .interval-container {
+        height: 100%;
+      }
+    </style>
+    <section class="interval-container" fxLayout="column">
+      <mat-toolbar class="app-toolbar" color="primary">
         <mat-icon class="icon-header">schedule</mat-icon>
         Intervall
       </mat-toolbar>
