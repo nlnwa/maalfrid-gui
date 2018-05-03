@@ -6,19 +6,15 @@ import {AppConfig} from '../app.config';
 @Injectable()
 export class RoleService {
 
-  private readonly apiGatewayUrl: string;
-
   private roles: Role[] = [];
 
   constructor(private http: HttpClient, private appConfig: AppConfig) {
-    this.apiGatewayUrl = this.appConfig.apiGatewayUrl;
   }
 
-  fetchRoles(): Promise<Role[]> {
-    return this.http.get<RoleList>(this.apiGatewayUrl + '/control/activeroles')
+  async fetchRoles() {
+    this.roles = await this.http.get<RoleList>(this.appConfig.apiGatewayUrl + '/control/activeroles')
       .toPromise()
-      .then(reply => reply.role.map(role => Role[role]))
-      .then(roles => this.roles = roles);
+      .then((reply) => reply.role.map(role => Role[role]));
   }
 
   getRoles(): Role[] {

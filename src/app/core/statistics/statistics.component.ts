@@ -2,10 +2,12 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, QueryList, ViewCh
 import {MaalfridService} from '../maalfrid-service/maalfrid.service';
 import {CrawlJob, Seed} from '../../shared/models/config.model';
 import {chartOptions} from './charts';
-import {Interval} from '../interval';
-
+import {Interval} from '../interval/interval.component';
 import * as moment from 'moment';
 import {NvD3Component} from 'ng2-nvd3';
+import {from} from 'rxjs/observable/from';
+import {finalize, mergeMap, tap} from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-statistics',
@@ -22,7 +24,7 @@ export class StatisticsComponent {
   longTextData: any[];
 
   interval: Interval;
-  seed: Seed;
+  seeds: Seed[];
   job: CrawlJob;
 
   constructor(private maalfridService: MaalfridService,
@@ -33,8 +35,8 @@ export class StatisticsComponent {
     return chartOptions;
   }
 
-  onSelectSeed(seed: Seed) {
-    this.seed = seed;
+  onSelectSeed(seeds: Seed[]) {
+    this.seeds = seeds;
     this.checkFulfillment();
   }
 
@@ -44,8 +46,10 @@ export class StatisticsComponent {
   }
 
   private checkFulfillment() {
-    if (this.seed && this.interval) {
+    if (this.seeds && this.seeds.length > 0 && this.interval.end && this.interval.start) {
       this.getExecutions();
+    } else {
+      this.reset();
     }
   }
 
@@ -69,17 +73,22 @@ export class StatisticsComponent {
   }
 
   private getExecutions() {
-    this.maalfridService.getExecutions({
-      seed_id: this.seed.id,
-      job_id: this.job ? this.job.id : '',
-      start_time: this.interval.start
-        .startOf('day')
-        .toJSON(),
-      end_time: this.interval.end
-        .startOf('day')
-        .toJSON(),
-    })
-      .subscribe((executions) => this.getStatistics(executions));
+    let executions = [];
+    from(this.seeds).pipe(
+      mergeMap((seed) =>
+        this.maalfridService.getExecutions({
+          seed_id: seed.id,
+          job_id: this.job ? this.job.id : '',
+          start_time: this.interval.start
+            .startOf('day')
+            .toJSON(),
+          end_time: this.interval.end
+            .startOf('day')
+            .toJSON(),
+        })),
+      tap((result) => executions = result.concat(executions)),
+      finalize(() => { if (executions.length > 0) {this.getStatistics(executions); }})
+    ).subscribe();
   }
 
   private getStatistics(executions) {

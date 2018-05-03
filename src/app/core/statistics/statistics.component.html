@@ -3,7 +3,6 @@
   <!-- Entity list -->
   <app-entity-list class="app-entity-list" fxFlex="25%" (rowClick)="seedList.entity=$event"></app-entity-list>
 
-
   <div fxFlex="grow" fxLayout="column">
     <div class="statistics-selection" fxFlex="15%" fxLayout="row">
       <app-seed-list fxFlex="2 2 auto" #seedList (rowClick)="onSelectSeed($event)"></app-seed-list>
