@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core';
 import {
   MatButtonModule,
   MatDatepickerModule,
+  MatDividerModule,
   MatFormFieldModule,
   MatIconModule,
   MatInputModule,
@@ -9,9 +10,9 @@ import {
   MatProgressBarModule,
   MatProgressSpinnerModule,
   MatSidenavModule,
+  MatSortModule,
   MatTableModule,
   MatToolbarModule,
-  MatDividerModule,
 } from '@angular/material';
 
 import {FlexLayoutModule} from '@angular/flex-layout';
@@ -33,6 +34,7 @@ const modules = [
   MatDatepickerModule,
   MatMomentDateModule,
   MatDividerModule,
+  MatSortModule,
 ];
 
 @NgModule({

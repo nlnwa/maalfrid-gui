@@ -4,8 +4,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {StatisticsComponent} from './statistics/statistics.component';
 import {MaalfridService} from './maalfrid-service/maalfrid.service';
 import {EntityListComponent} from './entity-list/entity-list.component';
-import {ExecutionListComponent} from './execution-list/execution-list.component';
-import {IntervalComponent} from './interval';
+import {IntervalComponent} from './interval/interval.component';
 import {SeedListComponent} from './seed-list/seed-list.component';
 import {SharedModule} from '../shared/shared.module';
 
@@ -17,7 +16,6 @@ import 'nvd3';
   declarations: [
     StatisticsComponent,
     EntityListComponent,
-    ExecutionListComponent,
     IntervalComponent,
     SeedListComponent,
     StatisticsComponent,

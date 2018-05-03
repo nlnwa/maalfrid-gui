@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
+import {RouterModule, Routes} from '@angular/router';
 import {StatisticsComponent} from './core/statistics/statistics.component';
 import {HomeComponent} from './home/home.component';
 import {AuthGuard} from './auth';

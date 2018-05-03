@@ -1,21 +1,24 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {BaseListComponent} from '../../shared/list/base-list/base-list.component';
-import {Entity} from '../../shared/models/config.model';
-import {Database, ListDatabase} from '../../shared/list/list-database';
-import {ListDataSource} from '../../shared/list/list-datasource';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
+import {Entity, Seed} from '../../shared/models/config.model';
 import {MaalfridService} from '../maalfrid-service/maalfrid.service';
+import {MatTableDataSource} from '@angular/material';
+import {SelectionModel} from '@angular/cdk/collections';
 
 
 @Component({
   selector: 'app-seed-list',
   template: `
-    <div>
+    <style>
+      .highlight {
+        background-color: #eee;
+      }
+    </style>
+    <section>
       <mat-toolbar color="primary">
         <mat-icon class="icon-header">link</mat-icon>
-        {{ selected || 'URL' }}
+        {{ url || 'URL' }}
       </mat-toolbar>
-      <mat-table [dataSource]="dataSource"
-                 [trackBy]="trackById">
+      <mat-table [dataSource]="dataSource">
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef>URL</mat-header-cell>
           <mat-cell *matCellDef="let row">
@@ -26,46 +29,59 @@ import {MaalfridService} from '../maalfrid-service/maalfrid.service';
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
 
         <mat-row *matRowDef="let row; columns: displayedColumns"
-                 [ngClass]="{highlight: isSelected(row)}"
+                 [ngClass]="{highlight: selection.isSelected(row)}"
                  (click)="onRowClick(row)">
         </mat-row>
       </mat-table>
-    </div>`,
-  styleUrls: ['../../shared/list/base-list/base-list.component.css'],
-  providers: [{provide: Database, useClass: ListDatabase}],
+    </section>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SeedListComponent extends BaseListComponent {
+export class SeedListComponent {
 
+
+  displayedColumns = ['name'];
+  dataSource = new MatTableDataSource<Seed>([]);
+  selection = new SelectionModel<Seed>(true, []);
+
+  @Output()
+  private rowClick = new EventEmitter<Seed[]>();
   private _entity: Entity;
 
-  constructor(private database: Database,
-              private maalfridService: MaalfridService) {
-    super();
-    this.displayedColumns = ['name'];
-    this.dataSource = new ListDataSource(database);
-  }
-
-  get entity(): Entity {
-    return this._entity;
-  }
-
-  get selected(): string {
-    if (this.selectedItems.size > 0) {
-      return (this.selectedItems.values().next().value as any).meta.name;
-    } else {
-      return undefined;
-    }
+  constructor(private maalfridService: MaalfridService) {
   }
 
   @Input()
   set entity(entity: Entity) {
     this._entity = entity;
-    this.maalfridService.getSeeds(entity).subscribe((seeds) => {
-      this.database.items = seeds;
-      if (seeds.length > 0) {
-        this.onRowClick(seeds[0]);
-      }
-    });
+    this.selection.clear();
+
+    if (entity === null) {
+      this.dataSource.data = [];
+      this.onRowClick();
+      return;
+    }
+
+    this.maalfridService.getSeeds(entity)
+      .subscribe((seeds) => {
+        this.dataSource.data = seeds;
+        if (seeds.length > 0) {
+          this.onRowClick(seeds[0]);
+        }
+      });
+  }
+
+  get url(): string {
+    return this.selected ? this.selected.meta.name : '';
+  }
+
+  get selected(): Seed {
+    return this.selection.hasValue() ? this.selection.selected[0] : null;
+  }
+
+  onRowClick(seed?) {
+    if (seed) {
+      this.selection.toggle(seed);
+    }
+    this.rowClick.emit(this.selection.selected);
   }
 }
