@@ -1,15 +1,14 @@
 import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 import {StatisticsComponent} from './core/statistics/statistics.component';
 import {HomeComponent} from './home/home.component';
-import {AuthGuard, AuthService, RoleService} from './auth';
+import {AuthGuard} from './auth';
 import {Role} from './shared/models/config.model';
 
 
 const routes: Routes = [
   {
     path: '',
-    resolve: {AuthService},
     children: [
       {
         path: '',
@@ -25,7 +24,6 @@ const routes: Routes = [
       },
     ],
   },
-
 ];
 
 @NgModule({
