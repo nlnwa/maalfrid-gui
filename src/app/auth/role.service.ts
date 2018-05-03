@@ -11,9 +11,10 @@ export class RoleService {
   constructor(private http: HttpClient, private appConfig: AppConfig) {
   }
 
-  async fetchRoles(): Promise<Role[]> {
-    const reply = await this.http.get<RoleList>(this.appConfig.apiGatewayUrl + '/control/activeroles').toPromise();
-    return this.roles = reply.role.map(role => Role[role]);
+  async fetchRoles() {
+    this.roles = await this.http.get<RoleList>(this.appConfig.apiGatewayUrl + '/control/activeroles')
+      .toPromise()
+      .then((reply) => reply.role.map(role => Role[role]));
   }
 
   getRoles(): Role[] {
