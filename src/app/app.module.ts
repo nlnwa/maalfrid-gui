@@ -34,7 +34,12 @@ import {HomeComponent} from './home/home.component';
     RoleService,
     AuthGuard,
     ErrorService,
-    {provide: APP_INITIALIZER, useFactory: (conf: AppConfig) => () => conf.load(), deps: [AppConfig], multi: true},
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (conf: AppConfig, authService: AuthService) => () => conf.load(authService),
+      deps: [AppConfig, AuthService],
+      multi: true
+    },
     {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},
     {provide: ErrorHandler, useClass: ApplicationErrorHandler},
   ],

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {IdpReply} from './shared/models/controller.model';
 import {Environment} from './shared/models/environment.model';
-import {AuthConfig} from 'angular-oauth2-oidc';
+import {AuthService} from './auth';
 
 @Injectable()
 export class AppConfig {
@@ -17,10 +17,6 @@ export class AppConfig {
     return this.config.apiGatewayUrl;
   }
 
-  get authConfig(): AuthConfig {
-    return this.config.authConfig;
-  }
-
   get apiUrl(): string {
     return this.config.apiUrl;
   }
@@ -30,13 +26,18 @@ export class AppConfig {
    *
    * @returns {Promise<any>}
    */
-  async load(): Promise<any> {
+  async load(authService: AuthService) {
+    // get dynamic config
     const config = await this.http.get(this.config.configUrl).first().toPromise();
 
     Object.assign(this.config, config);
 
+    // get OpenID Connect issuer
     this.config.authConfig.issuer = await this.http.get<IdpReply>(this.config.apiGatewayUrl + '/control/idp')
       .toPromise()
       .then(reply => reply.open_id_connect_issuer || '');
+
+    // initialize authentication
+    await authService.initialize(this.config.authConfig);
   }
 }

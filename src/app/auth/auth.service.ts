@@ -1,15 +1,11 @@
 import {Injectable} from '@angular/core';
-import {JwksValidationHandler, OAuthService} from 'angular-oauth2-oidc';
-import {AppConfig} from '../app.config';
+import {AuthConfig, JwksValidationHandler, OAuthService} from 'angular-oauth2-oidc';
 import {RoleService} from './role.service';
-import {Resolve} from '@angular/router';
 
 @Injectable()
-export class AuthService implements Resolve<void> {
+export class AuthService {
 
-  constructor(private appConfig: AppConfig, private oauthService: OAuthService, private roleService: RoleService) {
-    this.oauthService.tokenValidationHandler = new JwksValidationHandler();
-    this.oauthService.configure(this.appConfig.authConfig);
+  constructor(private oauthService: OAuthService, private roleService: RoleService) {
   }
 
   get claims() {
@@ -41,13 +37,14 @@ export class AuthService implements Resolve<void> {
     this.roleService.fetchRoles();
   }
 
-  async resolve(): Promise<void> {
+  async initialize(authConfig: AuthConfig) {
+    this.oauthService.tokenValidationHandler = new JwksValidationHandler();
+    this.oauthService.configure(authConfig);
     try {
       await this.oauthService.loadDiscoveryDocumentAndTryLogin();
     } catch (err) {
-      console.log(err);
-    }
-    finally {
+      // noop
+    } finally {
       await this.roleService.fetchRoles();
     }
   }
