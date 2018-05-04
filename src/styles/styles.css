@@ -4,22 +4,11 @@ html, body, app-root {
   padding: 0;
 }
 
-body {
-  background: black;
-}
-
-/*
-  Don't squash toolbars
- */
-
 .app-toolbar {
-  min-height: 64px;
+  min-height: 48px;
+  max-height: 48px;
 }
 
-.container {
-  padding: 1em 24px;
-}
-
-.icon-header {
-  margin-right: 8px;
+.app-container__padding {
+  padding: 24px;
 }

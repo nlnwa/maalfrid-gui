@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MatDatepickerInputEvent} from '@angular/material/datepicker/typings/datepicker-input';
-import {Moment} from 'moment';
 import * as moment from 'moment';
+import {Moment} from 'moment';
 
 export class Interval {
   start: Moment;
@@ -12,16 +12,16 @@ export class Interval {
   selector: 'app-interval',
   template: `
     <style>
-      .interval-container {
+      section {
         height: 100%;
       }
     </style>
-    <section class="interval-container" fxLayout="column">
+    <section fxLayout="column">
       <mat-toolbar class="app-toolbar" color="primary">
-        <mat-icon class="icon-header">schedule</mat-icon>
+        <mat-icon class="icon-header">schedule</mat-icon>&nbsp;
         Intervall
       </mat-toolbar>
-      <div class="container" fxLayout="column">
+      <div fxLayout="column" class="app-container__padding">
         <mat-input-container>
           <input matInput
                  [ngModel]="interval.start"

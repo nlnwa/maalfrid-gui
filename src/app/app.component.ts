@@ -1,20 +1,54 @@
 import {Component} from '@angular/core';
 import {AuthService} from './auth';
 import {Router} from '@angular/router';
-import {environment} from '../environments/environment';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+  template: `
+    <style>
+      main {
+        overflow: hidden;
+      }
+
+      .app-container {
+        height: 100%;
+      }
+
+      .user {
+        font-family: monospace;
+      }
+
+      .title-link {
+        text-decoration: none;
+        color: inherit;
+      }
+    </style>
+
+    <div class="app-container" fxLayout="column">
+      <mat-toolbar class="app-toolbar" color="accent">
+        <a routerLink='/' class="title-link">Målfrid</a>
+        <span fxFlex></span>
+        <span class="user">{{ name }}&nbsp;</span>
+        <!-- Logon/Logoff-->
+        <a color="primary" mat-raised-button (click)="onLogout()" *ngIf="name">
+          <mat-icon>person</mat-icon>
+          <ng-container i18n="@@toolbarLogon">Logg av</ng-container>
+        </a>
+        <a color="primary" mat-raised-button (click)="onLogin()" *ngIf="!name">
+          <mat-icon>person</mat-icon>
+          <ng-container i18n="@@toolbarLogon">Logg på</ng-container>
+        </a>
+      </mat-toolbar>
+
+      <main fxFlex="grow">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  `,
 })
 export class AppComponent {
 
   constructor(private authService: AuthService, private router: Router) {
-  }
-
-  get version(): string {
-    return environment.version;
   }
 
   get name(): string {

@@ -1,12 +1,14 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, QueryList, ViewChildren} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {MaalfridService} from '../maalfrid-service/maalfrid.service';
-import {CrawlJob, Seed} from '../../shared/models/config.model';
+import {CrawlJob, Entity, Seed} from '../../shared/models/config.model';
 import {chartOptions} from './charts';
 import {Interval} from '../interval/interval.component';
 import * as moment from 'moment';
 import {NvD3Component} from 'ng2-nvd3';
 import {from} from 'rxjs/observable/from';
 import {finalize, mergeMap, tap} from 'rxjs/operators';
+import {MatButtonToggleChange, MatButtonToggleGroup} from '@angular/material';
+import {SeedListComponent} from '../seed-list/seed-list.component';
 
 
 @Component({
@@ -15,15 +17,22 @@ import {finalize, mergeMap, tap} from 'rxjs/operators';
   styleUrls: ['./statistics.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StatisticsComponent {
+export class StatisticsComponent implements AfterViewInit {
   @ViewChildren(NvD3Component) charts: QueryList<NvD3Component>;
+  @ViewChild(MatButtonToggleGroup) chartToggleGroup: MatButtonToggleGroup;
+  @ViewChild(SeedListComponent) seedList: SeedListComponent;
 
-  totalData: any[];
   perExecutionData: any[];
+  allTextData: any[];
   shortTextData: any[];
   longTextData: any[];
 
+  nrOfTexts: number;
+  nrOfShortTexts: number;
+  nrOfLongTexts: number;
+
   interval: Interval;
+  entity: Entity;
   seeds: Seed[];
   job: CrawlJob;
 
@@ -33,6 +42,19 @@ export class StatisticsComponent {
 
   get options() {
     return chartOptions;
+  }
+
+  ngAfterViewInit() {
+    this.chartToggleGroup.change.subscribe((change: MatButtonToggleChange) => {
+      this.charts.last.clearElement();
+      this.charts.last.options = this.options[change.value];
+      this.charts.last.initChart(this.options[change.value]);
+    });
+  }
+
+  onSelectEntity(entity: Entity) {
+    this.entity = entity;
+    this.seedList.entity = entity;
   }
 
   onSelectSeed(seeds: Seed[]) {
@@ -53,23 +75,14 @@ export class StatisticsComponent {
     }
   }
 
-  onClickMultiBar() {
-    this.charts.last.clearElement();
-    this.charts.last.options = this.options.multiBar; // need this or else the toolip gets corrupted
-    this.charts.last.initChart(this.options.multiBar);
-  }
-
-  onClickStacked() {
-    this.charts.last.clearElement();
-    this.charts.last.options = this.options.stackedArea; // need this or else the toolip gets corrupted
-    this.charts.last.initChart(this.options.stackedArea);
-  }
-
   private reset() {
     this.perExecutionData = [];
-    this.totalData = [];
+    this.allTextData = [];
     this.shortTextData = [];
     this.longTextData = [];
+    this.nrOfLongTexts = undefined;
+    this.nrOfTexts = undefined;
+    this.nrOfShortTexts = undefined;
   }
 
   private getExecutions() {
@@ -104,7 +117,7 @@ export class StatisticsComponent {
             values: perLanguageData[key],
           }));
 
-        this.totalData = this.perExecutionData.map((o) => (
+        this.allTextData = this.perExecutionData.map((o) => (
           {
             key: o.key,
             value: o.values.reduce((acc, curr) => acc + curr[1], 0)
@@ -121,6 +134,11 @@ export class StatisticsComponent {
             key: language,
             value: perLanguageData[language].reduce((acc, curr) => acc + curr[3], 0),
           }));
+
+
+        this.nrOfTexts = this.allTextData.reduce((acc, curr) => curr.value + acc, 0);
+        this.nrOfShortTexts = this.shortTextData.reduce((acc, curr) => curr.value + acc, 0);
+        this.nrOfLongTexts = this.longTextData.reduce((acc, curr) => curr.value + acc, 0);
 
         this.changeDetectorRef.markForCheck();
       });
