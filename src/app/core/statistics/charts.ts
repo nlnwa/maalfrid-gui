@@ -18,7 +18,7 @@ export const chartOptions = {
       labelThreshold: 0.01,
       labelSunbeamLayout: false,
       duration: 250,
-      noData: 'Ingen data tilgjengelig.',
+      noData: 'Ingen data tilgjengelig',
     }
   }
   ,
@@ -35,13 +35,15 @@ export const chartOptions = {
         axisLabel: 'Innhøsting',
         tickFormat: dateFormat,
         axisLabelDistance: 10,
-      }
+      },
+      yAxis: {
+        axisLabel: 'Antall tekster',
+        tickFormat: (d) => d3.format(',f')(d),
+        axisLabelDistance: 12,
+      },
+      noData: 'Ingen data tilgjengelig',
     },
-    yAxis: {
-      axisLabel: 'Antall tekster',
-      tickFormat: (d) => d3.format(',f')(d),
-      axisLabelDistance: 12,
-    },
+
   },
 
   stackedArea: {
@@ -62,6 +64,7 @@ export const chartOptions = {
         tickFormat: (d) => d3.format(',f')(d),
         axisLabelDistance: 12,
       },
+      noData: 'Ingen data tilgjengelig',
     },
   },
 };
