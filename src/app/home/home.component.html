@@ -1,11 +1,17 @@
-<header class="header-background">
-  <section class="header-section">
-    <div class="header-headline">
-      <h1>Målfrid</h1>
-      <h2>Målformsidentifisering for statstenesta</h2>
-    </div>
-    <div class="header-stats" *ngIf="isLoggedIn">
-      <a mat-raised-button color="accent" [routerLink]="['/statistics']">Statistikk</a>
-    </div>
-  </section>
-</header>
+<section class="home-container" fxLayout="column" fxLayoutAlign="space-between">
+  <header class="header-background">
+    <section class="header-section">
+      <div class="header-headline">
+        <h1>Målfrid</h1>
+        <h2>Målformsidentifisering for statstenesta</h2>
+      </div>
+      <div class="header-stats" *ngIf="isLoggedIn">
+        <a mat-raised-button color="accent" [routerLink]="['/statistics']">Statistikk</a>
+      </div>
+    </section>
+  </header>
+  <footer class="app-footer" fxLayoutAlign="space-around center">
+    <span>En teneste utvikla av Nasjonalbiblioteket for Språkrådet</span>
+    <span>versjon: {{ version }}</span>
+  </footer>
+</section>

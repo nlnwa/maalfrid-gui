@@ -1,3 +1,8 @@
+.home-container {
+  height: 100%;
+  background: black;
+}
+
 .header-background {
   background: #3f51b5;
   overflow: hidden;
@@ -28,4 +33,15 @@
 
 .header-stats {
   margin: 60px 0 60px 0;
+}
+
+
+.app-footer {
+  color: white;
+  padding: 12px;
+  background: #3f51b5;
+}
+
+.app-version {
+  font-family: monospace;
 }

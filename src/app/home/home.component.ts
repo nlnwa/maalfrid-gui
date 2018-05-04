@@ -1,5 +1,6 @@
 import {Component, ChangeDetectionStrategy} from '@angular/core';
 import {AuthService} from '../auth/auth.service';
+import {environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -13,5 +14,9 @@ export class HomeComponent {
 
   get isLoggedIn(): boolean {
     return this.authService.isLoggedIn;
+  }
+
+  get version(): string {
+    return environment.version;
   }
 }
