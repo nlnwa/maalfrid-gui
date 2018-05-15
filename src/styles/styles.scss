@@ -1,0 +1,18 @@
+html, body, app-root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.app-toolbar {
+  min-height: 48px;
+  max-height: 48px;
+}
+
+.app-container__padding {
+  padding: 24px;
+}
+
+.mat-tab-body-wrapper {
+  height: 100%;
+}

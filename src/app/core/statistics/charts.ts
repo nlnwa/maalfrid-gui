@@ -1,67 +1,85 @@
 declare let d3, nv: any;
 
 const dateFormat = (unix) => d3.time.format('%e.%m.%Y')(new Date(unix * 1000));
+const noData = 'Ingen data tilgjengelig';
 
+const pieChart: nv.PieChart | any = {
+  x: function (d) {
+    return d.key;
+  },
+  y: function (d) {
+    return d.value;
+  },
+  showLabels: true,
+  donut: false,
+  labelType: 'percent',
+  labelThreshold: 0.01,
+  labelSunbeamLayout: false,
+  duration: 250,
+  noData,
+};
+
+const multibarChart: nv.MultiBarChart | any = {
+  duration: 250,
+  stacked: true,
+  x: (d) => d[0],
+  y: (d) => d[1],
+  xAxis: {
+    axisLabel: 'Innhøsting',
+    tickFormat: dateFormat,
+    axisLabelDistance: 10,
+  },
+  yAxis: {
+    axisLabel: 'Antall tekster',
+    tickFormat: (d) => d3.format(',f')(d),
+    axisLabelDistance: 12,
+  },
+  noData,
+};
+
+const stackedAreaChart: nv.StackedAreaChart | any = {
+  duration: 250,
+  useInteractiveGuideline: true,
+  style: 'stack',
+  x: (d) => d[0],
+  y: (d) => d[1],
+  xAxis: {
+    axisLabel: 'Innhøsting',
+    tickFormat: dateFormat,
+    axisLabelDistance: 12,
+  },
+  yAxis: {
+    axisLabel: 'Antall tekster' + '',
+    tickFormat: (d) => d3.format(',f')(d),
+    axisLabelDistance: 12,
+  },
+  noData,
+};
+
+// chartOptions in a format used by ng2-nvd3
 export const chartOptions = {
-  pie: {
+  pieChart: (extra?) => ({
     chart: {
       type: 'pieChart',
-      x: function (d) {
-        return d.key;
-      },
-      y: function (d) {
-        return d.value;
-      },
-      showLabels: true,
-      donut: true,
-      labelType: 'percent',
-      labelThreshold: 0.01,
-      labelSunbeamLayout: false,
-      duration: 250,
-      noData: 'Ingen data tilgjengelig.',
+      ...pieChart,
+      ...extra,
     }
-  }
-  ,
-  multiBar: {
-    chart: {
-      duration: 250,
-      type: 'multiBarChart',
-      stacked: true,
-      showLabels: true,
-      labelType: 'percent',
-      x: (d) => d[0],
-      y: (d) => d[1],
-      xAxis: {
-        axisLabel: 'Innhøsting',
-        tickFormat: dateFormat,
-        axisLabelDistance: 10,
-      }
-    },
-    yAxis: {
-      axisLabel: 'Antall tekster',
-      tickFormat: (d) => d3.format(',f')(d),
-      axisLabelDistance: 12,
-    },
-  },
+  }),
 
-  stackedArea: {
+  multiBarChart: (extra?) => ({
     chart: {
-      duration: 250,
-      type: 'stackedAreaChart',
-      style: 'stacked',
-      useInteractiveGuideline: true,
-      x: (d) => d[0],
-      y: (d) => d[1],
-      xAxis: {
-        axisLabel: 'Innhøsting',
-        tickFormat: dateFormat,
-        axisLabelDistance: 12,
-      },
-      yAxis: {
-        axisLabel: 'Antall tekster' + '',
-        tickFormat: (d) => d3.format(',f')(d),
-        axisLabelDistance: 12,
-      },
+      type: 'multiBarChart',
+      ...multibarChart,
+      ...extra,
     },
-  },
+  }),
+
+  stackedAreaChart: (extra?) => ({
+    chart: {
+      type: 'stackedAreaChart',
+      ...stackedAreaChart,
+      ...extra,
+    },
+  }),
 };
+

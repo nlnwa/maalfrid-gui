@@ -1,19 +1,21 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {MaalfridService} from '../maalfrid-service/maalfrid.service';
 import {MatSort, MatTableDataSource} from '@angular/material';
 import {Entity} from '../../shared/models/config.model';
 import {SelectionModel} from '@angular/cdk/collections';
 import {_isNumberValue} from '@angular/cdk/coercion';
+import {map} from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-entity-list',
   template: `
     <style>
-      .entity-container {
+      section {
         height: 100%;
       }
 
-      .entity-list-table {
+      .table {
         height: 100%;
         overflow-y: scroll;
       }
@@ -22,25 +24,32 @@ import {_isNumberValue} from '@angular/cdk/coercion';
         background-color: #eee;
       }
     </style>
-    <section class="entity-container" fxLayout="column">
+    <section fxLayout="column">
       <mat-toolbar class="app-toolbar" color="primary">
-        <mat-icon class="icon-header">business</mat-icon>
-        {{ name || 'Entitet' }}
+        <mat-icon>business</mat-icon>&nbsp;Entitet
+        <span fxFlex></span>
+        <button mat-icon-button (click)="onToggleFilter()">
+          <mat-icon>filter_list</mat-icon>
+        </button>
       </mat-toolbar>
 
-      <mat-form-field class="container">
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+      <mat-form-field class="app-container__padding" [fxShow]="showFilter">
+        <input #filter matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
       </mat-form-field>
 
-      <mat-table class="entity-list-table" [dataSource]="dataSource" matSort>
+      <mat-table class="table" [dataSource]="dataSource" matSort>
 
-        <ng-container matColumnDef="meta.name">
+        <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Entitet</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{ row.meta.name }}</mat-cell>
+          <mat-cell *matCellDef="let row">
+            <span [matTooltip]="row.meta.description"
+                  [matTooltipDisabled]="row.meta.description === row.meta.name"
+                  [matTooltipShowDelay]="350">{{ row.meta.name}}</span>
+          </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="description">
-          <mat-header-cell *matHeaderCellDef>Description</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef>Beskrivelse</mat-header-cell>
           <mat-cell *matCellDef="let row">{{row.meta.description}}</mat-cell>
         </ng-container>
 
@@ -55,14 +64,15 @@ import {_isNumberValue} from '@angular/cdk/coercion';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EntityListComponent implements OnInit, AfterViewInit {
-  displayedColumns = ['meta.name', 'description'];
+  displayedColumns = ['name'];
   dataSource: MatTableDataSource<Entity>;
   selection = new SelectionModel<Entity>(false, []);
-
+  showFilter = false;
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('filter') filterInput: ElementRef;
 
   @Output()
-  private rowClick = new EventEmitter<Entity>();
+  rowClick = new EventEmitter<Entity>();
 
   constructor(private maalfridService: MaalfridService) {
     this.dataSource = new MatTableDataSource([]);
@@ -94,6 +104,17 @@ export class EntityListComponent implements OnInit, AfterViewInit {
     return this.selection.hasValue() ? this.selection.selected[0] : null;
   }
 
+  onToggleFilter() {
+    this.showFilter = !this.showFilter;
+
+    if (this.showFilter) {
+      setTimeout(() => this.filterInput.nativeElement.focus(), 0);
+    } else {
+      this.filterInput.nativeElement.value = '';
+      this.applyFilter('');
+    }
+  }
+
   applyFilter(filter: string) {
     this.dataSource.filter = filter;
   }
@@ -109,7 +130,7 @@ export class EntityListComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.maalfridService.getEntities()
-      .map((entities) => entities.sort((a, b) => a.meta.name < b.meta.name ? -1 : (a.meta.name === b.meta.name ? 0 : 1)))
+      .pipe(map((entities) => entities.sort((a, b) => a.meta.name < b.meta.name ? -1 : (a.meta.name === b.meta.name ? 0 : 1))))
       .subscribe((entities) => this.dataSource.data = entities);
   }
 

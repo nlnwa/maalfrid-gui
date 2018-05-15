@@ -9,16 +9,25 @@ import {SelectionModel} from '@angular/cdk/collections';
   selector: 'app-seed-list',
   template: `
     <style>
+      section {
+        height: 100%;
+      }
+
+      .table {
+        height: 100%;
+        overflow-y: scroll;
+      }
+
       .highlight {
         background-color: #eee;
       }
     </style>
-    <section>
-      <mat-toolbar color="primary">
-        <mat-icon class="icon-header">link</mat-icon>
-        {{ url || 'URL' }}
+    <section fxLayout="column">
+      <mat-toolbar class="app-toolbar" color="primary">
+        <mat-icon>link</mat-icon>&nbsp;URL
       </mat-toolbar>
-      <mat-table [dataSource]="dataSource">
+
+      <mat-table [dataSource]="dataSource" class="table">
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef>URL</mat-header-cell>
           <mat-cell *matCellDef="let row">

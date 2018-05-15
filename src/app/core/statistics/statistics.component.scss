@@ -1,0 +1,32 @@
+@import url("https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.4/nv.d3.min.css");
+
+section {
+  height: 100%;
+}
+
+.left-column {
+  min-width: 250px;
+  height: 100%;
+}
+
+.right-column {
+  overflow-y: auto;
+}
+
+.statistics-selection {
+  height: 100%;
+  min-height: 250px;
+}
+
+.chart {
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+.stat-count {
+  font-size: 75%;
+  font-family: monospace;
+}

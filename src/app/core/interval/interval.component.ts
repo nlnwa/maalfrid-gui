@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MatDatepickerInputEvent} from '@angular/material/datepicker/typings/datepicker-input';
-import {Moment} from 'moment';
 import * as moment from 'moment';
+import {Moment} from 'moment';
 
 export class Interval {
   start: Moment;
@@ -12,33 +12,33 @@ export class Interval {
   selector: 'app-interval',
   template: `
     <style>
-      .interval-container {
+      section {
         height: 100%;
       }
     </style>
-    <section class="interval-container" fxLayout="column">
+    <section fxLayout="column">
       <mat-toolbar class="app-toolbar" color="primary">
-        <mat-icon class="icon-header">schedule</mat-icon>
+        <mat-icon class="icon-header">schedule</mat-icon>&nbsp;
         Intervall
       </mat-toolbar>
-      <div class="container" fxLayout="column">
-        <mat-input-container>
+      <div fxLayout="column" class="app-container__padding">
+        <mat-form-field>
           <input matInput
                  [ngModel]="interval.start"
                  [matDatepicker]="startTime"
                  placeholder="Start"
                  (dateChange)="onStartDateChange($event)">
           <mat-datepicker-toggle matSuffix [for]="startTime"></mat-datepicker-toggle>
-        </mat-input-container>
+        </mat-form-field>
         <mat-datepicker #startTime [startView]="startView"></mat-datepicker>
-        <mat-input-container>
+        <mat-form-field>
           <input matInput
                  [ngModel]="interval.end"
                  [matDatepicker]="endTimePicker"
                  placeholder="Slutt"
                  (dateChange)="onEndDateChange($event)">
           <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
-        </mat-input-container>
+        </mat-form-field>
         <mat-datepicker #endTimePicker [startView]="startView"></mat-datepicker>
       </div>
     </section>`,

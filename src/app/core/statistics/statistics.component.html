@@ -1,48 +1,71 @@
-<section class="statistics-container" fxLayout="row">
+<style>
+  .mat-tab-body-wrapper {
+    height: 100%;
+  }
+</style>
+<section fxLayout="row">
 
-  <!-- Entity list -->
-  <app-entity-list class="app-entity-list" fxFlex="25%" (rowClick)="seedList.entity=$event"></app-entity-list>
+  <div class="left-column" fxLayout="column" fxFlex="15%">
+    <app-entity-list fxFlex="grow" (rowClick)="onSelectEntity($event)"></app-entity-list>
+  </div>
 
-  <div fxFlex="grow" fxLayout="column">
-    <div class="statistics-selection" fxFlex="15%" fxLayout="row">
-      <app-seed-list fxFlex="2 2 auto" #seedList (rowClick)="onSelectSeed($event)"></app-seed-list>
+  <div class="right-column" fxFlex="grow">
+
+    <div fxLayout="row">
+      <app-seed-list fxFlex="grow" (rowClick)="onSelectSeed($event)"></app-seed-list>
       <app-interval (intervalSet)="onInterval($event)"></app-interval>
     </div>
 
     <mat-toolbar class="app-toolbar" color="primary">Statistikk</mat-toolbar>
 
-    <div fxFlex="25%" fxLayout="row">
-      <div fxFlex fxLayout="column" *ngIf="totalData">
-        <mat-toolbar class="app-toolbar">Alle tekster</mat-toolbar>
-        <nvd3 fxFlex="grow" class="chart" [options]="options.pie" [data]="totalData"></nvd3>
+    <div style="min-height: 300px" fxLayout="row">
+      <div fxFlex fxLayout="column">
+        <mat-toolbar class="app-toolbar">
+          <span fxFlex>Alle tekster</span>
+          <span class="stat-count">{{nrOfTexts}}</span>
+        </mat-toolbar>
+        <nvd3 class="chart" [options]="allTextChartOptions" [data]="allTextData"></nvd3>
       </div>
 
       <mat-divider [vertical]="true"></mat-divider>
 
-      <div fxFlex fxLayout="column" *ngIf="shortTextData">
-        <mat-toolbar class="app-toolbar">Korte tekster</mat-toolbar>
-        <nvd3 fxFlex="grow" class="chart" [options]="options.pie" [data]="shortTextData"></nvd3>
+      <div fxFlex fxLayout="column">
+        <mat-toolbar class="app-toolbar">
+          <span fxFlex>Korte tekster</span>
+          <span class="stat-count">{{nrOfShortTexts}}</span>
+        </mat-toolbar>
+        <nvd3 class="chart" [options]="shortTextChartOptions" [data]="shortTextData"></nvd3>
       </div>
 
       <mat-divider [vertical]="true"></mat-divider>
 
-      <div fxFlex fxLayout="column" *ngIf="longTextData">
-        <mat-toolbar class="app-toolbar">Lange tekster</mat-toolbar>
-        <nvd3 fxFlex="grow" class="chart" [options]="options.pie" [data]="longTextData"></nvd3>
+      <div fxFlex fxLayout="column">
+        <mat-toolbar class="app-toolbar">
+          <span fxFlex>Lange tekster</span>
+          <span class="stat-count">{{nrOfLongTexts}}</span>
+        </mat-toolbar>
+        <nvd3 class="chart" [options]="longTextChartOptions" [data]="longTextData"></nvd3>
       </div>
     </div>
 
-
-    <div fxFlex="grow" fxLayout="column">
-      <div fxFlex="grow" fxLayout="column" *ngIf="perExecutionData">
+    <div style="min-height: 400px; height: 400px; margin-bottom: 70px;" fxLayout="column">
         <mat-toolbar class="app-toolbar">Per innhøsting
           <span fxFlex></span>
-          <button mat-raised-button class="app-toolbar__button" (click)="onClickMultiBar()">multibar</button>
-          <button mat-raised-button class="app-toolbar__button" (click)="onClickStacked()">stacked</button>
+          <mat-button-toggle-group value="multiBar">
+            <mat-button-toggle value="multiBar">
+              <mat-icon>equalizer</mat-icon>
+            </mat-button-toggle>
+            <mat-button-toggle value="stackedArea">
+              <mat-icon>show_chart</mat-icon>
+            </mat-button-toggle>
+          </mat-button-toggle-group>
         </mat-toolbar>
-        <nvd3 fxFlex="grow" class="chart" [options]="options.multiBar" [data]="perExecutionData"></nvd3>
-      </div>
+        <nvd3 class="chart" [options]="perExecutionChartOptions" [data]="perExecutionData"></nvd3>
     </div>
 
+
+    <app-uri-list (text)="onText($event)" [texts]="texts" *ngIf="texts.length"></app-uri-list>
+
   </div>
+
 </section>

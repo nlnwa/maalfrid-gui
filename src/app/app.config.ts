@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {IdpReply} from './shared/models/controller.model';
 import {Environment} from './shared/models/environment.model';
 import {AuthService} from './auth';
+import {first} from 'rxjs/operators';
 
 @Injectable()
 export class AppConfig {
@@ -28,7 +29,7 @@ export class AppConfig {
    */
   async load(authService: AuthService) {
     // get dynamic config
-    const config = await this.http.get(this.config.configUrl).first().toPromise();
+    const config = await this.http.get(this.config.configUrl).pipe(first()).toPromise();
 
     Object.assign(this.config, config);
 

@@ -1,6 +1,7 @@
 import {NgModule} from '@angular/core';
 import {
   MatButtonModule,
+  MatButtonToggleModule,
   MatDatepickerModule,
   MatDividerModule,
   MatFormFieldModule,
@@ -12,7 +13,9 @@ import {
   MatSidenavModule,
   MatSortModule,
   MatTableModule,
+  MatTabsModule,
   MatToolbarModule,
+  MatTooltipModule,
 } from '@angular/material';
 
 import {FlexLayoutModule} from '@angular/flex-layout';
@@ -35,6 +38,9 @@ const modules = [
   MatMomentDateModule,
   MatDividerModule,
   MatSortModule,
+  MatButtonToggleModule,
+  MatTabsModule,
+  MatTooltipModule,
 ];
 
 @NgModule({

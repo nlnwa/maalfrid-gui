@@ -1,38 +1,101 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, QueryList, ViewChildren} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {MaalfridService} from '../maalfrid-service/maalfrid.service';
-import {CrawlJob, Seed} from '../../shared/models/config.model';
+import {CrawlJob, Entity, Seed} from '../../shared/models/config.model';
 import {chartOptions} from './charts';
 import {Interval} from '../interval/interval.component';
 import * as moment from 'moment';
 import {NvD3Component} from 'ng2-nvd3';
-import {from} from 'rxjs/observable/from';
-import {finalize, mergeMap, tap} from 'rxjs/operators';
+import {catchError, finalize, mergeMap, tap} from 'rxjs/operators';
+import {MatButtonToggleChange, MatButtonToggleGroup} from '@angular/material';
+import {SeedListComponent} from '../seed-list/seed-list.component';
+import {from, of} from 'rxjs';
+import {Text} from '../uri-list/uri-list.component';
+import {and, Predicate} from '../../shared/func';
 
+function codeCondition(code: string): Predicate {
+  return (e: any) => e.language === code;
+}
+
+function shortTextCondition(): Predicate {
+  return (e: Text) => e.wordCount <= 3500;
+}
+
+function longTextCondition(): Predicate {
+  const shortTextPredicate = shortTextCondition();
+  return (e: Text) => !shortTextPredicate(e);
+}
+
+function timeCondition(time: number): Predicate {
+  return (_) => true;
+}
 
 @Component({
   selector: 'app-statistics',
   templateUrl: './statistics.component.html',
-  styleUrls: ['./statistics.component.css'],
+  styleUrls: ['./statistics.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StatisticsComponent {
-  @ViewChildren(NvD3Component) charts: QueryList<NvD3Component>;
+export class StatisticsComponent implements AfterViewInit {
 
-  totalData: any[];
+  @ViewChildren(NvD3Component) charts: QueryList<NvD3Component>;
+  @ViewChild(MatButtonToggleGroup) chartToggleGroup: MatButtonToggleGroup;
+  @ViewChild(SeedListComponent) seedList: SeedListComponent;
+
   perExecutionData: any[];
+  allTextData: any[];
   shortTextData: any[];
   longTextData: any[];
 
+  nrOfTexts: number;
+  nrOfShortTexts: number;
+  nrOfLongTexts: number;
+
   interval: Interval;
+  entity: Entity;
   seeds: Seed[];
   job: CrawlJob;
 
+  texts: Text[];
+  executions: any[];
+  allTextChartOptions: any;
+  shortTextChartOptions: any;
+  longTextChartOptions: any;
+  perExecutionChartOptions: any;
+
   constructor(private maalfridService: MaalfridService,
               private changeDetectorRef: ChangeDetectorRef) {
+    this.initChartOptions();
   }
 
-  get options() {
-    return chartOptions;
+  ngAfterViewInit() {
+    this.chartToggleGroup.change.subscribe((change: MatButtonToggleChange) => {
+      this.charts.last.clearElement();
+      let chartOption: any;
+
+      if (change.value === 'stackedArea') {
+        chartOption = chartOptions.stackedAreaChart();
+      } else {
+        chartOption = chartOptions.multiBarChart();
+      }
+
+      this.charts.last.options = chartOption;
+      this.charts.last.initChart(chartOption);
+    });
+  }
+
+  onText(warcId: string) {
+    this.maalfridService.getText(warcId)
+      .pipe(
+        catchError((err) => {
+          return of(err);
+        })
+      )
+      .subscribe((text) => console.log(text));
+  }
+
+  onSelectEntity(entity: Entity) {
+    this.entity = entity;
+    this.seedList.entity = entity;
   }
 
   onSelectSeed(seeds: Seed[]) {
@@ -45,6 +108,42 @@ export class StatisticsComponent {
     this.checkFulfillment();
   }
 
+  private initChartOptions() {
+    this.allTextChartOptions = chartOptions.pieChart({
+      pie: {
+        dispatch: {
+          elementClick: ({data: {key: code}}) => this.updateUriList(null, [codeCondition(code)])
+        },
+      }
+    });
+
+    this.shortTextChartOptions = chartOptions.pieChart({
+      pie: {
+        dispatch: {
+          elementClick: ({data: {key: code}}) =>
+            this.updateUriList(null, [codeCondition(code), shortTextCondition()])
+        },
+      }
+    });
+    this.longTextChartOptions = chartOptions.pieChart({
+      pie: {
+        dispatch: {
+          elementClick: ({data: {key: code}}) =>
+            this.updateUriList(null, [codeCondition(code), longTextCondition()])
+        },
+      }
+    });
+
+    this.perExecutionChartOptions = chartOptions.multiBarChart({
+      multibar: {
+        dispatch: {
+          elementClick: ({data: [time, ...rest], series: code}) =>
+            this.updateUriList([timeCondition(time)], [codeCondition(code)])
+        },
+      },
+    });
+  }
+
   private checkFulfillment() {
     if (this.seeds && this.seeds.length > 0 && this.interval.end && this.interval.start) {
       this.getExecutions();
@@ -53,27 +152,35 @@ export class StatisticsComponent {
     }
   }
 
-  onClickMultiBar() {
-    this.charts.last.clearElement();
-    this.charts.last.options = this.options.multiBar; // need this or else the toolip gets corrupted
-    this.charts.last.initChart(this.options.multiBar);
-  }
+  private updateUriList(executionConditions?: Predicate[], textConditions?: Predicate[]) {
+    const filtered = executionConditions
+      ? this.executions.filter(and(executionConditions))
+      : this.executions;
 
-  onClickStacked() {
-    this.charts.last.clearElement();
-    this.charts.last.options = this.options.stackedArea; // need this or else the toolip gets corrupted
-    this.charts.last.initChart(this.options.stackedArea);
+    const texts = filtered
+      .map((execution) => execution.texts)
+      .reduce((acc, curr) => acc.concat(curr), []);
+
+    this.texts = textConditions
+      ? texts.filter(and(textConditions))
+      : texts;
+
+    this.changeDetectorRef.markForCheck();
   }
 
   private reset() {
+    this.texts = [];
     this.perExecutionData = [];
-    this.totalData = [];
+    this.allTextData = [];
     this.shortTextData = [];
     this.longTextData = [];
+    this.nrOfLongTexts = undefined;
+    this.nrOfTexts = undefined;
+    this.nrOfShortTexts = undefined;
   }
 
   private getExecutions() {
-    let executions = [];
+    this.executions = [];
     from(this.seeds).pipe(
       mergeMap((seed) =>
         this.maalfridService.getExecutions({
@@ -86,8 +193,13 @@ export class StatisticsComponent {
             .startOf('day')
             .toJSON(),
         })),
-      tap((result) => executions = result.concat(executions)),
-      finalize(() => { if (executions.length > 0) {this.getStatistics(executions); }})
+      tap((result) => this.executions = result.concat(this.executions)),
+      finalize(() => {
+        if (this.executions.length > 0) {
+          this.getStatistics(this.executions);
+          this.updateUriList();
+        }
+      })
     ).subscribe();
   }
 
@@ -104,7 +216,7 @@ export class StatisticsComponent {
             values: perLanguageData[key],
           }));
 
-        this.totalData = this.perExecutionData.map((o) => (
+        this.allTextData = this.perExecutionData.map((o) => (
           {
             key: o.key,
             value: o.values.reduce((acc, curr) => acc + curr[1], 0)
@@ -121,6 +233,11 @@ export class StatisticsComponent {
             key: language,
             value: perLanguageData[language].reduce((acc, curr) => acc + curr[3], 0),
           }));
+
+
+        this.nrOfTexts = this.allTextData.reduce((acc, curr) => curr.value + acc, 0);
+        this.nrOfShortTexts = this.shortTextData.reduce((acc, curr) => curr.value + acc, 0);
+        this.nrOfLongTexts = this.longTextData.reduce((acc, curr) => curr.value + acc, 0);
 
         this.changeDetectorRef.markForCheck();
       });
