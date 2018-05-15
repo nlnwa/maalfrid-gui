@@ -4,6 +4,7 @@ import {MatSort, MatTableDataSource} from '@angular/material';
 import {Entity} from '../../shared/models/config.model';
 import {SelectionModel} from '@angular/cdk/collections';
 import {_isNumberValue} from '@angular/cdk/coercion';
+import {map} from 'rxjs/operators';
 
 
 @Component({
@@ -40,7 +41,11 @@ import {_isNumberValue} from '@angular/cdk/coercion';
 
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Entitet</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{ row.meta.name }}</mat-cell>
+          <mat-cell *matCellDef="let row">
+            <span [matTooltip]="row.meta.description"
+                  [matTooltipDisabled]="row.meta.description === row.meta.name"
+                  [matTooltipShowDelay]="350">{{ row.meta.name}}</span>
+          </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="description">
@@ -59,7 +64,7 @@ import {_isNumberValue} from '@angular/cdk/coercion';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EntityListComponent implements OnInit, AfterViewInit {
-  displayedColumns = ['name', 'description'];
+  displayedColumns = ['name'];
   dataSource: MatTableDataSource<Entity>;
   selection = new SelectionModel<Entity>(false, []);
   showFilter = false;
@@ -67,7 +72,7 @@ export class EntityListComponent implements OnInit, AfterViewInit {
   @ViewChild('filter') filterInput: ElementRef;
 
   @Output()
-  private rowClick = new EventEmitter<Entity>();
+  rowClick = new EventEmitter<Entity>();
 
   constructor(private maalfridService: MaalfridService) {
     this.dataSource = new MatTableDataSource([]);
@@ -125,7 +130,7 @@ export class EntityListComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.maalfridService.getEntities()
-      .map((entities) => entities.sort((a, b) => a.meta.name < b.meta.name ? -1 : (a.meta.name === b.meta.name ? 0 : 1)))
+      .pipe(map((entities) => entities.sort((a, b) => a.meta.name < b.meta.name ? -1 : (a.meta.name === b.meta.name ? 0 : 1))))
       .subscribe((entities) => this.dataSource.data = entities);
   }
 

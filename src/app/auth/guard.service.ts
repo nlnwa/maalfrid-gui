@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
+import {Observable, of} from 'rxjs';
 
 import {Role} from '../shared/models/config.model';
 import {RoleService} from './role.service';
@@ -15,10 +15,10 @@ export class AuthGuard implements CanActivate {
 
     for (const role of this.roleService.getRoles()) {
       if (allowedRoles.includes(role)) {
-        return Observable.of(true);
+        return of(true);
       }
     }
-    return Observable.of(false);
+    return of(false);
   }
 
 }

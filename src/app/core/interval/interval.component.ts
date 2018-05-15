@@ -22,23 +22,23 @@ export class Interval {
         Intervall
       </mat-toolbar>
       <div fxLayout="column" class="app-container__padding">
-        <mat-input-container>
+        <mat-form-field>
           <input matInput
                  [ngModel]="interval.start"
                  [matDatepicker]="startTime"
                  placeholder="Start"
                  (dateChange)="onStartDateChange($event)">
           <mat-datepicker-toggle matSuffix [for]="startTime"></mat-datepicker-toggle>
-        </mat-input-container>
+        </mat-form-field>
         <mat-datepicker #startTime [startView]="startView"></mat-datepicker>
-        <mat-input-container>
+        <mat-form-field>
           <input matInput
                  [ngModel]="interval.end"
                  [matDatepicker]="endTimePicker"
                  placeholder="Slutt"
                  (dateChange)="onEndDateChange($event)">
           <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
-        </mat-input-container>
+        </mat-form-field>
         <mat-datepicker #endTimePicker [startView]="startView"></mat-datepicker>
       </div>
     </section>`,

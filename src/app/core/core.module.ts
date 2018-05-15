@@ -6,6 +6,7 @@ import {MaalfridService} from './maalfrid-service/maalfrid.service';
 import {EntityListComponent} from './entity-list/entity-list.component';
 import {IntervalComponent} from './interval/interval.component';
 import {SeedListComponent} from './seed-list/seed-list.component';
+import {UriListComponent} from './uri-list/uri-list.component';
 import {SharedModule} from '../shared/shared.module';
 
 import {NvD3Module} from 'ng2-nvd3';
@@ -19,6 +20,7 @@ import 'nvd3';
     IntervalComponent,
     SeedListComponent,
     StatisticsComponent,
+    UriListComponent,
   ],
   imports: [
     SharedModule,
