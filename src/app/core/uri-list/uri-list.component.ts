@@ -12,26 +12,12 @@ import {
   ViewChild
 } from '@angular/core';
 import {MaalfridService} from '../maalfrid-service/maalfrid.service';
-import {MatSort, MatTableDataSource} from '@angular/material';
+import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {Entity} from '../../shared/models/config.model';
 import {SelectionModel} from '@angular/cdk/collections';
 import {_isNumberValue} from '@angular/cdk/coercion';
+import {AggregateText} from '../../shared/models/maalfrid.model';
 
-export interface Text {
-  characterCount: number;
-  contentType: string;
-  discoveryPath: string;
-  language: string;
-  lix: number;
-  longWordCount: number;
-  recordType: string;
-  requestedUri: string;
-  sentenceCount: number;
-  size: number;
-  warcId: string;
-  wordCount: number;
-  count?: number;
-}
 
 @Component({
   selector: 'app-uri-list',
@@ -68,8 +54,8 @@ export interface Text {
       <mat-table class="table" [dataSource]="dataSource" matSort>
 
         <ng-container matColumnDef="requestedUri">
-          <mat-header-cell class="uri" *matHeaderCellDef mat-sort-header>Uri</mat-header-cell>
-          <mat-cell class="uri uri__size" *matCellDef="let row"><a href="{{row.requestedUri}}" target="_blank">{{row.requestedUri}}</a>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Uri</mat-header-cell>
+          <mat-cell *matCellDef="let row"><a href="{{row.requestedUri}}" target="_blank">{{row.requestedUri}}</a>
           </mat-cell>
         </ng-container>
 
@@ -79,8 +65,8 @@ export interface Text {
         </ng-container>
 
         <ng-container matColumnDef="contentType">
-          <mat-header-cell class="narrow" *matHeaderCellDef mat-sort-header>MIME</mat-header-cell>
-          <mat-cell class="narrow" *matCellDef="let row">{{row.contentType.split(';')[0]}}</mat-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>MIME</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.contentType.split(';')[0]}}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="recordType">
@@ -114,7 +100,7 @@ export interface Text {
         </ng-container>
 
         <ng-container matColumnDef="language">
-          <mat-header-cell class="narrow" *matHeaderCellDef mat-sort-header>ISO 639-3</mat-header-cell>
+          <mat-header-cell class="narrow" *matHeaderCellDef mat-sort-header>Språk</mat-header-cell>
           <mat-cell class="narrow" *matCellDef="let row">{{row.language}}</mat-cell>
         </ng-container>
 
@@ -145,6 +131,12 @@ export interface Text {
                  (click)="onRowClick(row)">
         </mat-row>
       </mat-table>
+
+
+      <mat-paginator [pageSize]="pageSize"
+                     [pageSizeOptions]="pageSizeOptions"
+                     [showFirstLastButtons]="true">
+      </mat-paginator>
     </section>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -162,28 +154,24 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
     'language',
     'warcId',
   ];
-  dataSource: MatTableDataSource<Text>;
-  selection = new SelectionModel<Text>(false, []);
+  dataSource: MatTableDataSource<AggregateText | any>;
+  selection = new SelectionModel<AggregateText | any>(false, []);
   showFilter = false;
+  pageSize = 10;
+  pageSizeOptions = [5, 10, 20, 50, 100];
+
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild('filter') filterInput: ElementRef;
 
   @Input()
-  texts: Text[];
+  texts: (AggregateText | any )[];
 
   @Output()
   text: EventEmitter<string> = new EventEmitter<string>();
 
   @Output()
   rowClick = new EventEmitter<Entity>();
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.texts) {
-      if (this.texts) {
-        this.dataSource.data = this.texts;
-      }
-    }
-  }
 
   constructor(private maalfridService: MaalfridService) {
     this.dataSource = new MatTableDataSource([]);
@@ -193,7 +181,7 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
       return _isNumberValue(value) ? Number(value) : value;
     };
 
-    this.dataSource.filterPredicate = (data: Text, filter: string): boolean => {
+    this.dataSource.filterPredicate = (data: AggregateText, filter: string): boolean => {
       // Transform the data into a lowercase string of all property values.
       const accumulator = (currentTerm, key) => currentTerm + data[key];
 
@@ -207,8 +195,27 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
     };
   }
 
-  get selected(): Text {
+  get selected(): AggregateText | any {
     return this.selection.hasValue() ? this.selection.selected[0] : null;
+  }
+
+
+  ngOnInit() {
+    // this.dataSource.paginator = this.paginator;
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.texts) {
+      if (this.texts) {
+        this.dataSource.data = this.texts;
+      }
+    }
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.sort.start = 'desc';
+    this.dataSource.sort = this.sort;
   }
 
   onTextClick(warcId: string) {
@@ -239,13 +246,6 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
     }
   }
 
-  ngOnInit(): void {
-  }
-
-  ngAfterViewInit() {
-    this.sort.start = 'desc';
-    this.dataSource.sort = this.sort;
-  }
 }
 
 

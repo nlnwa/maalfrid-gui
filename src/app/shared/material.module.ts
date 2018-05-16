@@ -16,6 +16,7 @@ import {
   MatTabsModule,
   MatToolbarModule,
   MatTooltipModule,
+  MatPaginatorModule,
 } from '@angular/material';
 
 import {FlexLayoutModule} from '@angular/flex-layout';
@@ -41,6 +42,7 @@ const modules = [
   MatButtonToggleModule,
   MatTabsModule,
   MatTooltipModule,
+  MatPaginatorModule,
 ];
 
 @NgModule({

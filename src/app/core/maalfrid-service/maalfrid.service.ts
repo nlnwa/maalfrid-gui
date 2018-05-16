@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {createQueryParams} from '../../shared/http/util';
 import {AppConfig} from '../../app.config';
-import {MaalfridReply} from '../../shared/models/maalfrid.model';
+import {AggregateExecution, MaalfridReply} from '../../shared/models/maalfrid.model';
 import {Entity, Seed} from '../../shared/models/config.model';
 import {ListReply} from '../../shared/models/controller.model';
 
@@ -18,7 +18,7 @@ export class MaalfridService {
     this.apiUrl = this.appConfig.apiUrl;
   }
 
-  getExecutions(query): Observable<any[]> {
+  getExecutions(query): Observable<AggregateExecution[]> {
     const params = createQueryParams(query);
 
     return this.http.get<MaalfridReply>(`${this.apiUrl}/executions`, {params})

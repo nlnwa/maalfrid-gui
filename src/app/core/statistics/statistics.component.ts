@@ -9,24 +9,26 @@ import {catchError, finalize, mergeMap, tap} from 'rxjs/operators';
 import {MatButtonToggleChange, MatButtonToggleGroup} from '@angular/material';
 import {SeedListComponent} from '../seed-list/seed-list.component';
 import {from, of} from 'rxjs';
-import {Text} from '../uri-list/uri-list.component';
 import {and, Predicate} from '../../shared/func';
+import {AggregateExecution, AggregateText} from '../../shared/models/maalfrid.model';
+
 
 function codeCondition(code: string): Predicate {
   return (e: any) => e.language === code;
 }
 
 function shortTextCondition(): Predicate {
-  return (e: Text) => e.wordCount <= 3500;
+  return (e: AggregateText) => e.wordCount <= 3500;
 }
 
 function longTextCondition(): Predicate {
   const shortTextPredicate = shortTextCondition();
-  return (e: Text) => !shortTextPredicate(e);
+  return (e: AggregateText) => !shortTextPredicate(e);
 }
 
 function timeCondition(time: number): Predicate {
-  return (_) => true;
+  const t = moment.unix(time).utc();
+  return (e: AggregateExecution) => moment(e.endTime).utc().isSame(t, 'hour');
 }
 
 @Component({
@@ -54,9 +56,9 @@ export class StatisticsComponent implements AfterViewInit {
   entity: Entity;
   seeds: Seed[];
   job: CrawlJob;
+  texts: AggregateText[];
+  executions: AggregateExecution[];
 
-  texts: Text[];
-  executions: any[];
   allTextChartOptions: any;
   shortTextChartOptions: any;
   longTextChartOptions: any;
@@ -112,7 +114,12 @@ export class StatisticsComponent implements AfterViewInit {
     this.allTextChartOptions = chartOptions.pieChart({
       pie: {
         dispatch: {
-          elementClick: ({data: {key: code}}) => this.updateUriList(null, [codeCondition(code)])
+          elementClick: ({data: {key: code}}) => {
+            this.texts = this.executions
+              .reduce((acc, curr) => acc.concat(curr.texts), [])
+              .filter(codeCondition(code));
+            this.changeDetectorRef.markForCheck();
+          }
         },
       }
     });
@@ -120,16 +127,25 @@ export class StatisticsComponent implements AfterViewInit {
     this.shortTextChartOptions = chartOptions.pieChart({
       pie: {
         dispatch: {
-          elementClick: ({data: {key: code}}) =>
-            this.updateUriList(null, [codeCondition(code), shortTextCondition()])
+          elementClick: ({data: {key: code}}) => {
+            this.texts = this.executions
+              .reduce((acc, curr) => acc.concat(curr.texts), [])
+              .filter(and([codeCondition(code), shortTextCondition()]));
+            this.changeDetectorRef.markForCheck();
+          }
         },
       }
     });
+
     this.longTextChartOptions = chartOptions.pieChart({
       pie: {
         dispatch: {
-          elementClick: ({data: {key: code}}) =>
-            this.updateUriList(null, [codeCondition(code), longTextCondition()])
+          elementClick: ({data: {key: code}}) => {
+            this.texts = this.executions
+              .reduce((acc, curr) => acc.concat(curr.texts), [])
+              .filter(and([codeCondition(code), longTextCondition()]));
+            this.changeDetectorRef.markForCheck();
+          }
         },
       }
     });
@@ -137,8 +153,14 @@ export class StatisticsComponent implements AfterViewInit {
     this.perExecutionChartOptions = chartOptions.multiBarChart({
       multibar: {
         dispatch: {
-          elementClick: ({data: [time, ...rest], series: code}) =>
-            this.updateUriList([timeCondition(time)], [codeCondition(code)])
+          elementClick: ({data: [time, ...rest], series: {key: code}}) => {
+            this.texts = this.executions
+              .filter(timeCondition(time))
+              .reduce((acc, curr) =>
+                acc.concat(curr.texts.map((text: AggregateText) => text)), [])
+              .filter(codeCondition(code));
+          this.changeDetectorRef.markForCheck();
+          }
         },
       },
     });
@@ -150,22 +172,6 @@ export class StatisticsComponent implements AfterViewInit {
     } else {
       this.reset();
     }
-  }
-
-  private updateUriList(executionConditions?: Predicate[], textConditions?: Predicate[]) {
-    const filtered = executionConditions
-      ? this.executions.filter(and(executionConditions))
-      : this.executions;
-
-    const texts = filtered
-      .map((execution) => execution.texts)
-      .reduce((acc, curr) => acc.concat(curr), []);
-
-    this.texts = textConditions
-      ? texts.filter(and(textConditions))
-      : texts;
-
-    this.changeDetectorRef.markForCheck();
   }
 
   private reset() {
@@ -197,7 +203,7 @@ export class StatisticsComponent implements AfterViewInit {
       finalize(() => {
         if (this.executions.length > 0) {
           this.getStatistics(this.executions);
-          this.updateUriList();
+          this.texts = this.executions.reduce((acc, curr) => acc.concat(curr.texts), []);
         }
       })
     ).subscribe();
@@ -205,9 +211,8 @@ export class StatisticsComponent implements AfterViewInit {
 
   private getStatistics(executions) {
     this.reset();
-    this.maalfridService.getStatistic({execution_id: executions.map((execution) => execution.executionId)})
+    this.maalfridService.getStatistic({execution_id: executions.map((execution: AggregateExecution) => execution.executionId)})
       .subscribe(stats => {
-        // const perLanguageData = this.getPerLanguageData(stats);
         const perLanguageData = this.getPerLanguageData(executions, stats);
 
         this.perExecutionData = Object.keys(perLanguageData).map((key) =>
@@ -273,7 +278,7 @@ export class StatisticsComponent implements AfterViewInit {
    *
    * @param executions
    * @param stats
-   * @returns {{key: string; values: any}[]}
+   * @returns {any[]}
    */
   private getPerLanguageData(executions, stats) {
     const data = {};
@@ -292,4 +297,3 @@ export class StatisticsComponent implements AfterViewInit {
     return data;
   }
 }
-
