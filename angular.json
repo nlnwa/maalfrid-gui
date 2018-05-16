@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/maalfrid-gui",
+            "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
             "tsConfig": "src/tsconfig.app.json",
@@ -34,6 +34,8 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/maalfrid/",
+              "deployUrl": "/maalfrid/",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
