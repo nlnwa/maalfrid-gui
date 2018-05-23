@@ -40,7 +40,7 @@ import {AggregateText} from '../../shared/models/maalfrid.model';
     </style>
     <section fxLayout="column">
       <mat-toolbar class="app-toolbar" color="primary">
-        URI
+        <mat-icon>link</mat-icon>&nbsp;URI
         <span fxFlex></span>
         <button mat-icon-button (click)="onToggleFilter()">
           <mat-icon>filter_list</mat-icon>
@@ -117,8 +117,8 @@ import {AggregateText} from '../../shared/models/maalfrid.model';
         <ng-container matColumnDef="warcId">
           <mat-header-cell class="narrow" *matHeaderCellDef mat-sort-header>Text</mat-header-cell>
           <mat-cell class="narrow" *matCellDef="let row">
-            <button mat-icon-button (click)="onTextClick(row.warcId)">
-              <mat-icon>textsms</mat-icon>
+            <button mat-icon-button (click)="onTextClick(row.warcId); $event.stopPropagation();">
+              <mat-icon>comment</mat-icon>
             </button>
           </mat-cell>
         </ng-container>
