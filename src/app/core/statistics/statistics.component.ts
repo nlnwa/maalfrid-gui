@@ -55,6 +55,7 @@ export class StatisticsComponent implements AfterViewInit {
   entity: Entity;
   seeds: Seed[];
   job: CrawlJob;
+  text: string;
   texts: AggregateText[];
   executions: AggregateExecution[];
 
@@ -88,10 +89,13 @@ export class StatisticsComponent implements AfterViewInit {
     this.maalfridService.getText(warcId)
       .pipe(
         catchError((err) => {
-          return of(err);
+          return of(err.message);
         })
       )
-      .subscribe((text) => console.log(text));
+      .subscribe((text) => {
+        this.text = text;
+        this.changeDetectorRef.markForCheck();
+      });
   }
 
   onSelectEntity(entity: Entity) {
@@ -174,6 +178,7 @@ export class StatisticsComponent implements AfterViewInit {
   }
 
   private reset() {
+    this.text = '';
     this.texts = [];
     this.perExecutionData = [];
     this.allTextData = [];

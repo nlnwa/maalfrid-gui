@@ -16,9 +16,9 @@
       <app-interval (intervalSet)="onInterval($event)"></app-interval>
     </div>
 
-    <mat-toolbar class="app-toolbar" color="primary">Statistikk</mat-toolbar>
+    <mat-toolbar class="app-toolbar" color="primary"><mat-icon>poll</mat-icon>&nbsp;Statistikk</mat-toolbar>
 
-    <div style="min-height: 300px" fxLayout="row">
+    <div style="min-height: 300px;" fxLayout="row">
       <div fxFlex fxLayout="column">
         <mat-toolbar class="app-toolbar">
           <span fxFlex>Alle tekster</span>
@@ -61,6 +61,10 @@
         </mat-button-toggle-group>
       </mat-toolbar>
       <nvd3 class="chart" [options]="perExecutionChartOptions" [data]="perExecutionData"></nvd3>
+    </div>
+
+    <div fxLayout="row" *ngIf="text">
+      <app-text fxFlex [text]="text"></app-text>
     </div>
 
     <app-uri-list (text)="onText($event)" [texts]="texts" *ngIf="texts.length"></app-uri-list>
