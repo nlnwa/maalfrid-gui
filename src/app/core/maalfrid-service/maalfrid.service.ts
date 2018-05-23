@@ -49,4 +49,8 @@ export class MaalfridService {
     return this.http.get(this.apiUrl + '/text', {params})
       .pipe(map((reply) => reply['value'] || ''));
   }
+
+  identifyLanguage(text: string): Observable<Object> {
+    return this.http.post(this.apiUrl + '/detect', {value: text});
+  }
 }
