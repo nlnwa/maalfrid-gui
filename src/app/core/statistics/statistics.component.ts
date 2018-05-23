@@ -14,7 +14,7 @@ import {AggregateExecution, AggregateText} from '../../shared/models/maalfrid.mo
 
 
 function codeCondition(code: string): Predicate {
-  return (e: any) => e.language === code;
+  return (e: AggregateText) => e.language === code;
 }
 
 function shortTextCondition(): Predicate {
@@ -22,8 +22,7 @@ function shortTextCondition(): Predicate {
 }
 
 function longTextCondition(): Predicate {
-  const shortTextPredicate = shortTextCondition();
-  return (e: AggregateText) => !shortTextPredicate(e);
+  return (e: AggregateText) => !shortTextCondition()(e);
 }
 
 function timeCondition(time: number): Predicate {
@@ -159,7 +158,7 @@ export class StatisticsComponent implements AfterViewInit {
               .reduce((acc, curr) =>
                 acc.concat(curr.texts.map((text: AggregateText) => text)), [])
               .filter(codeCondition(code));
-          this.changeDetectorRef.markForCheck();
+            this.changeDetectorRef.markForCheck();
           }
         },
       },
