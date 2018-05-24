@@ -1,3 +1,7 @@
+export interface Reply {
+  value: any;
+}
+
 export interface MaalfridReply {
   value: any[];
   count: string;

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {createQueryParams} from '../../shared/http/util';
 import {AppConfig} from '../../app.config';
-import {AggregateExecution, MaalfridReply} from '../../shared/models/maalfrid.model';
+import {AggregateExecution, MaalfridReply, Reply} from '../../shared/models/maalfrid.model';
 import {Entity, Seed} from '../../shared/models/config.model';
 import {ListReply} from '../../shared/models/controller.model';
 
@@ -46,8 +46,8 @@ export class MaalfridService {
 
   getText(warcId: string): Observable<string> {
     const params = createQueryParams({warc_id: warcId});
-    return this.http.get(this.apiUrl + '/text', {params})
-      .pipe(map((reply) => reply['value'] || ''));
+    return this.http.get<Reply>(this.apiUrl + '/text', {params})
+      .pipe(map((reply) => reply.value || ''));
   }
 
   identifyLanguage(text: string): Observable<Object> {
