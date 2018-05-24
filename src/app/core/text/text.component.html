@@ -12,8 +12,8 @@
 
 <div fxLayout="row" fxLayoutGap="12px" >
 
-  <mat-form-field fxFlex style="padding: 24px; ">
-    <textarea class="text" matInput #textInput ([ngModel])="text"></textarea>
+  <mat-form-field fxFlex style="padding: 24px;">
+    <textarea class="text" matInput #textInput [ngModel]="textModel.text"></textarea>
   </mat-form-field>
 
   <mat-table fxFlex="20%" [dataSource]="nominations">

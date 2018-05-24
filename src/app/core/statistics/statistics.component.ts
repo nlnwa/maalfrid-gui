@@ -72,14 +72,7 @@ export class StatisticsComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.chartToggleGroup.change.subscribe((change: MatButtonToggleChange) => {
       this.charts.last.clearElement();
-      let chartOption: any;
-
-      if (change.value === 'stackedArea') {
-        chartOption = chartOptions.stackedAreaChart();
-      } else {
-        chartOption = chartOptions.multiBarChart();
-      }
-
+      const chartOption = this.getPerExecutionChartOptions(change.value);
       this.charts.last.options = chartOption;
       this.charts.last.initChart(chartOption);
     });
@@ -89,13 +82,11 @@ export class StatisticsComponent implements AfterViewInit {
     this.maalfridService.getText(warcId)
       .pipe(
         catchError((err) => {
-          return of(err.message);
+          console.error(err.message);
+          return of(undefined);
         })
       )
-      .subscribe((text) => {
-        this.text = text;
-        this.changeDetectorRef.markForCheck();
-      });
+      .subscribe((value) => this.text = value);
   }
 
   onSelectEntity(entity: Entity) {
@@ -113,8 +104,8 @@ export class StatisticsComponent implements AfterViewInit {
     this.checkFulfillment();
   }
 
-  private initChartOptions() {
-    this.allTextChartOptions = chartOptions.pieChart({
+  getAllTextChartOptions() {
+    return chartOptions.pieChart({
       pie: {
         dispatch: {
           elementClick: ({data: {key: code}}) => {
@@ -126,8 +117,10 @@ export class StatisticsComponent implements AfterViewInit {
         },
       }
     });
+  }
 
-    this.shortTextChartOptions = chartOptions.pieChart({
+  getShortTextChartOptions() {
+    return chartOptions.pieChart({
       pie: {
         dispatch: {
           elementClick: ({data: {key: code}}) => {
@@ -139,8 +132,10 @@ export class StatisticsComponent implements AfterViewInit {
         },
       }
     });
+  }
 
-    this.longTextChartOptions = chartOptions.pieChart({
+  getLongTextChartOptions() {
+    return chartOptions.pieChart({
       pie: {
         dispatch: {
           elementClick: ({data: {key: code}}) => {
@@ -152,21 +147,32 @@ export class StatisticsComponent implements AfterViewInit {
         },
       }
     });
+  }
 
-    this.perExecutionChartOptions = chartOptions.multiBarChart({
-      multibar: {
-        dispatch: {
-          elementClick: ({data: [time, ...rest], series: {key: code}}) => {
-            this.texts = this.executions
-              .filter(timeCondition(time))
-              .reduce((acc, curr) =>
-                acc.concat(curr.texts.map((text: AggregateText) => text)), [])
-              .filter(codeCondition(code));
-            this.changeDetectorRef.markForCheck();
-          }
+  getPerExecutionChartOptions(type?: string) {
+    return type === 'stackedArea'
+      ? chartOptions.stackedAreaChart()
+      : chartOptions.multiBarChart({
+        multibar: {
+          dispatch: {
+            elementClick: ({data: [time, ...rest], series: {key: code}}) => {
+              this.texts = this.executions
+                .filter(timeCondition(time))
+                .reduce((acc, curr) =>
+                  acc.concat(curr.texts.map((text: AggregateText) => text)), [])
+                .filter(codeCondition(code));
+              this.changeDetectorRef.markForCheck();
+            }
+          },
         },
-      },
-    });
+      });
+  }
+
+  private initChartOptions() {
+    this.allTextChartOptions = this.getAllTextChartOptions();
+    this.shortTextChartOptions = this.getShortTextChartOptions();
+    this.longTextChartOptions = this.getLongTextChartOptions();
+    this.perExecutionChartOptions = this.getPerExecutionChartOptions();
   }
 
   private checkFulfillment() {
@@ -178,7 +184,7 @@ export class StatisticsComponent implements AfterViewInit {
   }
 
   private reset() {
-    this.text = '';
+    this.text = undefined;
     this.texts = [];
     this.perExecutionData = [];
     this.allTextData = [];

@@ -1,7 +1,10 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from '@angular/core';
 import {MaalfridService} from '../maalfrid-service/maalfrid.service';
-import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 import {map} from 'rxjs/operators';
+
+interface TextModel {
+  text: string;
+}
 
 @Component({
   selector: 'app-text',
@@ -13,8 +16,13 @@ export class TextComponent {
 
   displayedColumns = ['code', 'count'];
 
+  textModel: TextModel = {text: ''};
+
   @Input()
-  text: string;
+  set text(text: string) {
+    this.textModel = {text};
+    this.changeDetectorRef.markForCheck();
+  }
 
   nominations: any[] = [];
 
