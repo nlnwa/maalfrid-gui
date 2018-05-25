@@ -24,11 +24,12 @@ export class TextComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.text) {
+      if (this.hidden) {
+        setTimeout(() => this.elementRef.nativeElement.scrollIntoView(), 250);
+      }
       this.hidden = false;
-      this.elementRef.nativeElement.scrollIntoView();
       this.onIdentifyLanguage(this.text);
     }
-    // this.changeDetectorRef.markForCheck();
   }
 
   onIdentifyLanguage(text) {

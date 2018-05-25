@@ -23,7 +23,7 @@
     <mat-table fxFlex="20%" [dataSource]="nominations">
       <ng-container matColumnDef="code">
         <mat-header-cell class="narrow" *matHeaderCellDef>Språkkode</mat-header-cell>
-        <mat-cell class="narrow" *matCellDef="let row">{{row.code}}</mat-cell>
+        <mat-cell class="narrow" *matCellDef="let row"><a href="https://iso639-3.sil.org/code/{{row.code.toLowerCase()}}" target="_blank">{{row.code}}</a></mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="count">
