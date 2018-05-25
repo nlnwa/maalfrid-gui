@@ -38,12 +38,15 @@ import {AggregateText} from '../../shared/models/maalfrid.model';
         background-color: #eee;
       }
     </style>
-    <section fxLayout="column">
+    <section fxLayout="column" *ngIf="!hidden">
       <mat-toolbar class="app-toolbar" color="primary">
         <mat-icon>link</mat-icon>&nbsp;URI
         <span fxFlex></span>
         <button mat-icon-button (click)="onToggleFilter()">
           <mat-icon>filter_list</mat-icon>
+        </button>
+        <button mat-icon-button (click)="onClear()">
+          <mat-icon>clear</mat-icon>
         </button>
       </mat-toolbar>
 
@@ -117,7 +120,7 @@ import {AggregateText} from '../../shared/models/maalfrid.model';
         <ng-container matColumnDef="warcId">
           <mat-header-cell class="narrow" *matHeaderCellDef mat-sort-header>Text</mat-header-cell>
           <mat-cell class="narrow" *matCellDef="let row">
-            <button mat-icon-button (click)="onTextClick(row.warcId); $event.stopPropagation();">
+            <button mat-icon-button (click)="onTextClick(row); $event.stopPropagation();">
               <mat-icon>comment</mat-icon>
             </button>
           </mat-cell>
@@ -159,13 +162,14 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
   showFilter = false;
   pageSize = 10;
   pageSizeOptions = [5, 10, 20, 50, 100];
+  hidden = false;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild('filter') filterInput: ElementRef;
 
   @Input()
-  texts: (AggregateText | any )[];
+  texts: (AggregateText | any)[];
 
   @Output()
   text: EventEmitter<string> = new EventEmitter<string>();
@@ -195,11 +199,6 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
     };
   }
 
-  get selected(): AggregateText | any {
-    return this.selection.hasValue() ? this.selection.selected[0] : null;
-  }
-
-
   ngOnInit() {
     // this.dataSource.paginator = this.paginator;
   }
@@ -208,6 +207,7 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
     if (changes.texts) {
       if (this.texts) {
         this.dataSource.data = this.texts;
+        this.hidden = false;
       }
     }
   }
@@ -218,8 +218,12 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
-  onTextClick(warcId: string) {
-    this.text.emit(warcId);
+  onClear() {
+    this.hidden = true;
+  }
+
+  onTextClick(uri: AggregateText) {
+    this.text.emit(uri.warcId);
   }
 
   onToggleFilter() {
@@ -238,14 +242,8 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   onRowClick(entity) {
-    this.selection.toggle(entity);
-    if (this.selection.hasValue()) {
-      this.rowClick.emit(entity);
-    } else {
-      this.rowClick.emit(null);
-    }
+    this.rowClick.emit(entity);
   }
-
 }
 
 
