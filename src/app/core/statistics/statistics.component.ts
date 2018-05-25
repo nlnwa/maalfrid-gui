@@ -86,7 +86,10 @@ export class StatisticsComponent implements AfterViewInit {
           return of(undefined);
         })
       )
-      .subscribe((value) => this.text = value);
+      .subscribe((value) => {
+        this.text = value;
+        this.changeDetectorRef.markForCheck();
+      });
   }
 
   onSelectEntity(entity: Entity) {
