@@ -8,7 +8,7 @@ import {first} from 'rxjs/operators';
 @Injectable()
 export class AppConfig {
 
-  private config: Environment;
+  private readonly config: Environment;
 
   constructor(private http: HttpClient) {
     this.config = new Environment();

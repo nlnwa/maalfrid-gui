@@ -12,6 +12,7 @@ import {SharedModule} from '../shared/shared.module';
 import {NvD3Module} from 'ng2-nvd3';
 import 'd3';
 import 'nvd3';
+import { TextComponent } from './text/text.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import 'nvd3';
     SeedListComponent,
     StatisticsComponent,
     UriListComponent,
+    TextComponent,
   ],
   imports: [
     SharedModule,

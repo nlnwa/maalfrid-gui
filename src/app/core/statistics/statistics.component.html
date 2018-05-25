@@ -1,8 +1,3 @@
-<style>
-  .mat-tab-body-wrapper {
-    height: 100%;
-  }
-</style>
 <section fxLayout="row">
 
   <div class="left-column" fxLayout="column" fxFlex="15%">
@@ -16,9 +11,11 @@
       <app-interval (intervalSet)="onInterval($event)"></app-interval>
     </div>
 
-    <mat-toolbar class="app-toolbar" color="primary">Statistikk</mat-toolbar>
+    <mat-toolbar class="app-toolbar" color="primary">
+      <mat-icon>poll</mat-icon>&nbsp;Statistikk
+    </mat-toolbar>
 
-    <div style="min-height: 300px" fxLayout="row">
+    <div style="min-height: 300px;" fxLayout="row">
       <div fxFlex fxLayout="column">
         <mat-toolbar class="app-toolbar">
           <span fxFlex>Alle tekster</span>
@@ -49,23 +46,25 @@
     </div>
 
     <div style="min-height: 400px; height: 400px; margin-bottom: 70px;" fxLayout="column">
-        <mat-toolbar class="app-toolbar">Per innhøsting
-          <span fxFlex></span>
-          <mat-button-toggle-group value="multiBar">
-            <mat-button-toggle value="multiBar">
-              <mat-icon>equalizer</mat-icon>
-            </mat-button-toggle>
-            <mat-button-toggle value="stackedArea">
-              <mat-icon>show_chart</mat-icon>
-            </mat-button-toggle>
-          </mat-button-toggle-group>
-        </mat-toolbar>
-        <nvd3 class="chart" [options]="perExecutionChartOptions" [data]="perExecutionData"></nvd3>
+      <mat-toolbar class="app-toolbar">Per innhøsting
+        <span fxFlex></span>
+        <mat-button-toggle-group value="multiBar">
+          <mat-button-toggle value="multiBar">
+            <mat-icon>equalizer</mat-icon>
+          </mat-button-toggle>
+          <mat-button-toggle value="stackedArea">
+            <mat-icon>show_chart</mat-icon>
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </mat-toolbar>
+      <nvd3 class="chart" [options]="perExecutionChartOptions" [data]="perExecutionData"></nvd3>
     </div>
-
 
     <app-uri-list (text)="onText($event)" [texts]="texts" *ngIf="texts.length"></app-uri-list>
 
+    <div fxLayout="row">
+      <app-text *ngIf="text" fxFlex [text]="text"></app-text>
+    </div>
   </div>
 
 </section>
