@@ -1,6 +1,6 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from './auth';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -46,9 +46,11 @@ import {Router} from '@angular/router';
     </div>
   `,
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService,
+              private router: Router,
+              private route: ActivatedRoute) {
   }
 
   get name(): string {
@@ -57,6 +59,12 @@ export class AppComponent {
 
   get groups(): string[] {
     return this.authService.groups;
+  }
+
+  ngOnInit() {
+    if (this.authService.isLoggedIn) {
+      this.router.navigate(['/statistics']);
+    }
   }
 
   onLogin() {
