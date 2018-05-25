@@ -1,3 +1,9 @@
 .text {
+  height: 290px;
   max-height: 480px;
+}
+
+.text-form-field {
+  padding-left: 24px;
+  padding-right: 24px;
 }

@@ -55,7 +55,7 @@ export class StatisticsComponent implements AfterViewInit {
   entity: Entity;
   seeds: Seed[];
   job: CrawlJob;
-  text: string;
+  text: String;
   texts: AggregateText[];
   executions: AggregateExecution[];
 

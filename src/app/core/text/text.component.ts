@@ -1,10 +1,6 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {MaalfridService} from '../maalfrid-service/maalfrid.service';
 import {map} from 'rxjs/operators';
-
-interface TextModel {
-  text: string;
-}
 
 @Component({
   selector: 'app-text',
@@ -12,21 +8,28 @@ interface TextModel {
   styleUrls: ['./text.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TextComponent {
+export class TextComponent implements OnChanges {
+
+  @Input()
+  text: string;
 
   displayedColumns = ['code', 'count'];
 
-  textModel: TextModel = {text: ''};
-
-  @Input()
-  set text(text: string) {
-    this.textModel = {text};
-    this.changeDetectorRef.markForCheck();
-  }
+  hidden = true;
 
   nominations: any[] = [];
 
-  constructor(private maalfridService: MaalfridService, private changeDetectorRef: ChangeDetectorRef) { }
+  constructor(private maalfridService: MaalfridService, private elementRef: ElementRef,
+              private changeDetectorRef: ChangeDetectorRef) { }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (this.text) {
+      this.hidden = false;
+      this.elementRef.nativeElement.scrollIntoView();
+      this.onIdentifyLanguage(this.text);
+    }
+    // this.changeDetectorRef.markForCheck();
+  }
 
   onIdentifyLanguage(text) {
     if (text) {
@@ -40,5 +43,9 @@ export class TextComponent {
           this.changeDetectorRef.markForCheck();
         });
     }
+  }
+
+  onClear() {
+    this.hidden = true;
   }
 }
