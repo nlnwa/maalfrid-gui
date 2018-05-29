@@ -40,7 +40,7 @@ const multibarChart: nv.MultiBarChart | any = {
 const stackedAreaChart: nv.StackedAreaChart | any = {
   duration: 250,
   useInteractiveGuideline: true,
-  style: 'stack',
+  style: 'expand',
   x: (d) => d[0],
   y: (d) => d[1],
   xAxis: {
@@ -52,6 +52,10 @@ const stackedAreaChart: nv.StackedAreaChart | any = {
     axisLabel: 'Antall tekster' + '',
     tickFormat: (d) => d3.format(',f')(d),
     axisLabelDistance: 12,
+  },
+  margin: {
+    left: 50,
+    right: 50,
   },
   noData,
 };
