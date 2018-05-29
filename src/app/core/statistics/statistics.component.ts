@@ -25,9 +25,9 @@ function longTextCondition(): Predicate {
   return (e: AggregateText) => !shortTextCondition()(e);
 }
 
-function timeCondition(time: number): Predicate {
+function timeCondition(time: number, granularity: string): Predicate {
   const t = moment.unix(time).utc();
-  return (e: AggregateExecution) => moment(e.endTime).isSame(t, this.granularity);
+  return (e: AggregateExecution) => moment(e.endTime).isSame(t, granularity as any);
 }
 
 @Component({
@@ -174,7 +174,7 @@ export class StatisticsComponent implements AfterViewInit {
           dispatch: {
             elementClick: ({data: [time, ...rest], series: {key: code}}) => {
               this.texts = this.executions
-                .filter(timeCondition(time))
+                .filter(timeCondition(time, this.granularity))
                 .reduce((acc, curr) =>
                   acc.concat(curr.texts.map((text: AggregateText) => text)), [])
                 .filter(codeCondition(code));
