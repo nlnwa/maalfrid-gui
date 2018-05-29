@@ -40,6 +40,12 @@ export class Interval {
           <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
         </mat-form-field>
         <mat-datepicker #endTimePicker [startView]="startView"></mat-datepicker>
+
+        <mat-form-field>
+          <mat-select [value]="defaultUnit" (valueChange)="onGranularityChange($event)" placeholder="Granularitet">
+            <mat-option *ngFor="let unit of units" [value]="unit">{{unitLanguageMap[unit] | titlecase}}</mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
     </section>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,6 +55,9 @@ export class IntervalComponent implements OnInit {
   @Output()
   intervalSet = new EventEmitter<Interval>();
 
+  @Output()
+  granularity = new EventEmitter<string>();
+
   startView = 'year';
 
   interval: Interval = {
@@ -56,9 +65,24 @@ export class IntervalComponent implements OnInit {
     end: moment().endOf('month'),
   };
 
+  unitLanguageMap = {
+    hour: 'time',
+    day: 'dag',
+    week: 'uke',
+    month: 'måned',
+    year: 'år',
+  };
+
+  defaultUnit = 'week';
+  units = ['hour', 'day', 'week', 'month', 'year'];
 
   ngOnInit(): void {
     this.intervalSet.emit(this.interval);
+    this.granularity.emit(this.defaultUnit);
+  }
+
+  onGranularityChange(event: string) {
+    this.granularity.emit(event);
   }
 
   onStartDateChange(event: MatDatepickerInputEvent<Moment>) {

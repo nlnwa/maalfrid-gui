@@ -27,7 +27,7 @@ function longTextCondition(): Predicate {
 
 function timeCondition(time: number): Predicate {
   const t = moment.unix(time).utc();
-  return (e: AggregateExecution) => moment(e.endTime).utc().isSame(t, 'hour');
+  return (e: AggregateExecution) => moment(e.endTime).isSame(t, this.granularity);
 }
 
 @Component({
@@ -42,6 +42,7 @@ export class StatisticsComponent implements AfterViewInit {
   @ViewChild(MatButtonToggleGroup) chartToggleGroup: MatButtonToggleGroup;
   @ViewChild(SeedListComponent) seedList: SeedListComponent;
 
+  perLanguageData: any;
   perExecutionData: any[];
   allTextData: any[];
   shortTextData: any[];
@@ -64,6 +65,14 @@ export class StatisticsComponent implements AfterViewInit {
   longTextChartOptions: any;
   perExecutionChartOptions: any;
 
+
+  colorMap = {
+    // 'NOB': 'red',
+    // 'NNO': 'green',
+  };
+
+  granularity = 'hour';
+
   constructor(private maalfridService: MaalfridService,
               private changeDetectorRef: ChangeDetectorRef) {
     this.initChartOptions();
@@ -76,6 +85,11 @@ export class StatisticsComponent implements AfterViewInit {
       this.charts.last.options = chartOption;
       this.charts.last.initChart(chartOption);
     });
+  }
+
+  onGranularity(granularity: string) {
+    this.granularity = granularity;
+    this.applyData();
   }
 
   onText(warcId: string) {
@@ -222,42 +236,71 @@ export class StatisticsComponent implements AfterViewInit {
     ).subscribe();
   }
 
+  private mergeData(data, granularity) {
+    return Object.keys(data).reduce((acc, curr) => {
+      acc[curr] = data[curr].reduce((a, c) => {
+        if (a.length > 0 && moment.unix(a[a.length - 1][0]).isSame(moment.unix(c[0]), granularity)) {
+          const prev = a[a.length - 1];
+          prev[1] += c[1];
+          prev[2] += c[2];
+          prev[3] += c[3];
+        } else {
+          a.push(c);
+        }
+        return a;
+      }, []);
+      return acc;
+    }, {});
+  }
+
+  private applyData() {
+    if (!this.perLanguageData) {
+      return;
+    }
+
+    const data = this.mergeData(this.perLanguageData, this.granularity);
+
+    this.perExecutionData = Object.keys(data).map((key) =>
+      ({
+        key,
+        values: data[key],
+      }));
+
+    this.allTextData = this.perExecutionData.map((o) => (
+      {
+        key: o.key,
+        value: o.values.reduce((acc, curr) => acc + curr[1], 0),
+        color: this.colorMap[o.key],
+      }));
+
+    this.shortTextData = Object.keys(data)
+      .map((language) => ({
+        key: language,
+        value: data[language].reduce((acc, curr) => acc + curr[2], 0),
+        color: this.colorMap[language],
+      }));
+
+    this.longTextData = Object.keys(data)
+      .map((language) => ({
+        key: language,
+        value: data[language].reduce((acc, curr) => acc + curr[3], 0),
+        color: this.colorMap[language],
+      }));
+
+
+    this.nrOfTexts = this.allTextData.reduce((acc, curr) => curr.value + acc, 0);
+    this.nrOfShortTexts = this.shortTextData.reduce((acc, curr) => curr.value + acc, 0);
+    this.nrOfLongTexts = this.longTextData.reduce((acc, curr) => curr.value + acc, 0);
+
+    this.changeDetectorRef.markForCheck();
+  }
+
   private getStatistics(executions) {
     this.reset();
     this.maalfridService.getStatistic({execution_id: executions.map((execution: AggregateExecution) => execution.executionId)})
       .subscribe(stats => {
-        const perLanguageData = this.getPerLanguageData(executions, stats);
-
-        this.perExecutionData = Object.keys(perLanguageData).map((key) =>
-          ({
-            key,
-            values: perLanguageData[key],
-          }));
-
-        this.allTextData = this.perExecutionData.map((o) => (
-          {
-            key: o.key,
-            value: o.values.reduce((acc, curr) => acc + curr[1], 0)
-          }));
-
-        this.shortTextData = Object.keys(perLanguageData)
-          .map((language) => ({
-            key: language,
-            value: perLanguageData[language].reduce((acc, curr) => acc + curr[2], 0)
-          }));
-
-        this.longTextData = Object.keys(perLanguageData)
-          .map((language) => ({
-            key: language,
-            value: perLanguageData[language].reduce((acc, curr) => acc + curr[3], 0),
-          }));
-
-
-        this.nrOfTexts = this.allTextData.reduce((acc, curr) => curr.value + acc, 0);
-        this.nrOfShortTexts = this.shortTextData.reduce((acc, curr) => curr.value + acc, 0);
-        this.nrOfLongTexts = this.longTextData.reduce((acc, curr) => curr.value + acc, 0);
-
-        this.changeDetectorRef.markForCheck();
+        this.perLanguageData = this.getPerLanguageData(executions, stats);
+        this.applyData();
       });
   }
 
