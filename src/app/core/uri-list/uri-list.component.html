@@ -1,0 +1,129 @@
+<style>
+  .narrow {
+    max-width: 90px;
+  }
+
+  .wide {
+    max-width: 300px;
+    overflow: hidden;
+  }
+
+  .uri {
+    font-size: 13px;
+    text-decoration: none;
+  }
+
+  .uri:hover {
+    text-decoration: underline;
+  }
+
+  .uri__size {
+    font-size: 12px;
+  }
+
+  .highlight {
+    background-color: #eee;
+  }
+
+  .table {
+    width: 100%;
+  }
+</style>
+<section fxLayout="column">
+  <mat-toolbar class="app-toolbar">
+    <mat-icon>link</mat-icon>&nbsp;
+    URI
+    <span fxFlex></span>
+    <button [attr.disabled]="visible ? null : ''" mat-icon-button (click)="onToggleFilter()">
+      <mat-icon>filter_list</mat-icon>
+    </button>
+    <button mat-icon-button (click)="onToggleVisibility()">
+      <mat-icon>{{ visible ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <div [fxShow]="visible">
+    <mat-form-field class="app-container__padding" [fxShow]="showFilter">
+      <input #filter matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+    </mat-form-field>
+
+    <table fxFlex mat-table matSort class="table" [dataSource]="dataSource">
+      <ng-container matColumnDef="requestedUri">
+        <th mat-header-cell class="wide" *matHeaderCellDef mat-sort-header>Uri</th>
+        <td mat-cell *matCellDef="let row" class="wide"><a class="uri" href="{{row.requestedUri}}"
+                                                           target="_blank">{{row.requestedUri}}</a>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="contentType">
+        <th colspan="1" mat-header-cell *matHeaderCellDef mat-sort-header>MIME</th>
+        <td mat-cell *matCellDef="let row">{{row.contentType.split(';')[0]}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="recordType">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+        <td mat-cell *matCellDef="let row">{{row.recordType}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="characterCount">
+        <th mat-header-cell class="narrow" *matHeaderCellDef mat-sort-header>Tegn</th>
+        <td mat-cell class="narrow" *matCellDef="let row">{{row.characterCount}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="discoveryPath">
+        <th mat-header-cell class="narrow" *matHeaderCellDef mat-sort-header>Tre</th>
+        <td mat-cell class="narrow" *matCellDef="let row">{{row.discoveryPath}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="lix">
+        <th mat-header-cell class="narrow" *matHeaderCellDef mat-sort-header>Lesbarhet</th>
+        <td mat-cell class="narrow" *matCellDef="let row">{{row.lix}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="longWordCount">
+        <th mat-header-cell class="narrow" *matHeaderCellDef mat-sort-header>Lange ord</th>
+        <td mat-cell class="narrow" *matCellDef="let row">{{row.longWordCount}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="wordCount">
+        <th mat-header-cell class="narrow" *matHeaderCellDef mat-sort-header>Ord</th>
+        <td mat-cell class="narrow" *matCellDef="let row">{{row.wordCount}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="language">
+        <th mat-header-cell class="narrow" *matHeaderCellDef mat-sort-header>Språk</th>
+        <td mat-cell class="narrow" *matCellDef="let row">{{row.language}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="sentenceCount">
+        <th mat-header-cell class="narrow" *matHeaderCellDef mat-sort-header>Setninger</th>
+        <td mat-cell class="narrow" *matCellDef="let row">{{row.sentenceCount}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="size">
+        <th mat-header-cell class="narrow" *matHeaderCellDef mat-sort-header>Størrelse</th>
+        <td mat-cell class="narrow" *matCellDef="let row">{{row.size}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="warcId">
+        <th mat-header-cell class="narrow" *matHeaderCellDef mat-sort-header>Text</th>
+        <td mat-cell class="narrow" *matCellDef="let row" (click)="$event.stopPropagation()">
+          <button mat-icon-button (click)="onTextClick(row)">
+            <mat-icon>comment</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"
+          [ngClass]="{'highlight': selection.isSelected(row)}"
+          (click)="onRowClick(row)">
+      </tr>
+    </table>
+    <mat-paginator [pageSize]="pageSize"
+                   [pageSizeOptions]="pageSizeOptions"
+                   [showFirstLastButtons]="true">
+    </mat-paginator>
+  </div>
+</section>

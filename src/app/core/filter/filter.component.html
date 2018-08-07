@@ -1,0 +1,36 @@
+<section fxLayout="column">
+  <mat-toolbar class="app-toolbar" color="accent">
+    <mat-icon class="icon-header">adjust</mat-icon>&nbsp;
+    Filter
+    <span fxFlex></span>
+    <button mat-icon-button (click)="onToggleBypass()">
+      <mat-icon>{{ _bypass ? 'visibility_off' : 'visibility' }}</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <div fxLayout="column" class="app-container__padding">
+    <mat-form-field *ngFor="let selection of selections$ | async">
+      <mat-select multiple
+                  [(ngModel)]="filterModel[selection]"
+                  [placeholder]="label[selection]"
+                  [disabled]="disabled"
+                  (selectionChange)="onFilterChange(selection, $event.value)">
+        <mat-option *ngFor="let option of getSelectOptions(selection)"
+                    [value]="option">{{option || emptyOption[selection]}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div *ngFor="let slider of sliders$ | async" fxLayout="row" class="slider">
+      <label class="slider-label">{{label[slider]}}</label>
+      <nouislider fxFlex [(ngModel)]="filterModel[slider]"
+                  [step]="sliderConfigs[slider].step"
+                  [connect]="sliderConfigs[slider].connect"
+                  [min]="sliderConfigs[slider].range.min"
+                  [max]="sliderConfigs[slider].range.max"
+                  [tooltips]="sliderConfigs[slider].tooltips"
+                  (change)="onFilterChange(slider, $event)"
+                  [attr.disabled]="disabled ? '' : null"></nouislider>
+    </div>
+  </div>
+</section>

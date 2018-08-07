@@ -13,6 +13,9 @@ import {NvD3Module} from 'ng2-nvd3';
 import 'd3';
 import 'nvd3';
 import { TextComponent } from './text/text.component';
+import { ChartComponent } from './chart/chart.component';
+import { FilterComponent } from './filter/filter.component';
+import {NouisliderModule} from 'ng2-nouislider';
 
 @NgModule({
   declarations: [
@@ -23,12 +26,15 @@ import { TextComponent } from './text/text.component';
     StatisticsComponent,
     UriListComponent,
     TextComponent,
+    ChartComponent,
+    FilterComponent,
   ],
   imports: [
     SharedModule,
     NvD3Module,
     FormsModule,
     ReactiveFormsModule,
+    NouisliderModule,
   ],
   exports: [
     StatisticsComponent,

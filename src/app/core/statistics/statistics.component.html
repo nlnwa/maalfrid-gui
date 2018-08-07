@@ -1,70 +1,27 @@
+<mat-spinner [strokeWidth]="2" color="warn" *ngIf="loading" class="data-loader"></mat-spinner>
 <section fxLayout="row">
-
-  <div class="left-column" fxLayout="column" fxFlex="15%">
-    <app-entity-list fxFlex="grow" (rowClick)="onSelectEntity($event)"></app-entity-list>
+  <div class="column-left" fxFlex="15%">
+    <app-entity-list fxFlex="grow" (rowClick)="onEntitySelect($event)"></app-entity-list>
   </div>
+  <div class="column-center" fxLayout="column" fxFlex="grow">
+    <app-seed-list fxFlex (rowClick)="onSeedSelect($event)" [entity]="entity$ | async"></app-seed-list>
+    <app-chart fxFlex
+               [granularity]="granularity$ | async"
+               [data]="filteredData$ | async"
+               (allTextElementClick)="onAllTextClick($event)"
+               (shortTextElementClick)="onShortTextClick($event)"
+               (longTextElementClick)="onLongTextClick($event)"
+               (perExecutionElementClick)="onPerExecutionTextClick($event)"></app-chart>
 
-  <div class="right-column" fxFlex="grow">
-
-    <div fxLayout="row">
-      <app-seed-list fxFlex="grow" (rowClick)="onSelectSeed($event)"></app-seed-list>
-      <app-interval (granularity)="onGranularity($event)" (intervalSet)="onInterval($event)"></app-interval>
-    </div>
-
-    <mat-toolbar class="app-toolbar" color="primary">
-      <mat-icon>poll</mat-icon>&nbsp;Statistikk
-    </mat-toolbar>
-
-    <div style="min-height: 300px;" fxLayout="row">
-      <div fxFlex fxLayout="column">
-        <mat-toolbar class="app-toolbar">
-          <span fxFlex>Alle tekster</span>
-          <span class="stat-count">{{nrOfTexts}}</span>
-        </mat-toolbar>
-        <nvd3 class="chart" [options]="allTextChartOptions" [data]="allTextData"></nvd3>
-      </div>
-
-      <mat-divider [vertical]="true"></mat-divider>
-
-      <div fxFlex fxLayout="column">
-        <mat-toolbar class="app-toolbar">
-          <span fxFlex>Korte tekster</span>
-          <span class="stat-count">{{nrOfShortTexts}}</span>
-        </mat-toolbar>
-        <nvd3 class="chart" [options]="shortTextChartOptions" [data]="shortTextData"></nvd3>
-      </div>
-
-      <mat-divider [vertical]="true"></mat-divider>
-
-      <div fxFlex fxLayout="column">
-        <mat-toolbar class="app-toolbar">
-          <span fxFlex>Lange tekster</span>
-          <span class="stat-count">{{nrOfLongTexts}}</span>
-        </mat-toolbar>
-        <nvd3 class="chart" [options]="longTextChartOptions" [data]="longTextData"></nvd3>
-      </div>
-    </div>
-
-    <div style="min-height: 400px; height: 400px; margin-bottom: 70px;" fxLayout="column">
-      <mat-toolbar class="app-toolbar">Per innhøsting
-        <span fxFlex></span>
-        <mat-button-toggle-group value="multiBar">
-          <mat-button-toggle value="multiBar">
-            <mat-icon>equalizer</mat-icon>
-          </mat-button-toggle>
-          <mat-button-toggle value="stackedArea">
-            <mat-icon>show_chart</mat-icon>
-          </mat-button-toggle>
-        </mat-button-toggle-group>
-      </mat-toolbar>
-      <nvd3 class="chart" [options]="perExecutionChartOptions" [data]="perExecutionData"></nvd3>
-    </div>
-
-    <app-uri-list (text)="onText($event)" [texts]="texts" *ngIf="texts.length"></app-uri-list>
-
-    <div fxLayout="row">
-      <app-text *ngIf="text" fxFlex [text]="text"></app-text>
-    </div>
+    <app-uri-list fxFlex (text)="onRequestText($event)"
+                  [data]="filteredData$ | async"></app-uri-list>
+    <app-text fxFlex [text]="text$ | async"></app-text>
   </div>
-
+  <div class="column-right" fxFlex="20%" fxLayout="column">
+    <app-interval (granularity)="onGranularityChange($event)" (intervalSet)="onIntervalChange($event)"></app-interval>
+    <app-filter fxFlex="grow"
+                [domain]="domain$ | async"
+                [filter]="filter$ | async"
+                (change)="onFilterChange($event)"></app-filter>
+  </div>
 </section>

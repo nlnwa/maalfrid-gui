@@ -2,8 +2,76 @@
 
 @include mat-core();
 
-$my-app-primary: mat-palette($mat-blue);
-$my-app-accent: mat-palette($mat-pink, 500, 900, A100);
+$maalfrid-primary: (
+  50 : #e0ebf3,
+  100 : #b3cde2,
+  200 : #80abcf,
+  300 : #4d89bb,
+  400 : #2670ad,
+  500 : #00579e,
+  600 : #004f96,
+  700 : #00468c,
+  800 : #003c82,
+  900 : #002c70,
+  A100 : #9fbcff,
+  A200 : #6c98ff,
+  A400 : #3974ff,
+  A700 : #1f62ff,
+  contrast: (
+    50 : #000000,
+    100 : #000000,
+    200 : #000000,
+    300 : #ffffff,
+    400 : #ffffff,
+    500 : #ffffff,
+    600 : #ffffff,
+    700 : #ffffff,
+    800 : #ffffff,
+    900 : #ffffff,
+    A100 : #000000,
+    A200 : #000000,
+    A400 : #ffffff,
+    A700 : #ffffff,
+  )
+);
+
+$maalfrid-secondary: (
+  50 : #f6f9fb,
+  100 : #e8eff6,
+  200 : #d8e5f0,
+  300 : #c8dbea,
+  400 : #bdd3e6,
+  500 : #b1cbe1,
+  600 : #aac6dd,
+  700 : #a1bed9,
+  800 : #98b8d5,
+  900 : #88accd,
+  A100 : #ffffff,
+  A200 : #ffffff,
+  A400 : #f6fbff,
+  A700 : #ddeeff,
+  contrast: (
+    50 : #000000,
+    100 : #000000,
+    200 : #000000,
+    300 : #000000,
+    400 : #000000,
+    500 : #000000,
+    600 : #000000,
+    700 : #000000,
+    800 : #000000,
+    900 : #000000,
+    A100 : #000000,
+    A200 : #000000,
+    A400 : #000000,
+    A700 : #000000,
+  )
+);
+
+
+
+$my-app-primary: mat-palette($maalfrid-primary);
+$my-app-accent: mat-palette($maalfrid-secondary, 500, 900, A100);
 $my-app-warn: mat-palette($mat-red);
 
 $my-app-theme: mat-light-theme($my-app-primary, $my-app-accent, $my-app-warn);

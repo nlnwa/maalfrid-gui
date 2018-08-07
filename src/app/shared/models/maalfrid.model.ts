@@ -21,6 +21,7 @@ export interface ExtractedText {
 
 
 export interface CrawlLog {
+  executionId: string;
   contentType: string;
   discoveryPath: string;
   recordType: string;
@@ -29,7 +30,6 @@ export interface CrawlLog {
   size: number;
 }
 
-export interface AggregateText extends ExtractedText, CrawlLog {}
 
 export enum ExecutionState {
   UNDEFINED = 'UNDEFINED',
@@ -65,9 +65,7 @@ export interface Execution {
   state: ExecutionState;
 }
 
-export interface AggregateExecution extends Execution {
-  texts: AggregateText[];
-}
+export interface AggregateText extends ExtractedText, CrawlLog, Execution {}
 
 export interface Statistic {
   count: number;
