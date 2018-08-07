@@ -9,13 +9,9 @@ import {SelectionModel} from '@angular/cdk/collections';
   selector: 'app-seed-list',
   template: `
     <style>
-      section {
-        height: 100%;
-      }
-
       .table {
         height: 100%;
-        overflow-y: scroll;
+        overflow-y: auto;
       }
 
       .highlight {
@@ -23,7 +19,7 @@ import {SelectionModel} from '@angular/cdk/collections';
       }
     </style>
     <section fxLayout="column">
-      <mat-toolbar class="app-toolbar" color="primary">
+      <mat-toolbar class="app-toolbar" color="accent">
         <mat-icon>link</mat-icon>&nbsp;URL
       </mat-toolbar>
 
@@ -64,7 +60,7 @@ export class SeedListComponent {
     this._entity = entity;
     this.selection.clear();
 
-    if (entity === null) {
+    if (!entity) {
       this.dataSource.data = [];
       this.onRowClick();
       return;

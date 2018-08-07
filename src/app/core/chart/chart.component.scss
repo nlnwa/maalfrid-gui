@@ -1,19 +1,11 @@
 @import url("https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.css");
 
-section {
+.chart {
+  display: inline-block;
   height: 100%;
-}
-
-.column-left {
-  min-width: 200px;
-}
-
-.column-center {
-  overflow-y: auto;
-}
-
-.column-right {
-  overflow-y: auto;
+  width: 100%;
+  padding-top: 1em;
+  padding-bottom: 1em;
 }
 
 .statistics-selection {
@@ -21,15 +13,7 @@ section {
   min-height: 250px;
 }
 
-
 .stat-count {
   font-size: 75%;
   font-family: monospace;
-}
-
-.data-loader {
-  bottom: 50%;
-  left: 50%;
-  position: absolute;
-  z-index: 100;
 }

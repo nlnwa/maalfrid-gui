@@ -2,11 +2,11 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {createQueryParams} from '../../shared/http/util';
 import {AppConfig} from '../../app.config';
-import {AggregateExecution, MaalfridReply, Reply} from '../../shared/models/maalfrid.model';
+import {AggregateText, MaalfridReply, Reply} from '../../shared/models/maalfrid.model';
 import {Entity, Seed} from '../../shared/models/config.model';
 import {ListReply} from '../../shared/models/controller.model';
 
-import {Observable} from 'rxjs/index';
+import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 @Injectable()
@@ -18,17 +18,10 @@ export class MaalfridService {
     this.apiUrl = this.appConfig.apiUrl;
   }
 
-  getExecutions(query): Observable<AggregateExecution[]> {
+  getExecutions(query): Observable<AggregateText[]> {
     const params = createQueryParams(query);
 
     return this.http.get<MaalfridReply>(`${this.apiUrl}/executions`, {params})
-      .pipe(map(reply => reply.value || []));
-  }
-
-  getStatistic(query): Observable<any[]> {
-    const params = createQueryParams(query);
-
-    return this.http.get<MaalfridReply>(`${this.apiUrl}/statistic`, {params})
       .pipe(map(reply => reply.value || []));
   }
 

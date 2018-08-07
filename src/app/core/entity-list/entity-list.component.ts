@@ -25,7 +25,7 @@ import {map} from 'rxjs/operators';
       }
     </style>
     <section fxLayout="column">
-      <mat-toolbar class="app-toolbar" color="primary">
+      <mat-toolbar class="app-toolbar" color="accent">
         <mat-icon>business</mat-icon>&nbsp;Entitet
         <span fxFlex></span>
         <button mat-icon-button (click)="onToggleFilter()">

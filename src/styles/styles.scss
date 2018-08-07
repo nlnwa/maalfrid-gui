@@ -1,3 +1,5 @@
+@import "~nouislider/distribute/nouislider.min.css";
+
 html, body, app-root {
   height: 100%;
   margin: 0;
@@ -15,4 +17,18 @@ html, body, app-root {
 
 .mat-tab-body-wrapper {
   height: 100%;
+}
+
+// noUislider customizations
+
+.noUi-connect {
+  background: #B1CBE1;
+}
+
+.noUi-horizontal .noUi-tooltip {
+  bottom: 110%;
+}
+
+.noUi-tooltip {
+  padding: 1px;
 }

@@ -17,14 +17,14 @@ export class Interval {
       }
     </style>
     <section fxLayout="column">
-      <mat-toolbar class="app-toolbar" color="primary">
+      <mat-toolbar class="app-toolbar" color="accent">
         <mat-icon class="icon-header">schedule</mat-icon>&nbsp;
         Intervall
       </mat-toolbar>
       <div fxLayout="column" class="app-container__padding">
         <mat-form-field>
           <input matInput
-                 [ngModel]="interval.start"
+                 [ngModel]="intervalModel.start"
                  [matDatepicker]="startTime"
                  placeholder="Start"
                  (dateChange)="onStartDateChange($event)">
@@ -33,7 +33,7 @@ export class Interval {
         <mat-datepicker #startTime [startView]="startView"></mat-datepicker>
         <mat-form-field>
           <input matInput
-                 [ngModel]="interval.end"
+                 [ngModel]="intervalModel.end"
                  [matDatepicker]="endTimePicker"
                  placeholder="Slutt"
                  (dateChange)="onEndDateChange($event)">
@@ -60,7 +60,7 @@ export class IntervalComponent implements OnInit {
 
   startView = 'year';
 
-  interval: Interval = {
+  intervalModel: Interval = {
     start: moment().startOf('year'),
     end: moment().endOf('month'),
   };
@@ -77,7 +77,7 @@ export class IntervalComponent implements OnInit {
   units = ['hour', 'day', 'week', 'month', 'year'];
 
   ngOnInit(): void {
-    this.intervalSet.emit(this.interval);
+    this.intervalSet.emit(this.intervalModel);
     this.granularity.emit(this.defaultUnit);
   }
 
@@ -86,12 +86,12 @@ export class IntervalComponent implements OnInit {
   }
 
   onStartDateChange(event: MatDatepickerInputEvent<Moment>) {
-    this.interval.start = event.value;
-    this.intervalSet.emit(this.interval);
+    this.intervalModel.start = event.value;
+    this.intervalSet.emit(this.intervalModel);
   }
 
   onEndDateChange(event: MatDatepickerInputEvent<Moment>) {
-    this.interval.end = event.value;
-    this.intervalSet.emit(this.interval);
+    this.intervalModel.end = event.value;
+    this.intervalSet.emit(this.intervalModel);
   }
 }

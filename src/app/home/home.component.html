@@ -4,14 +4,14 @@
       <div class="header-headline">
         <h1>Målfrid</h1>
         <h2>Målformsidentifisering for statstenesta</h2>
+        <a *ngIf="isLoggedIn" mat-raised-button [routerLink]="['/statistics']">Statistikk</a>
       </div>
-      <div class="header-stats" *ngIf="isLoggedIn">
-        <a mat-raised-button color="accent" [routerLink]="['/statistics']">Statistikk</a>
+      <div class="header-stats">
+        <img src="assets/NB-logo-no-eng-hvit.svg"><br/>
       </div>
     </section>
   </header>
   <footer class="app-footer" fxLayoutAlign="space-around center">
-    <span>En teneste utvikla av Nasjonalbiblioteket for Språkrådet</span>
     <span>versjon: {{ version }}</span>
   </footer>
 </section>

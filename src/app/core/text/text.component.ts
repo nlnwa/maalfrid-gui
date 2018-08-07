@@ -5,7 +5,7 @@ import {map} from 'rxjs/operators';
 @Component({
   selector: 'app-text',
   templateUrl: './text.component.html',
-  styleUrls: ['./text.component.css'],
+  styleUrls: ['./text.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TextComponent implements OnChanges {
@@ -15,7 +15,7 @@ export class TextComponent implements OnChanges {
 
   displayedColumns = ['code', 'count'];
 
-  hidden = true;
+  visible = false;
 
   nominations: any[] = [];
 
@@ -24,10 +24,10 @@ export class TextComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.text) {
-      if (this.hidden) {
-        setTimeout(() => this.elementRef.nativeElement.scrollIntoView(), 250);
+      if (!this.visible) {
+        this.onToggleVisibility();
       }
-      this.hidden = false;
+      setTimeout(() => this.elementRef.nativeElement.scrollIntoView(), 250);
       this.onIdentifyLanguage(this.text);
     }
   }
@@ -46,7 +46,7 @@ export class TextComponent implements OnChanges {
     }
   }
 
-  onClear() {
-    this.hidden = true;
+  onToggleVisibility() {
+    this.visible = !this.visible;
   }
 }

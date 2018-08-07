@@ -25,8 +25,8 @@ import {ActivatedRoute, Router} from '@angular/router';
     </style>
 
     <div class="app-container" fxLayout="column">
-      <mat-toolbar class="app-toolbar" color="accent">
-        <a routerLink='/' class="title-link">Målfrid</a>
+      <mat-toolbar class="app-toolbar">
+        <img src="assets/favicon-32x32.png">&nbsp;<a routerLink='/' class="title-link">Målfrid</a>
         <span fxFlex></span>
         <span class="user">{{ name }}&nbsp;</span>
         <!-- Logon/Logoff-->

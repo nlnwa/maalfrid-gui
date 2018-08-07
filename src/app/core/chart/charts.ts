@@ -1,6 +1,6 @@
 declare let d3, nv: any;
 
-const dateFormat = (unix) => d3.time.format('%e.%m.%Y')(new Date(unix * 1000));
+const formatDate = (unix) => d3.time.format('%e.%m.%Y')(new Date(unix * 1000));
 const noData = 'Ingen data tilgjengelig';
 
 const pieChart: nv.PieChart | any = {
@@ -25,14 +25,17 @@ const multibarChart: nv.MultiBarChart | any = {
   x: (d) => d[0],
   y: (d) => d[1],
   xAxis: {
-    axisLabel: 'Innhøsting',
-    tickFormat: dateFormat,
+    axisLabel: '',
+    tickFormat: (d) => typeof d === 'string' ? d : formatDate(d),
     axisLabelDistance: 10,
   },
   yAxis: {
     axisLabel: 'Antall tekster',
     tickFormat: (d) => d3.format(',f')(d),
     axisLabelDistance: 12,
+  },
+  margin: {
+    left: 100,
   },
   noData,
 };
@@ -44,8 +47,8 @@ const stackedAreaChart: nv.StackedAreaChart | any = {
   x: (d) => d[0],
   y: (d) => d[1],
   xAxis: {
-    axisLabel: 'Innhøsting',
-    tickFormat: dateFormat,
+    axisLabel: '',
+    tickFormat: formatDate,
     axisLabelDistance: 12,
   },
   yAxis: {
