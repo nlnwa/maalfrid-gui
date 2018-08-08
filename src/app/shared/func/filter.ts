@@ -62,13 +62,17 @@ function shortTextCondition(): Predicate {
   return (e: AggregateText) => e.wordCount <= 3500;
 }
 
+function mediaType(contentType: string): string {
+  return contentType.split(';')[0];
+}
+
 // establish domain/range of fields in dataset
 function dominate(data) {
-  if (data && data.length === 0) {
+  if (!data || data.length === 0) {
     return null;
   }
   const domain = data.reduce((acc: AggregateText | any, curr: AggregateText) => {
-      acc.contentType.add(curr.contentType.split(';')[0]);
+      acc.contentType.add(mediaType(curr.contentType));
       acc.language.add(curr.language);
       acc.discoveryPath.add(curr.discoveryPath || '');
       acc.requestedUri.add(domainOf(curr.requestedUri));
@@ -105,7 +109,10 @@ function predicatesFromFilters(filters): Predicate[] {
     if (!value || (value as any[]).length === 0) {
       continue;
     }
-    predicates.push(predicateFromFilter(name, value));
+    const predicate = predicateFromFilter(name, value);
+    if (predicate) {
+      predicates.push(predicate);
+    }
   }
   return predicates;
 }
@@ -127,8 +134,8 @@ function predicateFromFilter(name, value): Predicate {
     case 'wordCount':
       return rangeCondition(value, name);
     default:
-      console.log('unknown filter', name, value);
-      return trueCondition();
+      console.log('unhandled filter', name, value);
+      return;
   }
 }
 

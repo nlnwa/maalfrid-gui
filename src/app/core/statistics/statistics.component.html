@@ -1,4 +1,4 @@
-<mat-spinner [strokeWidth]="2" color="warn" *ngIf="loading" class="data-loader"></mat-spinner>
+<mat-spinner [strokeWidth]="2" color="warn" *ngIf="loading$ | async" class="data-loader"></mat-spinner>
 <section fxLayout="row">
   <div class="column-left" fxFlex="15%">
     <app-entity-list fxFlex="grow" (rowClick)="onEntitySelect($event)"></app-entity-list>
@@ -22,6 +22,7 @@
     <app-filter fxFlex="grow"
                 [domain]="domain$ | async"
                 [filter]="filter$ | async"
-                (change)="onFilterChange($event)"></app-filter>
+                (change)="onFilterChange($event)"
+                (save)="onFilterSave($event)"></app-filter>
   </div>
 </section>

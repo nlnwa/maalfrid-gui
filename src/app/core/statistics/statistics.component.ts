@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 
-import {BehaviorSubject, combineLatest, from, merge, Observable, of, Subject} from 'rxjs';
-import {bufferWhen, catchError, filter, finalize, flatMap, map, mergeMap, share, shareReplay, switchMap, tap} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, forkJoin, from, Observable, of, Subject} from 'rxjs';
+import {bufferWhen, catchError, exhaustMap, filter, finalize, flatMap, map, mergeMap, share, tap} from 'rxjs/operators';
 
 import {MaalfridService} from '../maalfrid-service/maalfrid.service';
 import {CrawlJob, Entity, Seed} from '../../shared/models/config.model';
@@ -19,28 +19,26 @@ import * as moment from 'moment';
 })
 export class StatisticsComponent {
   private entity = new Subject<Entity>();
-  private seeds = new Subject<Seed[]>();
+  private seeds = new BehaviorSubject<Seed[]>([]);
   private interval = new Subject<Interval>();
   private granularity = new Subject<string>();
   private text = new Subject<string>();
   private data = new BehaviorSubject<AggregateText[]>([]);
+  private domain = new Subject<object>();
   private filter = new Subject<any>();
   private filteredData = new Subject<AggregateText[]>();
   private job: CrawlJob;
 
-  loading = false;
+  loading = new Subject<boolean>();
+  loading$ = this.loading.asObservable();
 
   granularity$ = this.granularity.asObservable();
   text$ = this.text.asObservable();
 
-  domain$ = this.data.pipe(
-    map((data) => dominate(data)),
-    tap(() => {
-      // set filter to default values
-      this.filter.next({language: ['NOB', 'NNO']});
-    })
+  domain$ = this.domain.pipe(
+    map((data) => dominate(data))
   );
-
+  filter$ = this.filter.asObservable();
   filteredData$ = this.filteredData.pipe(
     share(),
   );
@@ -49,7 +47,7 @@ export class StatisticsComponent {
   seeds$ = this.seeds.asObservable();
   interval$ = this.interval.asObservable();
   seedsAndInterval$ = combineLatest(this.seeds$, this.interval$).pipe(
-    shareReplay(1),
+    share(),
   );
 
   reset$ = this.seedsAndInterval$.pipe(
@@ -59,18 +57,31 @@ export class StatisticsComponent {
 
   fulfillment$ = this.seedsAndInterval$.pipe(
     filter(([seeds, interval]) => this.isFulfilled(seeds, interval)),
-    tap(() => this.loading = true),
-    switchMap(([seeds, interval]) => this.fetchData(seeds, interval)),
-    tap(() => this.loading = false),
+    tap(() => this.loading.next(true)),
+    exhaustMap(([seeds, interval]) => {
+      return forkJoin(
+        this.fetchData(seeds, interval).pipe(
+          tap((_) => this.domain.next(_)),
+        ),
+        this.maalfridService.getFilter(seeds));
+    }),
+    tap(() => this.loading.next(false)),
   );
 
-  filter$ = this.filter.pipe(
-    tap((_) => this.onFilterChange(_))
-  );
 
   constructor(private maalfridService: MaalfridService) {
     // fetch data when preconditions is fulfilled
-    merge(this.fulfillment$, this.reset$).subscribe(_ => this.data.next(_));
+    this.fulfillment$.subscribe(([data, _]) => {
+      this.data.next(data);
+      this.filter.next(_['filter']);
+      this.onFilterChange(_['filter']);
+    });
+    // reset when preconditions is not fulfilled
+    this.reset$.subscribe(_ => {
+      this.data.next([]);
+      this.domain.next(null);
+      this.filteredData.next([]);
+    });
   }
 
   onFilterChange(_: object) {
@@ -83,6 +94,16 @@ export class StatisticsComponent {
       // filter data by combining predicates
       this.filteredData.next(this.data.value.filter(and(predicates)));
     }
+  }
+
+  onFilterSave(_: object) {
+    const seeds = this.seeds.value;
+    if (seeds.length > 1) {
+      console.log('cannot save filter for multiple seeds');
+      return;
+    }
+    const seed = seeds[0];
+    this.maalfridService.saveFilter(seed, _).subscribe();
   }
 
   onGranularityChange(granularity: string) {
@@ -137,16 +158,7 @@ export class StatisticsComponent {
 
     return from(seeds).pipe(
       mergeMap((seed) =>
-        this.maalfridService.getExecutions({
-          seed_id: seed.id,
-          job_id: this.job ? this.job.id : '',
-          start_time: interval.start
-            .startOf('day')
-            .toJSON(),
-          end_time: interval.end
-            .startOf('day')
-            .toJSON(),
-        })),
+        this.maalfridService.getExecutions(seed, interval, this.job)),
       finalize(() => complete.next()),
       flatMap(_ => _),
       bufferWhen(() => complete$),
