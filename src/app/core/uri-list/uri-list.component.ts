@@ -103,13 +103,16 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngOnInit() {
     // this.dataSource.paginator = this.paginator;
+    this.onToggleVisibility();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.texts) {
+    if (changes.data) {
       if (this.data) {
         this.dataSource.data = this.data;
         this.visible = this.data.length > 0 ? true : false;
+      } else {
+        this.visible = false;
       }
     }
   }

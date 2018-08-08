@@ -47,6 +47,9 @@ export class FilterComponent {
   @Output()
   change: EventEmitter<object> = new EventEmitter();
 
+  @Output()
+  save: EventEmitter<object> = new EventEmitter();
+
   /**
    * @return {object} new instance of default slider configuration
    */
@@ -101,6 +104,10 @@ export class FilterComponent {
     this.disabled = isDisabled;
   }
 
+  onSave() {
+    this.save.emit(this.transformFilter(this.filterModel));
+  }
+
   /**
    * Toggle filter bypass. Triggered by button click.
    */
@@ -121,17 +128,7 @@ export class FilterComponent {
   }
 
   onFilterChange() {
-    // only emit filters not equal to domain
-    const filters = Object.entries(this.filterModel).reduce((acc: any, [name, value]) => {
-      if (this.filterModel[name].length === this._domain[name].length
-        && this._domain[name].every((v, index) => v === value[index])) {
-        return acc;
-      } else {
-        acc[name] = this.filterModel[name];
-        return acc;
-      }
-    }, {});
-    this.change.emit(filters);
+    this.change.emit(this.transformFilter(this.filterModel));
   }
 
   /**
@@ -184,6 +181,25 @@ export class FilterComponent {
   private recreateSliders() {
     this.sliders$.next(null); // remove sliders
     setTimeout(() => this.sliders$.next(this.sliders)); // recreate sliders
+  }
+
+  /**
+   * Transform filters by removing those with values matching domain values
+   *
+   * @param filter {object}
+   */
+  private transformFilter(filter: object) {
+    return Object.entries(filter).reduce((acc: any, [name, value]) => {
+      if (filter[name].length === this._domain[name].length
+        && this._domain[name].every((v, index) => v === value[index])) {
+        return acc;
+      } else if (filter[name].length === 0) {
+        return acc;
+      } else {
+        acc[name] = filter[name];
+        return acc;
+      }
+    }, {});
   }
 
   /*

@@ -3,6 +3,9 @@
     <mat-icon class="icon-header">adjust</mat-icon>&nbsp;
     Filter
     <span fxFlex></span>
+    <button mat-icon-button (click)="onSave()">
+      <mat-icon>save</mat-icon>
+    </button>
     <button mat-icon-button (click)="onToggleBypass()">
       <mat-icon>{{ _bypass ? 'visibility_off' : 'visibility' }}</mat-icon>
     </button>
