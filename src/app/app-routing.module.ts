@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {StatisticsComponent} from './core/statistics/statistics.component';
+import {StatisticsComponent} from './core/containers/statistics/statistics.component';
 import {HomeComponent} from './home/home.component';
 import {AuthGuard} from './auth';
 import {Role} from './shared/models/config.model';

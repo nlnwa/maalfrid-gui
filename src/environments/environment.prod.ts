@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  version: require('../../package.json').version,
+  version: '',
   configUrl: '/maalfrid/assets/config/environment.json',
   apiUrl: '/maalfrid/api',
   apiGatewayUrl: '/api',

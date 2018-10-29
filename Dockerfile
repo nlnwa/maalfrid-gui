@@ -2,13 +2,18 @@ FROM node:8-alpine
 
 ARG BASE_HREF=/maalfrid
 ARG DEPLOY_URL=/maalfrid
+ARG VERSION
+
+RUN apk add --update --no-cache git
 
 COPY package.json yarn.lock /usr/src/app/
 WORKDIR /usr/src/app
 RUN yarn install
 
 COPY . .
-RUN node_modules/@angular/cli/bin/ng build --configuration=production
+RUN VERSION=${VERSION:-$(git describe --tags)} \
+&& sed -i "s/version: ''/version: '${VERSION}'/" src/environments/*.ts \
+&& node_modules/@angular/cli/bin/ng build --configuration=production
 
 
 FROM nginx:alpine

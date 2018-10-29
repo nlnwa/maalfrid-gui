@@ -1,5 +1,5 @@
-export interface Reply {
-  value: any;
+export interface Reply<T> {
+  value: T;
 }
 
 export interface MaalfridReply {
@@ -77,4 +77,9 @@ export interface Statistic {
 export interface ExecutionStatistic {
   id: string;
   stats: Statistic[];
+}
+
+export interface Filter {
+  name: string;
+  value: any;
 }
