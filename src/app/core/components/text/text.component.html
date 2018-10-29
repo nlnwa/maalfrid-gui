@@ -1,0 +1,42 @@
+<mat-toolbar class="app-toolbar">
+  <mat-icon class="icon-header">comment</mat-icon>&nbsp;
+  Tekst
+  <span fxFlex></span>
+  <button mat-icon-button
+          [attr.disabled]="visible ? null : ''" (click)="onIdentifyLanguage(textArea.value)">
+    <mat-icon>translate</mat-icon>
+  </button>
+  <a mat-icon-button
+     [attr.disabled]="visible ? null : ''" [href]="'https://translate.google.com/?sl=auto#auto/no/' + textArea.value"
+     target="_blank">
+    <mat-icon>g_translate</mat-icon>
+  </a>
+  <button mat-icon-button (click)="onToggleVisibility()">
+    <mat-icon>{{ visible ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </button>
+</mat-toolbar>
+
+<div fxLayout="row" fxLayoutGap="12px" [fxShow]="visible">
+
+  <mat-form-field class="text-form-field" fxFlex>
+    <textarea class="text" matInput #textArea [ngModel]="text"></textarea>
+  </mat-form-field>
+
+  <mat-table fxFlex="20%" [dataSource]="nominations">
+    <ng-container matColumnDef="code">
+      <mat-header-cell class="narrow" *matHeaderCellDef>Språkkode</mat-header-cell>
+      <mat-cell class="narrow" *matCellDef="let row"><a href="https://iso639-3.sil.org/code/{{row.code | lowercase}}"
+                                                        target="_blank">{{row.code}}</a></mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="count">
+      <mat-header-cell class="narrow" *matHeaderCellDef>Sannsynlighet</mat-header-cell>
+      <mat-cell class="narrow" *matCellDef="let row">{{row.count}}</mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+
+  </mat-table>
+
+</div>
