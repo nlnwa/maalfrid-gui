@@ -137,5 +137,8 @@
       }
     }
   },
-  "defaultProject": "maalfrid-gui"
+  "defaultProject": "maalfrid-gui",
+  "cli": {
+    "packageManager": "yarn"
+  }
 }
