@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from '@angular/router';
 import {Observable, of} from 'rxjs';
 
-import {Role} from '../shared/models/config.model';
+import {Role} from '../core/models/config.model';
 import {RoleService} from './role.service';
 
 @Injectable()

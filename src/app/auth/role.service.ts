@@ -1,6 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {Role, RoleList} from '../shared/models/config.model';
+import {Role, RoleList} from '../core/models/config.model';
 import {AppConfig} from '../app.config';
 
 @Injectable()

@@ -1,9 +1,9 @@
 {
   "/maalfrid/api": {
     "target": {
-      "host": "veidemann.local",
-      "protocol": "https:",
-      "port": 443
+      "host": "localhost",
+      "protocol": "http:",
+      "port": 3010
     },
     "secure": false,
     "changeOrigin": true,

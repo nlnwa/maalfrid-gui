@@ -1,5 +1,5 @@
 import {Component, ChangeDetectionStrategy} from '@angular/core';
-import {AuthService} from '../auth/auth.service';
+import {AuthService} from '../auth';
 import {environment} from '../../environments/environment';
 
 @Component({

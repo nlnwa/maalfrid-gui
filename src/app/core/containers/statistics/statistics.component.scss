@@ -1,0 +1,25 @@
+@import url("https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.css");
+
+section {
+  height: 100%;
+}
+
+.column-left {
+  min-width: 15%;
+}
+
+.column-center {
+  overflow-y: auto;
+}
+
+.column-right {
+  min-width: 30%;
+  overflow-y: auto;
+}
+
+.data-loader {
+  bottom: 50%;
+  left: 50%;
+  position: absolute;
+  z-index: 100;
+}

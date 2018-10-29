@@ -1,0 +1,18 @@
+.container {
+  transform: translateY(15px);
+}
+
+.slider {
+  margin-left: 1rem;
+  margin-right: 1rem;
+  transform: translateY(-15px);
+}
+
+.checkbox {
+  margin-left: 1rem;
+}
+
+label {
+  min-width: 5rem;
+
+}

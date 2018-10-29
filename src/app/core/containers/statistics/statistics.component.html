@@ -1,0 +1,59 @@
+<mat-spinner
+  [strokeWidth]="2"
+  color="warn"
+  *ngIf="loading$ | async"
+  class="data-loader"></mat-spinner>
+<section fxLayout="row">
+
+  <div class="column-left" fxFlex>
+    <app-entity-list
+      (rowClick)="selectedEntity.next($event)"
+      [entities]="entities$ | async"></app-entity-list>
+  </div>
+
+  <div class="column-center" fxFlex="grow" fxLayout="column">
+    <app-chart
+      fxFlex
+      [granularity]="granularity$ | async"
+      [data]="filteredData$ | async"></app-chart>
+    <app-uri-list
+      fxFlex (text)="onRequestText($event)"
+      [data]="filteredData$ | async"></app-uri-list>
+    <app-text
+      fxFlex
+      [text]="text$ | async"></app-text>
+    <span fxFlex="grow"></span>
+  </div>
+
+  <div class="column-right" fxFlex fxLayout="column">
+    <app-seed-list
+      fxFlex
+      (rowClick)="selectedSeed.next($event)"
+      [seeds]="seeds$ | async"></app-seed-list>
+    <app-interval
+      fxFlex
+      (granularity)="granularity.next($event)"
+      (change)="interval.next($event)"></app-interval>
+    <app-filter-set
+      fxFlex
+      [filterSet]="globalFilterSet$ | async"
+      (rowClick)="globalFilters.next($event)"></app-filter-set>
+    <app-filter-set-list
+      fxFlex
+      [filterSets]="filterSets$ | async"
+      (rowClick)="filterSet.next($event)"></app-filter-set-list>
+    <app-filter-set
+      #seedFilterSet
+      fxFlex
+      [filterSet]="filterSet$ | async"
+      (rowClick)="seedFilters.next($event)"></app-filter-set>
+    <app-filter
+      fxFlex="grow"
+      #immediateFilter
+      [domain]="domain$ | async"
+      (filterChange)="immediateFilters.next($event)"
+      (setSeedFilter)="seedFilterSet.addFilters(immediateFilter.getFilters())"
+    ></app-filter>
+  </div>
+
+</section>

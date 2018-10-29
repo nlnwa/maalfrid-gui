@@ -1,0 +1,82 @@
+<mat-toolbar class="app-toolbar stat-toolbar" color="accent">
+  <mat-icon>poll</mat-icon>&nbsp;Statistikk
+  <span fxFlex></span>
+</mat-toolbar>
+
+<div style="width: 100%;" fxLayout="column">
+  <div fxFlex class="pie-charts-container" fxLayout="row">
+    <div class="pie-chart-container" fxFlex="33%" fxLayout="column">
+      <mat-toolbar class="app-toolbar">
+        <span fxFlex>Alle tekster</span>
+        <span class="stat-count">{{nrOfTexts}}</span>
+      </mat-toolbar>
+      <div class="pie-chart" fxFlex="grow">
+        <ngx-charts-pie-chart
+          [animations]="false"
+          [labels]="true"
+          [customColors]="customColors"
+          [doughnut]="doughnut"
+          [results]="allTextData$ | async"></ngx-charts-pie-chart>
+      </div>
+    </div>
+
+    <mat-divider [vertical]="true"></mat-divider>
+
+    <div class="pie-chart-container" fxFlex="33%" fxLayout="column">
+      <mat-toolbar class="app-toolbar">
+        <span fxFlex>Korte tekster</span>
+        <span class="stat-count">{{nrOfShortTexts}}</span>
+      </mat-toolbar>
+      <div class="pie-chart" fxFlex="grow">
+        <ngx-charts-pie-chart
+          [animations]="false"
+          [labels]="true"
+          [customColors]="customColors"
+          [doughnut]="doughnut"
+          [results]="shortTextData$ | async"></ngx-charts-pie-chart>
+      </div>
+    </div>
+
+    <mat-divider [vertical]="true"></mat-divider>
+
+    <div class="pie-chart-container" fxFlex="33%" fxLayout="column">
+      <mat-toolbar class="app-toolbar">
+        <span fxFlex>Lange tekster</span>
+        <span class="stat-count">{{nrOfLongTexts}}</span>
+      </mat-toolbar>
+
+      <div class="pie-chart" fxFlex="grow">
+        <ngx-charts-pie-chart
+          [animations]="false"
+          [labels]="true"
+          [customColors]="customColors"
+          [doughnut]="doughnut"
+          [results]="longTextData$ | async"></ngx-charts-pie-chart>
+      </div>
+    </div>
+  </div>
+
+  <div fxFlex="grow" class="bar-chart-container" fxLayout="column">
+    <mat-toolbar class="app-toolbar">Per innhøsting
+      <span fxFlex></span>
+      <mat-button-toggle-group value="multiBar" (change)="onChartToggle($event)">
+        <mat-button-toggle value="multiBar">
+          <mat-icon>equalizer</mat-icon>
+        </mat-button-toggle>
+        <mat-button-toggle value="stackedArea">
+          <mat-icon>show_chart</mat-icon>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </mat-toolbar>
+    <div class="bar-chart" fxFlex="grow">
+      <ngx-charts-bar-vertical-stacked
+        [xAxis]="true"
+        [yAxis]="true"
+        [legend]="true"
+        [animations]="false"
+        legendTitle="Språk"
+        [customColors]="customColors"
+        [results]="perExecutionData$ | async"></ngx-charts-bar-vertical-stacked>
+    </div>
+  </div>
+</div>

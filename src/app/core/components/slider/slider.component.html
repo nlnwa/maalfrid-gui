@@ -1,0 +1,23 @@
+<div class="container" fxLayout="row">
+  <label fxFlex>{{ label }}</label>
+  <app-nouislider
+    fxFlex="grow"
+    class="slider"
+    #slider
+    [keyboard]="keyboard"
+    [(ngModel)]="model"
+    [step]="step"
+    [pageSteps]="pageSteps"
+    [connect]="connect"
+    [range]="range"
+    [tooltips]="tooltips"
+    (change)="onChange(slider.value, checkbox.checked)"
+    [attr.disabled]="disabled ? '' : null"></app-nouislider>
+  <mat-checkbox
+    fxFlex
+    #checkbox
+    class="checkbox"
+    color="warn"
+    matTooltip="Exclusive"
+    (change)="onChange(slider.value, checkbox.checked)"></mat-checkbox>
+</div>

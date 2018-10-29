@@ -6,11 +6,20 @@
  */
 onmessage = onMessage;
 
+onerror = onError;
+
+function onError(error) {
+  console.error(error);
+}
+
 function onMessage(event) {
   postMessage(processData(event.data));
 }
 
 function processData(data) {
+  if (data.length === 0) {
+    return data;
+  }
   const languages = Array.from(new Set(data.map(_ => _.language)));
 
   // group data by end time
@@ -25,6 +34,7 @@ function processData(data) {
     return acc;
   }, {});
 
+
   // insert dummy entry for languages not present in set of languages for a date
   dates.forEach((date) => {
     languages.forEach((language) => {
@@ -32,6 +42,10 @@ function processData(data) {
     });
   });
 
+  const result = Object.entries(byEndTimeByLanguage).map(([name, series]) => ({name, series}));
+  result.sort((a, b) => a.name < b.name);
+  return result;
+  /*
   // transform data per language
   return languages.reduce((acc, language) => {
     acc[language] = dates.map((date) => {
@@ -39,6 +53,7 @@ function processData(data) {
     });
     return acc;
   }, {});
+  */
 }
 
 function toUnixTime(dateString) {
