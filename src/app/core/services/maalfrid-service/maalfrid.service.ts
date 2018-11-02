@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {createQueryParams} from '../../../shared/http/util';
 import {AppConfig} from '../../../app.config';
-import {AggregateText, Filter, MaalfridReply, Reply} from '../../../shared/models/maalfrid.model';
+import {AggregateText, Filter, FilterSet, MaalfridReply, Reply} from '../../../shared/models/maalfrid.model';
 import {CrawlJob, Entity, Seed} from '../../../shared/models/config.model';
 import {ListReply} from '../../../shared/models/controller.model';
 
@@ -58,15 +58,15 @@ export class MaalfridService {
     return this.http.post(this.apiUrl + '/detect', {value: text});
   }
 
-  getFilter(seed: Seed): Observable<Reply<Filter[]>> {
-    const params = createQueryParams({seed_id: seed.id});
-    return this.http.get<Reply<Filter[]>>(this.apiUrl + '/filter', {params})
+  getFilter(id: string): Observable<Reply<FilterSet>> {
+    const params = createQueryParams({id});
+    return this.http.get<Reply<FilterSet>>(this.apiUrl + '/filter', {params})
       .pipe(
         map((reply) => reply.value || {filter: this.defaultFilter}),
       );
   }
 
-  saveFilter(seed: Seed, filter: Filter[]): Observable<any> {
-    return this.http.post(this.apiUrl + '/filter', {seed_id: seed.id, filter});
+  saveFilter(filterSet: FilterSet): Observable<any> {
+    return this.http.post(this.apiUrl + '/filter', filterSet);
   }
 }

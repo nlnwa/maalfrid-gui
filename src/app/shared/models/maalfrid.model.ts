@@ -79,7 +79,16 @@ export interface ExecutionStatistic {
   stats: Statistic[];
 }
 
+export interface FilterSet {
+  id: string;
+  valid_from: string;
+  valid_to: string;
+  value: Filter[];
+}
+
 export interface Filter {
   name: string;
   value: any;
+  exclusive: boolean;
+  field: string;
 }
