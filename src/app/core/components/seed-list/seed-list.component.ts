@@ -46,7 +46,7 @@ export class SeedListComponent {
 
   displayedColumns = ['name'];
   dataSource = new MatTableDataSource<Seed>([]);
-  selection = new SelectionModel<Seed>(true, []);
+  selection = new SelectionModel<Seed>(false, []);
 
   @Output()
   private rowClick = new EventEmitter<Seed[]>();

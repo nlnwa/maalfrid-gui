@@ -1,0 +1,8 @@
+<label class="slider-label">{{label}}</label>
+<nouislider fxFlex [(ngModel)]="slider"
+            [step]="step"
+            [connect]="connect"
+            [range]="range"
+            [tooltips]="tooltips"
+            (change)="onFilterChange($event)"
+            [attr.disabled]="disabled ? '' : null"></nouislider>

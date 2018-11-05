@@ -13,15 +13,7 @@
 
   <div fxLayout="column" class="app-container__padding">
     <mat-form-field *ngFor="let selection of selections$ | async">
-      <mat-select multiple
-                  [(ngModel)]="filterModel[selection]"
-                  [placeholder]="label[selection]"
-                  [disabled]="disabled"
-                  (selectionChange)="onFilterChange(selection, $event.value)">
-        <mat-option *ngFor="let option of getSelectOptions(selection)"
-                    [value]="option">{{option || emptyOption[selection]}}
-        </mat-option>
-      </mat-select>
+
     </mat-form-field>
 
     <div *ngFor="let slider of sliders$ | async" fxLayout="row" class="slider">

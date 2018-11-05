@@ -16,6 +16,8 @@ import { TextComponent } from './components/text/text.component';
 import { ChartComponent } from './components/chart/chart.component';
 import { FilterComponent } from './components/filter/filter.component';
 import {NouisliderModule} from 'ng2-nouislider';
+import { SliderFilterComponent } from './components/filter/slider/slider-filter/slider-filter.component';
+import { SelectFilterComponent } from './components/filter/slider/select-filter/select-filter.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +30,8 @@ import {NouisliderModule} from 'ng2-nouislider';
     TextComponent,
     ChartComponent,
     FilterComponent,
+    SliderFilterComponent,
+    SelectFilterComponent,
   ],
   imports: [
     SharedModule,

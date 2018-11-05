@@ -16,7 +16,7 @@ import {NvD3Component} from 'ng2-nvd3';
 import colorMaps from './colors';
 import * as moment from 'moment';
 import {AggregateText} from '../../../shared/models/maalfrid.model';
-import {WorkerService} from '../../worker/worker.service';
+import {WorkerService} from './worker.service';
 
 function timeFormat(granularity: string): string {
   switch (granularity) {

@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {MaalfridService} from '../maalfrid-service/maalfrid.service';
+import {MaalfridService} from '../../services/maalfrid-service/maalfrid.service';
 import {map} from 'rxjs/operators';
 
 @Component({

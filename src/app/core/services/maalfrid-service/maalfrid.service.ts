@@ -14,7 +14,7 @@ import {Interval} from '../../components/interval/interval.component';
 export class MaalfridService {
 
   private readonly apiUrl: string;
-  private readonly defaultFilter = [{name: 'language', value: ['NOB', 'NNO']}];
+  private readonly defaultFilter: Filter[] = [{name: 'language', value: ['NOB', 'NNO']}];
 
   constructor(private http: HttpClient, private appConfig: AppConfig) {
     this.apiUrl = this.appConfig.apiUrl;
@@ -58,9 +58,9 @@ export class MaalfridService {
     return this.http.post(this.apiUrl + '/detect', {value: text});
   }
 
-  getFilter(id: string): Observable<Reply<FilterSet>> {
+  getFilter(id: string): Observable<Filter[]> {
     const params = createQueryParams({id});
-    return this.http.get<Reply<FilterSet>>(this.apiUrl + '/filter', {params})
+    return this.http.get<Reply<Filter[]>>(this.apiUrl + '/filter', {params})
       .pipe(
         map((reply) => reply.value || {filter: this.defaultFilter}),
       );

@@ -11,13 +11,13 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import {MaalfridService} from '../maalfrid-service/maalfrid.service';
+import {MaalfridService} from '../../services/maalfrid-service/maalfrid.service';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import {Entity} from '../../shared/models/config.model';
+import {Entity} from '../../../shared/models/config.model';
 import {SelectionModel} from '@angular/cdk/collections';
 import {_isNumberValue} from '@angular/cdk/coercion';
-import {AggregateText} from '../../shared/models/maalfrid.model';
-import {RoleService} from '../../auth';
+import {AggregateText} from '../../../shared/models/maalfrid.model';
+import {RoleService} from '../../../auth';
 
 
 @Component({

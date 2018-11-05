@@ -6,7 +6,7 @@ import {bufferWhen, catchError, exhaustMap, filter, finalize, flatMap, map, merg
 import {MaalfridService} from '../../services/maalfrid-service/maalfrid.service';
 import {CrawlJob, Entity, Seed} from '../../../shared/models/config.model';
 import {Interval} from '../../components/interval/interval.component';
-import {AggregateText, Filter} from '../../../shared/models/maalfrid.model';
+import {AggregateText, Filter, FilterSet} from '../../../shared/models/maalfrid.model';
 import {dominate, predicatesFromFilters} from '../../func/filter';
 import {and} from '../../func';
 import * as moment from 'moment';
@@ -104,7 +104,11 @@ export class StatisticsComponent {
       return;
     }
     const seed = seeds[0];
-    this.maalfridService.saveFilter(seed, _).subscribe();
+    const filterSet: FilterSet = {
+      seedId: seed.id,
+      value: _
+    };
+    this.maalfridService.saveFilter(filterSet).subscribe();
   }
 
   onGranularityChange(granularity: string) {
