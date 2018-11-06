@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ControlValueAccessor} from '@angular/forms';
 
 @Component({
@@ -41,19 +41,20 @@ export class SliderFilterComponent implements ControlValueAccessor, OnInit {
   /**
    * @return {object} new instance of default slider configuration
    */
-  private static defaultSliderConfig() {
-    return {
-      connect: true,
-      start: [0, 100],
-      range: {
-        min: 0,
-        max: 100,
-      },
-      tooltips: [true, true],
-      step: 1,
-    };
-  }
-
-  private static defaultFilterModel() {
-    return [0, 0]
-  }
+  // private static defaultSliderConfig() {
+  //   return {
+  //     connect: true,
+  //     start: [0, 100],
+  //     range: {
+  //       min: 0,
+  //       max: 100,
+  //     },
+  //     tooltips: [true, true],
+  //     step: 1,
+  //   };
+  // }
+  //
+  // private static defaultFilterModel() {
+  //   return [0, 0]
+  // }
+}

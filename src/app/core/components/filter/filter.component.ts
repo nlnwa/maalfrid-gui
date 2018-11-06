@@ -50,37 +50,6 @@ export class FilterComponent {
   @Output()
   save: EventEmitter<object> = new EventEmitter();
 
-  /**
-   * @return {object} new instance of default slider configuration
-   */
-  private static defaultSliderConfig() {
-    return {
-      connect: true,
-      start: [0, 100],
-      range: {
-        min: 0,
-        max: 100,
-      },
-      tooltips: [true, true],
-      step: 1,
-    };
-  }
-
-
-  private static defaultFilterModel() {
-    return {
-      language: [],
-      contentType: [],
-      discoveryPath: [],
-      requestedUri: [],
-      lix: [0, 0],
-      characterCount: [0, 0],
-      sentenceCount: [0, 0],
-      longWordCount: [0, 0],
-      wordCount: [0, 0],
-    };
-  }
-
   constructor() {}
 
   @Input()
