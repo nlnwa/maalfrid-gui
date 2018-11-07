@@ -22,6 +22,11 @@ export class TextComponent implements OnChanges {
   constructor(private maalfridService: MaalfridService, private elementRef: ElementRef,
               private changeDetectorRef: ChangeDetectorRef) { }
 
+
+  get visibilityIcon() {
+    return this.visible ? 'expand_less' : 'expand_more';
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     if (this.text) {
       if (!this.visible) {

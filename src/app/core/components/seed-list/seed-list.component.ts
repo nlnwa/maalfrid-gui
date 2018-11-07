@@ -1,6 +1,5 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {Entity, Seed} from '../../../shared/models/config.model';
-import {MaalfridService} from '../../services/maalfrid-service/maalfrid.service';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {Seed} from '../../../shared/models/config.model';
 import {MatTableDataSource} from '@angular/material';
 import {SelectionModel} from '@angular/cdk/collections';
 
@@ -41,38 +40,31 @@ import {SelectionModel} from '@angular/cdk/collections';
     </section>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SeedListComponent {
-
-
+export class SeedListComponent implements OnChanges {
   displayedColumns = ['name'];
   dataSource = new MatTableDataSource<Seed>([]);
-  selection = new SelectionModel<Seed>(false, []);
+  selection = new SelectionModel<Seed>();
 
-  @Output()
-  private rowClick = new EventEmitter<Seed[]>();
-  private _entity: Entity;
-
-  constructor(private maalfridService: MaalfridService) {
-  }
 
   @Input()
-  set entity(entity: Entity) {
-    this._entity = entity;
-    this.selection.clear();
+  seeds: Seed[] = [];
 
-    if (!entity) {
-      this.dataSource.data = [];
-      this.onRowClick();
-      return;
+  @Output()
+  private rowClick = new EventEmitter<Seed>();
+
+  constructor() {
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.seeds && this.seeds) {
+      this.selection.clear();
+      this.dataSource.data = this.seeds;
+      if (this.seeds.length > 0) {
+        this.onRowClick(this.seeds[0]);
+      } else {
+        this.onRowClick(null);
+      }
     }
-
-    this.maalfridService.getSeeds(entity)
-      .subscribe((seeds) => {
-        this.dataSource.data = seeds;
-        if (seeds.length > 0) {
-          this.onRowClick(seeds[0]);
-        }
-      });
   }
 
   get url(): string {
@@ -83,10 +75,15 @@ export class SeedListComponent {
     return this.selection.hasValue() ? this.selection.selected[0] : null;
   }
 
-  onRowClick(seed?) {
+  onRowClick(seed: Seed) {
     if (seed) {
       this.selection.toggle(seed);
     }
-    this.rowClick.emit(this.selection.selected);
+    if (this.selection.hasValue()) {
+      this.rowClick.emit(seed);
+    } else {
+      this.rowClick.emit(null);
+    }
   }
+
 }

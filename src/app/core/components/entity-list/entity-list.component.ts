@@ -1,10 +1,19 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
-import {MaalfridService} from '../../services/maalfrid-service/maalfrid.service';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import {MatSort, MatTableDataSource} from '@angular/material';
 import {Entity} from '../../../shared/models/config.model';
 import {SelectionModel} from '@angular/cdk/collections';
 import {_isNumberValue} from '@angular/cdk/coercion';
-import {map} from 'rxjs/operators';
 
 
 @Component({
@@ -63,18 +72,22 @@ import {map} from 'rxjs/operators';
     </section>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EntityListComponent implements OnInit, AfterViewInit {
+export class EntityListComponent implements OnChanges, AfterViewInit {
   displayedColumns = ['name'];
   dataSource: MatTableDataSource<Entity>;
   selection = new SelectionModel<Entity>(false, []);
   showFilter = false;
+
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild('filter') filterInput: ElementRef;
+
+  @Input()
+  entities: Entity[];
 
   @Output()
   rowClick = new EventEmitter<Entity>();
 
-  constructor(private maalfridService: MaalfridService) {
+  constructor() {
     this.dataSource = new MatTableDataSource([]);
 
     this.dataSource.sortingDataAccessor = (data: Entity, sortHeaderId: string): string | number => {
@@ -128,15 +141,16 @@ export class EntityListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngOnInit(): void {
-    this.maalfridService.getEntities()
-      .pipe(map((entities) => entities.sort((a, b) => a.meta.name < b.meta.name ? -1 : (a.meta.name === b.meta.name ? 0 : 1))))
-      .subscribe((entities) => this.dataSource.data = entities);
-  }
-
   ngAfterViewInit() {
     this.sort.start = 'desc';
     this.dataSource.sort = this.sort;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.entities && this.entities) {
+      this.entities.sort((a, b) => a.meta.name < b.meta.name ? -1 : (a.meta.name === b.meta.name ? 0 : 1));
+      this.dataSource.data = this.entities;
+    }
   }
 }
 

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {createQueryParams} from '../../../shared/http/util';
 import {AppConfig} from '../../../app.config';
-import {AggregateText, Filter, FilterSet, MaalfridReply, Reply} from '../../../shared/models/maalfrid.model';
+import {AggregateText, FilterSet, MaalfridReply, Reply} from '../../../shared/models/maalfrid.model';
 import {CrawlJob, Entity, Seed} from '../../../shared/models/config.model';
 import {ListReply} from '../../../shared/models/controller.model';
 
@@ -14,7 +14,6 @@ import {Interval} from '../../components/interval/interval.component';
 export class MaalfridService {
 
   private readonly apiUrl: string;
-  private readonly defaultFilter: Filter[] = [{name: 'language', value: ['NOB', 'NNO']}];
 
   constructor(private http: HttpClient, private appConfig: AppConfig) {
     this.apiUrl = this.appConfig.apiUrl;
@@ -50,7 +49,7 @@ export class MaalfridService {
 
   getText(warcId: string): Observable<string> {
     const params = createQueryParams({warc_id: warcId});
-    return this.http.get<Reply>(this.apiUrl + '/text', {params})
+    return this.http.get<Reply<string>>(this.apiUrl + '/text', {params})
       .pipe(map((reply) => reply.value || ''));
   }
 
@@ -58,11 +57,18 @@ export class MaalfridService {
     return this.http.post(this.apiUrl + '/detect', {value: text});
   }
 
-  getFilter(id: string): Observable<Filter[]> {
-    const params = createQueryParams({id});
-    return this.http.get<Reply<Filter[]>>(this.apiUrl + '/filter', {params})
+  getFilterById(id: string): Observable<FilterSet> {
+    return this.http.get<Reply<FilterSet>>(this.apiUrl + '/filter/' + id)
       .pipe(
-        map((reply) => reply.value || {filter: this.defaultFilter}),
+        map((reply) => reply.value),
+      );
+  }
+
+  getFilterBySeedId(seedId: string): Observable<FilterSet[]> {
+    const params = createQueryParams({seed_id: seedId});
+    return this.http.get<Reply<FilterSet[]>>(this.apiUrl + '/filter', {params})
+      .pipe(
+        map((reply) => reply.value),
       );
   }
 

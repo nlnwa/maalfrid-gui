@@ -53,7 +53,7 @@ export class Interval {
 export class IntervalComponent implements OnInit {
 
   @Output()
-  intervalSet = new EventEmitter<Interval>();
+  change = new EventEmitter<Interval>();
 
   @Output()
   granularity = new EventEmitter<string>();
@@ -77,7 +77,7 @@ export class IntervalComponent implements OnInit {
   units = ['hour', 'day', 'week', 'month', 'year'];
 
   ngOnInit(): void {
-    this.intervalSet.emit(this.intervalModel);
+    this.change.emit(this.intervalModel);
     this.granularity.emit(this.defaultUnit);
   }
 
@@ -87,11 +87,11 @@ export class IntervalComponent implements OnInit {
 
   onStartDateChange(event: MatDatepickerInputEvent<Moment>) {
     this.intervalModel.start = event.value;
-    this.intervalSet.emit(this.intervalModel);
+    this.change.emit(this.intervalModel);
   }
 
   onEndDateChange(event: MatDatepickerInputEvent<Moment>) {
     this.intervalModel.end = event.value;
-    this.intervalSet.emit(this.intervalModel);
+    this.change.emit(this.intervalModel);
   }
 }

@@ -1,5 +1,5 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {Subject} from 'rxjs/internal/Subject';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {Filter, FilterSet} from '../../../shared/models/maalfrid.model';
 
 @Component({
   selector: 'app-filter',
@@ -7,7 +7,9 @@ import {Subject} from 'rxjs/internal/Subject';
   styleUrls: ['./filter.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FilterComponent {
+export class FilterComponent implements OnChanges {
+
+  private filterSet: FilterSet;
 
   // Norwegian translation of filter labels
   readonly label = {
@@ -28,21 +30,18 @@ export class FilterComponent {
     discoveryPath: 'Rot'
   };
 
-  // value domain of data
-  private _domain: object;
-  filterModel = [];
 
   // bypasses filter if true
-  _bypass = false;
+  bypass = false;
 
-  private sliders = ['lix', 'characterCount', 'sentenceCount', 'wordCount', 'longWordCount'];
-  private selections = ['language', 'contentType', 'discoveryPath', 'requestedUri'];
 
-  selections$ = new Subject<string[]>();
-  sliders$ = new Subject<string[]>();
-
-  sliderConfigs = {};
   disabled = false;
+
+  @Input()
+  domain: any;
+
+  @Input()
+  filter: any;
 
   @Output()
   change: EventEmitter<object> = new EventEmitter();
@@ -52,21 +51,20 @@ export class FilterComponent {
 
   constructor() {}
 
-  @Input()
-  set domain(domain: any) {
-    if (domain) {
-      this._domain = domain;
-      this.reset();
-    } else {
-      this._domain = undefined;
-      this.selections$.next(null);
-      this.sliders$.next(null);
-    }
+  get bypassIcon() {
+    return this.bypass ? 'visibility_off' : 'visibility';
   }
 
-  @Input()
-  set filter(obj: any) {
-    Object.assign(this.filterModel, obj);
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.domain) {
+      if (this.domain) {
+        this.reset();
+      } else {
+        this.domain = undefined;
+      }
+    } else if (changes.filter) {
+      Object.assign(this.filterModel, this.filter);
+    }
   }
 
   setDisabledState(isDisabled: boolean): void {
@@ -106,50 +104,9 @@ export class FilterComponent {
    * Called when domain is changed.
    */
   private reset() {
-    this.filterModel = {};
+    this.filterModel = [];
     this._bypass = false;
     this.setDisabledState(false);
-    this.resetSelections();
-    this.resetSliders();
-  }
-
-  private resetSelections() {
-    // Object.assign(this.filterModel, FilterComponent.defaultSelectionConfig());
-    this.selections.forEach((selection) => {
-      this.filterModel[selection] = [];
-    });
-    this.selections$.next(this.selections);
-  }
-
-  private resetSliders() {
-    this.sliders.forEach((slider) => {
-      this.filterModel[slider] = [this._domain[slider][0], this._domain[slider][1]];
-      this.initSliderConfig(slider);
-    });
-    this.recreateSliders();
-  }
-
-  /**
-   * Initialize configuration for named slider
-   *
-   * @param slider {string} name of slider to initialize
-   */
-  private initSliderConfig(slider) {
-    const config = FilterComponent.defaultSliderConfig();
-    const domain = this._domain[slider];
-    config.range.min = domain ? domain[0] : 0;
-    config.range.max = domain ? domain[1] : 100;
-    config.start = domain;
-    this.sliderConfigs[slider] = config;
-  }
-
-  /**
-   * a hack to recreate sliders every update because the ng2-nouislider component
-   * doesn't handle the way we are updating slider config
-   */
-  private recreateSliders() {
-    this.sliders$.next(null); // remove sliders
-    setTimeout(() => this.sliders$.next(this.sliders)); // recreate sliders
   }
 
   /**
@@ -169,6 +126,9 @@ export class FilterComponent {
         return acc;
       }
     }, {});
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
   }
 
   /*
