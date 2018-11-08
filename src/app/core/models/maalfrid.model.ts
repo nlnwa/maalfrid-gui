@@ -84,7 +84,7 @@ export interface FilterSet {
   seedId?: string;
   valid_from?: string;
   valid_to?: string;
-  value: Filter[];
+  filters: Filter[];
 }
 
 export interface Filter {

@@ -61,8 +61,8 @@ export class IntervalComponent implements OnInit {
   startView = 'year';
 
   intervalModel: Interval = {
-    start: moment().startOf('year'),
-    end: moment().endOf('month'),
+    start: null,
+    end: null,
   };
 
   unitLanguageMap = {

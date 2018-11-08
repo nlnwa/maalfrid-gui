@@ -1,6 +1,6 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import {Observable, Observer} from 'rxjs';
-import {AggregateText} from '../../../shared/models/maalfrid.model';
+import {AggregateText} from '../../models/maalfrid.model';
 
 @Injectable()
 export class WorkerService implements OnDestroy {

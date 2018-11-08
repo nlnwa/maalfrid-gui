@@ -13,10 +13,10 @@ import {
 } from '@angular/core';
 import {MaalfridService} from '../../services/maalfrid-service/maalfrid.service';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import {Entity} from '../../../shared/models/config.model';
+import {Entity} from '../../models/config.model';
 import {SelectionModel} from '@angular/cdk/collections';
 import {_isNumberValue} from '@angular/cdk/coercion';
-import {AggregateText} from '../../../shared/models/maalfrid.model';
+import {AggregateText} from '../../models/maalfrid.model';
 import {RoleService} from '../../../auth';
 
 

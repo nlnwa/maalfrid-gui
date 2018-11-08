@@ -2,11 +2,11 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {createQueryParams} from '../../../shared/http/util';
 import {AppConfig} from '../../../app.config';
-import {AggregateText, FilterSet, MaalfridReply, Reply} from '../../../shared/models/maalfrid.model';
-import {CrawlJob, Entity, Seed} from '../../../shared/models/config.model';
+import {AggregateText, FilterSet, MaalfridReply, Reply} from '../../models/maalfrid.model';
+import {CrawlJob, Entity, Seed} from '../../models/config.model';
 import {ListReply} from '../../../shared/models/controller.model';
 
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Interval} from '../../components/interval/interval.component';
 
@@ -24,13 +24,16 @@ export class MaalfridService {
       seed_id: seed.id,
       job_id: job ? job.id : '',
       start_time: interval.start
-        .startOf('day')
-        .toJSON(),
+        ? interval.start
+          .startOf('day')
+          .toJSON()
+        : '',
       end_time: interval.end
-        .startOf('day')
-        .toJSON(),
+        ? interval.end
+          .startOf('day')
+          .toJSON()
+        : '',
     });
-
     return this.http.get<MaalfridReply>(`${this.apiUrl}/executions`, {params})
       .pipe(map(reply => reply.value || []));
   }
@@ -41,6 +44,9 @@ export class MaalfridService {
   }
 
   getSeeds(entity: Entity): Observable<Seed[]> {
+    if (!entity) {
+      return of([]);
+    }
     const params = createQueryParams({entity_id: entity.id});
 
     return this.http.get<ListReply<Seed>>(this.apiUrl + '/seeds', {params})
@@ -64,8 +70,11 @@ export class MaalfridService {
       );
   }
 
-  getFilterBySeedId(seedId: string): Observable<FilterSet[]> {
-    const params = createQueryParams({seed_id: seedId});
+  getFilter(seed: Seed): Observable<FilterSet[]> {
+    if (!seed) {
+      return of([]);
+    }
+    const params = createQueryParams({seed_id: seed.id});
     return this.http.get<Reply<FilterSet[]>>(this.apiUrl + '/filter', {params})
       .pipe(
         map((reply) => reply.value),

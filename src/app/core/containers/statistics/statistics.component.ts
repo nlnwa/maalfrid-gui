@@ -1,12 +1,12 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 
-import {BehaviorSubject, combineLatest, forkJoin, Observable, of, Subject} from 'rxjs';
-import {catchError, exhaustMap, filter, map, share, take, tap} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
+import {catchError, exhaustMap, filter, map, share, tap} from 'rxjs/operators';
 
 import {MaalfridService} from '../../services/maalfrid-service/maalfrid.service';
-import {Entity, Seed} from '../../../shared/models/config.model';
+import {Entity, Seed} from '../../models/config.model';
 import {Interval} from '../../components/interval/interval.component';
-import {AggregateText, FilterSet} from '../../../shared/models/maalfrid.model';
+import {AggregateText, FilterSet} from '../../models/maalfrid.model';
 import {dominate, predicatesFromFilters} from '../../func/filter';
 import {and} from '../../func';
 import * as moment from 'moment';
@@ -27,11 +27,11 @@ export class StatisticsComponent implements OnInit {
   private granularity = new Subject<string>();
   granularity$ = this.granularity.asObservable();
 
-  private interval = new Subject<Interval>();
+  private interval = new BehaviorSubject<Interval>(new Interval());
   interval$ = this.interval.asObservable();
 
   private selectedSeed = new BehaviorSubject<Seed>(null);
-  selectedSeed$ = this.selectedSeed.asObservable();
+  selectedSeed$ = this.selectedSeed.asObservable().pipe(share());
 
   private text = new Subject<string>();
   text$ = this.text.asObservable();
@@ -39,8 +39,11 @@ export class StatisticsComponent implements OnInit {
   loading = new Subject<boolean>();
   loading$ = this.loading.asObservable().pipe();
 
-  private filter = new Subject<FilterSet>();
-  filter$ = this.filter.asObservable();
+  private filters = new Subject<FilterSet[]>();
+  filters$ = this.filters.asObservable();
+
+  private filterSet = new Subject<FilterSet>();
+  filterSet$ = this.filterSet.asObservable();
 
   private data = new BehaviorSubject<AggregateText[]>([]);
   private domain = new Subject<object>();
@@ -50,39 +53,29 @@ export class StatisticsComponent implements OnInit {
 
   filteredData$ = this.filteredData.pipe(share());
 
-  seedAndInterval$ = combineLatest(this.selectedSeed$, this.interval$).pipe(share());
-
-  fulfillment$ = this.seedAndInterval$.pipe(filter(([seed, interval]) => this.isFulfilled([seed, interval])));
-
-  reset$ = this.seedAndInterval$.pipe(filter(_ => !this.isFulfilled(_)));
-
-
-  loadDataAndFilter$ = this.fulfillment$.pipe(
+  loadDataAndFilter$ = combineLatest(this.selectedSeed$, this.interval$).pipe(
+    filter(([seed, _]) => !!seed),
     tap(() => this.loading.next(true)),
-    exhaustMap(([seed, interval]) => forkJoin(
-      this.maalfridService.getFilterBySeedId(seed.id).pipe(take(1)),
-      this.fetchData(seed, interval).pipe(
-        take(1),
-        tap((_) => this.domain.next(_)),
-      ),
-    )),
+    exhaustMap(seed => {
+        return this.fetchData(this.selectedSeed.value, this.interval.value).pipe(
+          tap((_) => this.domain.next(_)),
+        );
+      }
+    ),
     tap(() => this.loading.next(false)),
   );
 
 
   constructor(private maalfridService: MaalfridService) {
-    this.loadDataAndFilter$.subscribe(([seedFilter, data]) => {
+    this.loadDataAndFilter$.subscribe((data) => {
       this.data.next(data);
-      if (seedFilter[0]) {
-        this.filter.next(seedFilter[0]);
-        this.onFilterChange(seedFilter[0]);
-      } else {
-        this.onFilterChange(null);
-      }
+      this.filteredData.next(data);
     });
 
-    // reset when preconditions is not fulfilled
-    this.reset$.subscribe(_ => {
+    // reset when no seed is selected
+    this.selectedSeed$.pipe(
+      filter((seed) => !seed)
+    ).subscribe(_ => {
       this.data.next([]);
       this.domain.next(null);
       this.filteredData.next([]);
@@ -106,9 +99,7 @@ export class StatisticsComponent implements OnInit {
     }
   }
 
-  onFilterSave(_: object) {
-    const seed = this.selectedSeed.value;
-    const filterSet: FilterSet = {seedId: seed.id, value: []};
+  onFilterSave(filterSet: FilterSet) {
     this.maalfridService.saveFilter(filterSet).subscribe();
   }
 
@@ -120,32 +111,17 @@ export class StatisticsComponent implements OnInit {
       .subscribe(_ => this.text.next(_));
   }
 
-  onAllTextClick({code}) {
-    // TODO
-  }
-
-  onShortTextClick({code}) {
-    // TODO
-  }
-
-  onLongTextClick({code}) {
-    // TODO
-  }
-
-  onPerExecutionTextClick({code, time}) {
-    // TODO
-  }
-
   onEntitySelect(entity: Entity) {
-    if (entity) {
-      this.maalfridService.getSeeds(entity).subscribe(seeds => this.seeds.next(seeds));
-    } else {
-      this.seeds.next([]);
-    }
+    this.maalfridService.getSeeds(entity).subscribe(seeds => this.seeds.next(seeds));
   }
 
   onSeedSelect(seed: Seed) {
     this.selectedSeed.next(seed);
+    this.maalfridService.getFilter(seed).subscribe((filters) => this.filters.next(filters));
+  }
+
+  onFilterSetSelect(filterSet: FilterSet) {
+    this.filterSet.next(filterSet);
   }
 
   onIntervalChange(interval: Interval) {
@@ -155,8 +131,6 @@ export class StatisticsComponent implements OnInit {
   onGranularityChange(granularity: string) {
     this.granularity.next(granularity);
   }
-
-  private isFulfilled = ([seed, interval]) => seed && moment.isMoment(interval.start) && moment.isMoment(interval.end);
 
   private fetchData(seed: Seed, interval: Interval): Observable<AggregateText[]> {
     return this.maalfridService.getExecutions(seed, interval);

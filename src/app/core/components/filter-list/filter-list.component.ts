@@ -1,0 +1,97 @@
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {MatTableDataSource} from '@angular/material';
+
+import {SelectionModel} from '@angular/cdk/collections';
+import {FilterSet} from '../../models/maalfrid.model';
+
+
+@Component({
+  selector: 'app-filter-list',
+  template: `
+    <style>
+      section {
+        height: 100%;
+      }
+
+      .table {
+        height: 100%;
+        overflow-y: scroll;
+      }
+
+      .highlight {
+        background-color: #eee;
+      }
+    </style>
+    <section fxLayout="column">
+      <mat-toolbar class="app-toolbar" color="accent">
+        <mat-icon>business</mat-icon>&nbsp;Filtre
+      </mat-toolbar>
+
+
+      <mat-table class="table" [dataSource]="dataSource" matSort>
+
+        <ng-container matColumnDef="valid_from">
+          <mat-header-cell *matHeaderCellDef>Gyldig fra</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <span>{{ row.valid_from || "-" }}</span>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="valid_to">
+          <mat-header-cell *matHeaderCellDef>Gyldig til</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{ row.valid_to || "-" }}</mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+        <mat-row *matRowDef="let row; columns: displayedColumns"
+                 [ngClass]="{'highlight': selection.isSelected(row)}"
+                 (click)="onRowClick(row)">
+        </mat-row>
+      </mat-table>
+    </section>`,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class FilterListComponent implements OnChanges {
+  displayedColumns = ['valid_from', 'valid_to'];
+  dataSource: MatTableDataSource<FilterSet>;
+  selection = new SelectionModel<FilterSet>(false, []);
+
+  @Input()
+  filters: FilterSet[];
+
+  @Output()
+  rowClick = new EventEmitter<FilterSet>();
+
+  constructor() {
+    this.dataSource = new MatTableDataSource([]);
+  }
+
+  get name(): string {
+    return this.selected ? this.selected.valid_from : '';
+  }
+
+  get selected(): FilterSet {
+    return this.selection.hasValue() ? this.selection.selected[0] : null;
+  }
+
+  onRowClick(filterSet) {
+    this.selection.toggle(filterSet);
+    if (this.selection.hasValue()) {
+      this.rowClick.emit(filterSet);
+    } else {
+      this.rowClick.emit(null);
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.filters && this.filters) {
+      this.dataSource.data = this.filters;
+      if (this.filters.length > 0) {
+        this.onRowClick(this.filters[0]);
+      }
+    }
+  }
+}
+
+

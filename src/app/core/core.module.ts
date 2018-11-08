@@ -12,12 +12,13 @@ import {SharedModule} from '../shared/shared.module';
 import {NvD3Module} from 'ng2-nvd3';
 import 'd3';
 import 'nvd3';
-import { TextComponent } from './components/text/text.component';
-import { ChartComponent } from './components/chart/chart.component';
-import { FilterComponent } from './components/filter/filter.component';
+import {TextComponent} from './components/text/text.component';
+import {ChartComponent} from './components/chart/chart.component';
+import {FilterComponent} from './components/filter/filter.component';
 import {NouisliderModule} from 'ng2-nouislider';
-import { SliderFilterComponent } from './components/filter/slider/slider-filter/slider-filter.component';
-import { SelectFilterComponent } from './components/filter/slider/select-filter/select-filter.component';
+import {SliderFilterComponent} from './components/filter/slider-filter/slider-filter.component';
+import {SelectFilterComponent} from './components/filter/select-filter/select-filter.component';
+import {FilterListComponent} from './components/filter-list/filter-list.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { SelectFilterComponent } from './components/filter/slider/select-filter/
     SeedListComponent,
     StatisticsComponent,
     UriListComponent,
+    FilterListComponent,
     TextComponent,
     ChartComponent,
     FilterComponent,

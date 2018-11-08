@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {Filter, FilterSet} from '../../../shared/models/maalfrid.model';
+import {AggregateText, FilterSet} from '../../models/maalfrid.model';
 
 @Component({
   selector: 'app-filter',
@@ -8,8 +8,6 @@ import {Filter, FilterSet} from '../../../shared/models/maalfrid.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterComponent implements OnChanges {
-
-  private filterSet: FilterSet;
 
   // Norwegian translation of filter labels
   readonly label = {
@@ -38,20 +36,24 @@ export class FilterComponent implements OnChanges {
   disabled = false;
 
   @Input()
-  domain: any;
+  domain: AggregateText | any;
 
   @Input()
-  filter: any;
+  filterSet: FilterSet;
 
   @Output()
-  change: EventEmitter<object> = new EventEmitter();
+  change: EventEmitter<FilterSet> = new EventEmitter();
 
   @Output()
-  save: EventEmitter<object> = new EventEmitter();
+  save: EventEmitter<FilterSet> = new EventEmitter();
 
   constructor() {}
 
-  get bypassIcon() {
+  get show(): string {
+    return this.filterSet ? this.filterSet.filters.toString() : '';
+  }
+
+  get bypassIcon(): string {
     return this.bypass ? 'visibility_off' : 'visibility';
   }
 
@@ -63,7 +65,7 @@ export class FilterComponent implements OnChanges {
         this.domain = undefined;
       }
     } else if (changes.filter) {
-      Object.assign(this.filterModel, this.filter);
+      // Object.assign(this.filterModel, this.filter);
     }
   }
 
@@ -72,30 +74,20 @@ export class FilterComponent implements OnChanges {
   }
 
   onSave() {
-    this.save.emit(this.transformFilter(this.filterModel));
+    // this.save.emit(this.transformFilter(this.filterModel));
   }
 
   /**
    * Toggle filter bypass. Triggered by button click.
    */
   onToggleBypass() {
-    this._bypass = !this._bypass;
-    this.setDisabledState(this._bypass);
-    this._bypass ? this.change.emit(null) : this.onFilterChange();
-  }
-
-  /**
-   * Helper for getting options for a specific selection dropdown.
-   *
-   * @param selection {string} name of selection dropdown
-   * @return {Array} array of options
-   */
-  getSelectOptions(selection) {
-    return Array.from(this._domain[selection]).sort();
+    this.bypass = !this.bypass;
+    this.setDisabledState(this.bypass);
+    this.bypass ? this.change.emit(null) : this.onFilterChange();
   }
 
   onFilterChange() {
-    this.change.emit(this.transformFilter(this.filterModel));
+    // this.change.emit(this.transformFilter(this.filterModel));
   }
 
   /**
@@ -104,8 +96,8 @@ export class FilterComponent implements OnChanges {
    * Called when domain is changed.
    */
   private reset() {
-    this.filterModel = [];
-    this._bypass = false;
+    // this.filterModel = [];
+    this.bypass = false;
     this.setDisabledState(false);
   }
 
@@ -116,8 +108,8 @@ export class FilterComponent implements OnChanges {
    */
   private transformFilter(filter: object) {
     return Object.entries(filter).reduce((acc: any, [name, value]) => {
-      if (filter[name].length === this._domain[name].length
-        && this._domain[name].every((v, index) => v === value[index])) {
+      if (filter[name].length === this.domain[name].length
+        && this.domain[name].every((v, index) => v === value[index])) {
         return acc;
       } else if (filter[name].length === 0) {
         return acc;
@@ -126,9 +118,6 @@ export class FilterComponent implements OnChanges {
         return acc;
       }
     }, {});
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
   }
 
   /*

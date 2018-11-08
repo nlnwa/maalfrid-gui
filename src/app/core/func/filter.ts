@@ -1,5 +1,5 @@
 import {and, domainOf, or, Predicate, rangify} from './index';
-import {AggregateText} from '../../shared/models/maalfrid.model';
+import {AggregateText} from '../models/maalfrid.model';
 import * as moment from 'moment';
 
 function trueCondition(): Predicate {

@@ -19,9 +19,11 @@
     <app-text fxFlex [text]="text$ | async"></app-text>
   </div>
   <div class="column-right" fxFlex="20%" fxLayout="column">
+    <app-filter-list [filters]="filters$ | async"
+    (rowClick)="onFilterSetSelect($event)"></app-filter-list>
     <app-filter fxFlex="grow"
+                [filterSet]="filterSet$ | async"
                 [domain]="domain$ | async"
-                [filter]="filter$ | async"
                 (change)="onFilterChange($event)"
                 (save)="onFilterSave($event)"></app-filter>
   </div>

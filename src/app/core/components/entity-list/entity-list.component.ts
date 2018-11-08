@@ -11,7 +11,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {MatSort, MatTableDataSource} from '@angular/material';
-import {Entity} from '../../../shared/models/config.model';
+import {Entity} from '../../models/config.model';
 import {SelectionModel} from '@angular/cdk/collections';
 import {_isNumberValue} from '@angular/cdk/coercion';
 
