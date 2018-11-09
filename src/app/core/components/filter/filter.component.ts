@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {AggregateText, FilterSet} from '../../models/maalfrid.model';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-filter',
@@ -28,6 +29,13 @@ export class FilterComponent implements OnChanges {
     discoveryPath: 'Rot'
   };
 
+  characterCount = new Subject<any>();
+  language = new Subject<any>();
+
+  config = {
+    characterCount$: this.characterCount.asObservable(),
+    language$: this.language.asObservable()
+  };
 
   // bypasses filter if true
   bypass = false;
@@ -60,11 +68,20 @@ export class FilterComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.domain) {
       if (this.domain) {
-        this.reset();
+        const range = {
+          min: this.domain.characterCount[0],
+          max: this.domain.characterCount[1]
+        };
+        this.characterCount.next({
+          range,
+          start: [range.min, range.max]
+        });
       } else {
         this.domain = undefined;
       }
-    } else if (changes.filter) {
+    } else if (changes.filterSet) {
+      this.language.next(this.filterSet.filters[0].value);
+      console.log(this.filterSet);
       // Object.assign(this.filterModel, this.filter);
     }
   }

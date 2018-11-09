@@ -12,6 +12,7 @@
   </mat-toolbar>
 
   <div fxLayout="column" class="app-container__padding">
-    {{ show }}
+    <app-slider [config]="config.characterCount$ | async"></app-slider>
+    <app-select [config]="config.language$ | async"></app-select>
   </div>
 </section>

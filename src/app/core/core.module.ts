@@ -15,10 +15,11 @@ import 'nvd3';
 import {TextComponent} from './components/text/text.component';
 import {ChartComponent} from './components/chart/chart.component';
 import {FilterComponent} from './components/filter/filter.component';
-import {NouisliderModule} from 'ng2-nouislider';
-import {SliderFilterComponent} from './components/filter/slider-filter/slider-filter.component';
-import {SelectFilterComponent} from './components/filter/select-filter/select-filter.component';
+import {SliderComponent} from './components/slider/slider.component';
+import {SelectComponent} from './components/select/select.component';
 import {FilterListComponent} from './components/filter-list/filter-list.component';
+import {NouisliderModule} from '../nouislider/ng2-nouislider';
+
 
 @NgModule({
   declarations: [
@@ -32,8 +33,8 @@ import {FilterListComponent} from './components/filter-list/filter-list.componen
     TextComponent,
     ChartComponent,
     FilterComponent,
-    SliderFilterComponent,
-    SelectFilterComponent,
+    SliderComponent,
+    SelectComponent,
   ],
   imports: [
     SharedModule,

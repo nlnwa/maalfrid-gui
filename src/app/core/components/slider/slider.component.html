@@ -1,0 +1,10 @@
+<app-nouislider
+  [keyboard]="keyboard"
+  [(ngModel)]="model"
+  [step]="step"
+  [pageSteps]="pageSteps"
+  [connect]="connect"
+  [range]="range"
+  [tooltips]="tooltips"
+  (change)="onChange($event)"
+  [attr.disabled]="disabled ? '' : null"></app-nouislider>
