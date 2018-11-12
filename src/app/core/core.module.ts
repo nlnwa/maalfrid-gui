@@ -19,6 +19,7 @@ import {SliderComponent} from './components/slider/slider.component';
 import {SelectComponent} from './components/select/select.component';
 import {FilterListComponent} from './components/filter-list/filter-list.component';
 import {NouisliderModule} from '../nouislider/ng2-nouislider';
+import {FListComponent} from './components/f-list/f-list.component';
 
 
 @NgModule({
@@ -35,6 +36,7 @@ import {NouisliderModule} from '../nouislider/ng2-nouislider';
     FilterComponent,
     SliderComponent,
     SelectComponent,
+    FListComponent,
   ],
   imports: [
     SharedModule,

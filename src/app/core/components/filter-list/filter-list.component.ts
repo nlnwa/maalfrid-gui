@@ -15,7 +15,7 @@ import {FilterSet} from '../../models/maalfrid.model';
 
       .table {
         height: 100%;
-        overflow-y: scroll;
+        overflow-y: auto;
       }
 
       .highlight {
@@ -24,7 +24,7 @@ import {FilterSet} from '../../models/maalfrid.model';
     </style>
     <section fxLayout="column">
       <mat-toolbar class="app-toolbar" color="accent">
-        <mat-icon>business</mat-icon>&nbsp;Filtre
+        <mat-icon>business</mat-icon>&nbsp;Filtersett
       </mat-toolbar>
 
 
@@ -58,7 +58,7 @@ export class FilterListComponent implements OnChanges {
   selection = new SelectionModel<FilterSet>(false, []);
 
   @Input()
-  filters: FilterSet[];
+  filterSets: FilterSet[];
 
   @Output()
   rowClick = new EventEmitter<FilterSet>();
@@ -85,10 +85,10 @@ export class FilterListComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.filters && this.filters) {
-      this.dataSource.data = this.filters;
-      if (this.filters.length > 0) {
-        this.onRowClick(this.filters[0]);
+    if (changes.filterSets && this.filterSets) {
+      this.dataSource.data = this.filterSets;
+      if (this.filterSets.length > 0) {
+        this.onRowClick(this.filterSets[0]);
       }
     }
   }

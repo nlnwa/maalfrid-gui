@@ -1,30 +1,51 @@
-<mat-spinner [strokeWidth]="2" color="warn" *ngIf="loading$ | async" class="data-loader"></mat-spinner>
+<mat-spinner
+  [strokeWidth]="2"
+  color="warn"
+  *ngIf="loading$ | async"
+  class="data-loader"></mat-spinner>
 <section fxLayout="row">
   <div class="column-left" fxFlex="15%" fxLayout="column">
-    <app-interval (granularity)="onGranularityChange($event)" (change)="onIntervalChange($event)"></app-interval>
-    <app-entity-list fxFlex="grow" (rowClick)="onEntitySelect($event)" [entities]="entities$ | async"></app-entity-list>
+    <app-interval
+      fxFlex
+      (granularity)="onGranularityChange($event)"
+      (change)="onIntervalChange($event)"></app-interval>
+    <app-entity-list
+      fxFlex="grow"
+      (rowClick)="onEntitySelect($event)"
+      [entities]="entities$ | async"></app-entity-list>
   </div>
   <div class="column-center" fxLayout="column" fxFlex="grow">
-    <app-seed-list fxFlex (rowClick)="onSeedSelect($event)" [seeds]="seeds$ | async"></app-seed-list>
-    <app-chart fxFlex
-               [granularity]="granularity$ | async"
-               [data]="filteredData$ | async"
-               (allTextElementClick)="onAllTextClick($event)"
-               (shortTextElementClick)="onShortTextClick($event)"
-               (longTextElementClick)="onLongTextClick($event)"
-               (perExecutionElementClick)="onPerExecutionTextClick($event)"></app-chart>
+    <app-seed-list
+      fxFlex
+      (rowClick)="onSeedSelect($event)"
+      [seeds]="seeds$ | async"></app-seed-list>
+    <app-f-list
+      fxFlex [filters]="filters$ | async"
+      (rowClick)="onFilterChange($event)"></app-f-list>
+    <app-chart
+      fxFlex
+      [granularity]="granularity$ | async"
+      [data]="filteredData$ | async"
+      (allTextElementClick)="onAllTextClick($event)"
+      (shortTextElementClick)="onShortTextClick($event)"
+      (longTextElementClick)="onLongTextClick($event)"
+      (perExecutionElementClick)="onPerExecutionTextClick($event)"></app-chart>
 
-    <app-uri-list fxFlex (text)="onRequestText($event)"
-                  [data]="filteredData$ | async"></app-uri-list>
-    <app-text fxFlex [text]="text$ | async"></app-text>
+    <app-uri-list
+      fxFlex (text)="onRequestText($event)"
+      [data]="filteredData$ | async"></app-uri-list>
+    <app-text
+      fxFlex
+      [text]="text$ | async"></app-text>
   </div>
   <div class="column-right" fxFlex="20%" fxLayout="column">
-    <app-filter-list [filters]="filters$ | async"
-    (rowClick)="onFilterSetSelect($event)"></app-filter-list>
-    <app-filter fxFlex="grow"
-                [filterSet]="filterSet$ | async"
-                [domain]="domain$ | async"
-                (change)="onFilterChange($event)"
-                (save)="onFilterSave($event)"></app-filter>
+    <app-filter-list
+      fxFlex
+      [filterSets]="filterSets$ | async"
+      (rowClick)="onFilterSetSelect($event)"></app-filter-list>
+    <app-filter
+      fxFlex="grow"
+      [domain]="domain$ | async"
+      (save)="onFilterSave($event)"></app-filter>
   </div>
 </section>

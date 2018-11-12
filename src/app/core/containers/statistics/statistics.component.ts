@@ -6,10 +6,9 @@ import {catchError, exhaustMap, filter, map, share, tap} from 'rxjs/operators';
 import {MaalfridService} from '../../services/maalfrid-service/maalfrid.service';
 import {Entity, Seed} from '../../models/config.model';
 import {Interval} from '../../components/interval/interval.component';
-import {AggregateText, FilterSet} from '../../models/maalfrid.model';
+import {AggregateText, Filter, FilterSet} from '../../models/maalfrid.model';
 import {dominate, predicatesFromFilters} from '../../func/filter';
 import {and} from '../../func';
-import * as moment from 'moment';
 
 @Component({
   selector: 'app-statistics',
@@ -39,38 +38,36 @@ export class StatisticsComponent implements OnInit {
   loading = new Subject<boolean>();
   loading$ = this.loading.asObservable().pipe();
 
-  private filters = new Subject<FilterSet[]>();
+  private filters = new Subject<Filter[]>();
   filters$ = this.filters.asObservable();
+
+  private filterSets = new Subject<FilterSet[]>();
+  filterSets$ = this.filterSets.asObservable();
 
   private filterSet = new Subject<FilterSet>();
   filterSet$ = this.filterSet.asObservable();
 
   private data = new BehaviorSubject<AggregateText[]>([]);
-  private domain = new Subject<object>();
-  private filteredData = new Subject<AggregateText[]>();
 
+  private domain = new Subject<object>();
   domain$ = this.domain.pipe(map((data) => dominate(data)));
 
+  private filteredData = new Subject<AggregateText[]>();
   filteredData$ = this.filteredData.pipe(share());
-
-  loadDataAndFilter$ = combineLatest(this.selectedSeed$, this.interval$).pipe(
-    filter(([seed, _]) => !!seed),
-    tap(() => this.loading.next(true)),
-    exhaustMap(seed => {
-        return this.fetchData(this.selectedSeed.value, this.interval.value).pipe(
-          tap((_) => this.domain.next(_)),
-        );
-      }
-    ),
-    tap(() => this.loading.next(false)),
-  );
 
 
   constructor(private maalfridService: MaalfridService) {
-    this.loadDataAndFilter$.subscribe((data) => {
-      this.data.next(data);
-      this.filteredData.next(data);
-    });
+    combineLatest(this.selectedSeed$, this.interval$).pipe(
+      filter(([seed, _]) => !!seed),
+      tap(() => this.loading.next(true)),
+      exhaustMap(seed => {
+          return this.fetchData(this.selectedSeed.value, this.interval.value).pipe(
+            tap((_) => this.domain.next(_)),
+          );
+        }
+      ),
+      tap(() => this.loading.next(false)),
+    ).subscribe((data) => this.data.next(data));
 
     // reset when no seed is selected
     this.selectedSeed$.pipe(
@@ -99,6 +96,14 @@ export class StatisticsComponent implements OnInit {
     }
   }
 
+  onFilterSetSelect(filterSet: FilterSet) {
+    if (filterSet) {
+      this.filters.next(filterSet.filters);
+    } else {
+      this.filters.next([]);
+    }
+  }
+
   onFilterSave(filterSet: FilterSet) {
     this.maalfridService.saveFilter(filterSet).subscribe();
   }
@@ -117,11 +122,7 @@ export class StatisticsComponent implements OnInit {
 
   onSeedSelect(seed: Seed) {
     this.selectedSeed.next(seed);
-    this.maalfridService.getFilter(seed).subscribe((filters) => this.filters.next(filters));
-  }
-
-  onFilterSetSelect(filterSet: FilterSet) {
-    this.filterSet.next(filterSet);
+    this.maalfridService.getFilterSets(seed).subscribe((filters) => this.filterSets.next(filters));
   }
 
   onIntervalChange(interval: Interval) {

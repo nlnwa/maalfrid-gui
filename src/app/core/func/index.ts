@@ -1,10 +1,12 @@
 export type Predicate = (e: any) => boolean;
 
 export function or(predicates: Predicate[]): Predicate {
+  console.log(predicates);
   return (e) => predicates.some(p => p(e));
 }
 
 export function and(predicates: Predicate[]): Predicate {
+  console.log(predicates);
   return (e) => predicates.every(p => p(e));
 }
 

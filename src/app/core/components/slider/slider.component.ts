@@ -20,11 +20,29 @@ export class SliderComponent {
     max: 1
   };
 
+  name = '';
   tooltips = true;
   keyboard = true;
 
   @Input()
-  set config(config: noUiSlider.Options | any) {
+  set config(config: any) {
+    if (config) {
+      this.name = config.name;
+      const domain = config.domain;
+      this.range = {
+        min: domain[0],
+        max: domain[1]
+      };
+      this.model = [domain[0], domain[1]];
+    }
+    // console.log(config);
+    /*
+        this.characterCount.next({
+          range,
+          start: [range.min, range.max]
+        });
+     */
+    /*
     if (config) {
       if (config.start) {
         this.model = config.start;
@@ -36,6 +54,7 @@ export class SliderComponent {
         this.step = config.step;
       }
     }
+    */
   }
 
   @Output()

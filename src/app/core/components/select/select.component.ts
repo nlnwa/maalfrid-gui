@@ -22,7 +22,10 @@ export class SelectComponent {
 
   @Input()
   set config(config: any) {
-    console.log(config);
+    if (config) {
+      this.placeholder = config.name;
+      this.options = [...(config.domain as string[])];
+    }
   }
 
   constructor() { }

@@ -1,7 +1,9 @@
-<mat-select multiple
-            [(ngModel)]="model"
-            [placeholder]="placeholder"
-            [disabled]="disabled"
-            (selectionChange)="onSelectionChange($event)">
-  <mat-option *ngFor="let option of options" [value]="option">{{option || emptyOption}}</mat-option>
-</mat-select>
+<mat-form-field>
+  <mat-select multiple
+              [(ngModel)]="model"
+              [placeholder]="placeholder"
+              [disabled]="disabled"
+              (selectionChange)="onSelectionChange($event)">
+    <mat-option *ngFor="let option of options" [value]="option">{{option || emptyOption}}</mat-option>
+  </mat-select>
+</mat-form-field>

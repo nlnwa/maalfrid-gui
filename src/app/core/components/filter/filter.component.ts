@@ -30,12 +30,31 @@ export class FilterComponent implements OnChanges {
   };
 
   characterCount = new Subject<any>();
-  language = new Subject<any>();
+  characterCount$ = this.characterCount.asObservable();
 
-  config = {
-    characterCount$: this.characterCount.asObservable(),
-    language$: this.language.asObservable()
-  };
+  wordCount = new Subject<any>();
+  wordCount$ = this.wordCount.asObservable();
+
+  sentenceCount = new Subject<any>();
+  sentenceCount$ = this.sentenceCount.asObservable();
+
+  lix = new Subject<any>();
+  lix$ = this.lix.asObservable();
+
+  longWordCount = new Subject<any>();
+  longWordCount$ = this.longWordCount.asObservable();
+
+  contentType = new Subject<any>();
+  contentType$ = this.contentType.asObservable();
+
+  language = new Subject<any>();
+  language$ = this.language.asObservable();
+
+  discoveryPath = new Subject<any>();
+  discoveryPath$ = this.discoveryPath.asObservable();
+
+  requestedUri = new Subject<any>();
+  requestedUri$ = this.requestedUri.asObservable();
 
   // bypasses filter if true
   bypass = false;
@@ -46,9 +65,6 @@ export class FilterComponent implements OnChanges {
   @Input()
   domain: AggregateText | any;
 
-  @Input()
-  filterSet: FilterSet;
-
   @Output()
   change: EventEmitter<FilterSet> = new EventEmitter();
 
@@ -57,10 +73,6 @@ export class FilterComponent implements OnChanges {
 
   constructor() {}
 
-  get show(): string {
-    return this.filterSet ? this.filterSet.filters.toString() : '';
-  }
-
   get bypassIcon(): string {
     return this.bypass ? 'visibility_off' : 'visibility';
   }
@@ -68,7 +80,13 @@ export class FilterComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.domain) {
       if (this.domain) {
-        const range = {
+        Object.keys(this.domain).forEach((_) => {
+          this[_].next({
+            name: _,
+            domain: this.domain[_]
+          });
+        });
+        /*const range = {
           min: this.domain.characterCount[0],
           max: this.domain.characterCount[1]
         };
@@ -76,13 +94,10 @@ export class FilterComponent implements OnChanges {
           range,
           start: [range.min, range.max]
         });
+        */
       } else {
         this.domain = undefined;
       }
-    } else if (changes.filterSet) {
-      this.language.next(this.filterSet.filters[0].value);
-      console.log(this.filterSet);
-      // Object.assign(this.filterModel, this.filter);
     }
   }
 

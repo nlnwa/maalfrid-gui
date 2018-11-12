@@ -70,7 +70,7 @@ export class MaalfridService {
       );
   }
 
-  getFilter(seed: Seed): Observable<FilterSet[]> {
+  getFilterSets(seed: Seed): Observable<FilterSet[]> {
     if (!seed) {
       return of([]);
     }

@@ -12,7 +12,17 @@
   </mat-toolbar>
 
   <div fxLayout="column" class="app-container__padding">
-    <app-slider [config]="config.characterCount$ | async"></app-slider>
-    <app-select [config]="config.language$ | async"></app-select>
+    <app-slider [config]="characterCount$ | async"></app-slider>
+    <app-slider [config]="wordCount$ | async"></app-slider>
+    <app-slider [config]="sentenceCount$ | async"></app-slider>
+    <app-slider [config]="lix$ | async"></app-slider>
+    <app-slider [config]="longWordCount$ | async"></app-slider>
+    <app-select [config]="language$ | async"></app-select>
+    <app-select [config]="contentType$ | async"></app-select>
+    <app-select [config]="discoveryPath$ | async"></app-select>
+    <app-select [config]="requestedUri$ | async"></app-select>
+    <mat-form-field>
+      <input matInput>
+    </mat-form-field>
   </div>
 </section>

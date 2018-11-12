@@ -104,8 +104,10 @@ function dominate(data) {
 }
 
 function predicatesFromFilters(filters): Predicate[] {
-  const predicates = [];
+  return filters.map((filter) => predicateFromFilter(filter.name, filter.value));
+  /*
   for (const [name, value] of Object.entries(filters)) {
+    console.log(name, value);
     if (!value || (value as any[]).length === 0) {
       continue;
     }
@@ -113,8 +115,7 @@ function predicatesFromFilters(filters): Predicate[] {
     if (predicate) {
       predicates.push(predicate);
     }
-  }
-  return predicates;
+  }*/
 }
 
 function predicateFromFilter(name, value): Predicate {

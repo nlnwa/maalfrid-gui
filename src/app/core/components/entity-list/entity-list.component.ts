@@ -26,7 +26,7 @@ import {_isNumberValue} from '@angular/cdk/coercion';
 
       .table {
         height: 100%;
-        overflow-y: scroll;
+        overflow-y: auto;
       }
 
       .highlight {
