@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -41,6 +42,7 @@ function timeFormat(granularity: string): string {
   providers: [WorkerService]
 })
 export class ChartComponent implements OnInit, AfterViewInit {
+  visible = false;
 
   defaultMap = colorMaps['maalfrid'];
   private readonly colorMap;
@@ -57,6 +59,7 @@ export class ChartComponent implements OnInit, AfterViewInit {
   @Input()
   set data(data) {
     if (data && Object.keys(data).length > 0) {
+      this.visible = true;
       this.workerService.transform(data).subscribe((val) => {
         this._data = val;
         this.applyData(this.mergeData(this._data, this._granularity));
@@ -96,6 +99,14 @@ export class ChartComponent implements OnInit, AfterViewInit {
               private changeDetectorRef: ChangeDetectorRef) {
     this.initChartOptions();
     this.colorMap = this.defaultMap;
+  }
+
+  get showHideIcon(): string {
+    return this.visible ? 'expand_less' : 'expand_more';
+  }
+
+  onToggleVisibility() {
+    this.visible = !this.visible;
   }
 
   ngOnInit() {

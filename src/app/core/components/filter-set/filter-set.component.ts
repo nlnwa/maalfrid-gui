@@ -2,11 +2,11 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Outp
 import {MatTableDataSource} from '@angular/material';
 
 import {SelectionModel} from '@angular/cdk/collections';
-import {Filter} from '../../models/maalfrid.model';
+import {Filter, FilterSet} from '../../models/maalfrid.model';
 
 
 @Component({
-  selector: 'app-f-list',
+  selector: 'app-filter-set',
   template: `
     <style>
       section {
@@ -22,9 +22,9 @@ import {Filter} from '../../models/maalfrid.model';
         background-color: #eee;
       }
     </style>
-    <section fxLayout="column">
+    <section fxLayout="column" [fxHide]="!show">
       <mat-toolbar class="app-toolbar" color="accent">
-        <mat-icon>business</mat-icon>&nbsp;Filtre
+        <mat-icon>{{ icon }}</mat-icon>&nbsp;{{ name }}
       </mat-toolbar>
 
 
@@ -61,19 +61,43 @@ import {Filter} from '../../models/maalfrid.model';
     </section>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FListComponent implements OnChanges {
+export class FilterSetComponent implements OnChanges {
   displayedColumns = ['name', 'field', 'exclusive', 'value'];
   dataSource: MatTableDataSource<Filter>;
   selection = new SelectionModel<Filter>(true, []);
 
   @Input()
-  filters: Filter[];
+  filterSet: FilterSet;
 
   @Output()
   rowClick = new EventEmitter<Filter[]>();
 
   constructor() {
     this.dataSource = new MatTableDataSource([]);
+  }
+
+  get name(): string {
+    if (this.filterSet) {
+      if (this.filterSet.id === 'global') {
+        return 'Globale filtre';
+      } else {
+        return 'Seed filtre';
+      }
+    } else {
+      return '';
+    }
+  }
+
+  get show(): boolean {
+    return this.filterSet !== null;
+  }
+
+  get icon(): string {
+    return this.filterSet && this.filterSet.id === 'global' ? '360' : 'trip_origin';
+  }
+
+  get filters(): Filter[] {
+    return this.filterSet ? this.filterSet.filters : [];
   }
 
   onRowClick(filter) {
@@ -86,11 +110,13 @@ export class FListComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.filters && this.filters) {
-      this.dataSource.data = this.filters;
+    if (changes.filterSet && this.filterSet) {
+      this.dataSource.data = this.filterSet.filters;
       if (this.filters.length > 0) {
         this.selection.select(...this.filters);
         this.rowClick.emit(this.selection.selected);
+      } else {
+        this.rowClick.emit([]);
       }
     }
   }

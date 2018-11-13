@@ -6,7 +6,7 @@ import {FilterSet} from '../../models/maalfrid.model';
 
 
 @Component({
-  selector: 'app-filter-list',
+  selector: 'app-filter-set-list',
   template: `
     <style>
       section {
@@ -26,10 +26,7 @@ import {FilterSet} from '../../models/maalfrid.model';
       <mat-toolbar class="app-toolbar" color="accent">
         <mat-icon>business</mat-icon>&nbsp;Filtersett
       </mat-toolbar>
-
-
       <mat-table class="table" [dataSource]="dataSource" matSort>
-
         <ng-container matColumnDef="valid_from">
           <mat-header-cell *matHeaderCellDef>Gyldig fra</mat-header-cell>
           <mat-cell *matCellDef="let row">
@@ -52,19 +49,23 @@ import {FilterSet} from '../../models/maalfrid.model';
     </section>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FilterListComponent implements OnChanges {
+export class FilterSetListComponent implements OnChanges {
   displayedColumns = ['valid_from', 'valid_to'];
   dataSource: MatTableDataSource<FilterSet>;
   selection = new SelectionModel<FilterSet>(false, []);
 
   @Input()
-  filterSets: FilterSet[];
+  filterSets: FilterSet[] = [];
 
   @Output()
   rowClick = new EventEmitter<FilterSet>();
 
   constructor() {
     this.dataSource = new MatTableDataSource([]);
+  }
+
+  get visible(): boolean {
+    return this.filterSets && this.filterSets.length > 0;
   }
 
   get name(): string {
@@ -89,6 +90,8 @@ export class FilterListComponent implements OnChanges {
       this.dataSource.data = this.filterSets;
       if (this.filterSets.length > 0) {
         this.onRowClick(this.filterSets[0]);
+      } else {
+        this.rowClick.emit(null);
       }
     }
   }

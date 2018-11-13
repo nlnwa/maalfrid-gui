@@ -1,6 +1,38 @@
-import {and, domainOf, or, Predicate, rangify} from './index';
-import {AggregateText} from '../models/maalfrid.model';
+import {AggregateText, Filter} from '../models/maalfrid.model';
 import * as moment from 'moment';
+
+export type Predicate = (e: any) => boolean;
+
+export function or(predicates: Predicate[]): Predicate {
+  return (e) => predicates.some(p => p(e));
+}
+
+export function and(predicates: Predicate[]): Predicate {
+  return (e) => predicates.every(p => p(e));
+}
+
+export function rangify(bounds, value): number[] {
+  if (value === undefined) {
+    return bounds;
+  }
+  return [Math.min(bounds[0], value), Math.max(bounds[1], value)];
+}
+
+export function domainOf(uri: string) {
+  const match = /(^[a-z]+:\/\/[^/]+)/.exec(uri);
+  return match.length ? match[0] : '';
+}
+
+/**
+ * Compares two pairs (ranges) of numbers
+ *
+ * @param a {number}
+ * @param b {number}
+ * @return {boolean} true if equal, false if not
+ */
+export function rangeIsEqual(a: number[], b: number[]) {
+  return a[0] === b[0] && a[1] === b[1];
+}
 
 function trueCondition(): Predicate {
   return (e: AggregateText) => true;
@@ -103,22 +135,17 @@ function dominate(data) {
   return domain;
 }
 
-function predicatesFromFilters(filters): Predicate[] {
-  return filters.map((filter) => predicateFromFilter(filter.name, filter.value));
-  /*
-  for (const [name, value] of Object.entries(filters)) {
-    console.log(name, value);
-    if (!value || (value as any[]).length === 0) {
-      continue;
-    }
-    const predicate = predicateFromFilter(name, value);
-    if (predicate) {
-      predicates.push(predicate);
-    }
-  }*/
+function predicateFromFilters(filters: Filter[]): Predicate {
+  return and(predicatesFromFilters(filters));
 }
 
-function predicateFromFilter(name, value): Predicate {
+function predicatesFromFilters(filters: Filter[]): Predicate[] {
+  return filters.map(predicateFromFilter);
+}
+
+function predicateFromFilter(filter: Filter): Predicate {
+  const name = filter.name;
+  const value = filter.value;
   switch (name) {
     case 'language':
       return languageCondition(value);
@@ -142,7 +169,7 @@ function predicateFromFilter(name, value): Predicate {
 
 export {
   dominate,
-  predicatesFromFilters,
+  predicateFromFilters,
   longTextCondition,
   timeCondition,
   codeCondition,

@@ -7,8 +7,7 @@ import {MaalfridService} from '../../services/maalfrid-service/maalfrid.service'
 import {Entity, Seed} from '../../models/config.model';
 import {Interval} from '../../components/interval/interval.component';
 import {AggregateText, Filter, FilterSet} from '../../models/maalfrid.model';
-import {dominate, predicatesFromFilters} from '../../func/filter';
-import {and} from '../../func';
+import {dominate, predicateFromFilters} from '../../func/filter';
 
 @Component({
   selector: 'app-statistics',
@@ -38,14 +37,23 @@ export class StatisticsComponent implements OnInit {
   loading = new Subject<boolean>();
   loading$ = this.loading.asObservable().pipe();
 
-  private filters = new Subject<Filter[]>();
-  filters$ = this.filters.asObservable();
+  private immediateFilter = new Subject<Filter>();
+  immediateFilter$ = this.immediateFilter.asObservable();
 
-  private filterSets = new Subject<FilterSet[]>();
-  filterSets$ = this.filterSets.asObservable();
+  private seedFilters = new BehaviorSubject<Filter[]>([]);
+  seedFilters$ = this.seedFilters.asObservable();
+
+  private globalFilters = new BehaviorSubject<Filter[]>([]);
+  globalFilters$ = this.globalFilters.asObservable();
+
+  private globalFilterSet = new Subject<FilterSet>();
+  globalFilterSet$ = this.globalFilterSet.asObservable();
 
   private filterSet = new Subject<FilterSet>();
   filterSet$ = this.filterSet.asObservable();
+
+  private filterSets = new Subject<FilterSet[]>();
+  filterSets$ = this.filterSets.asObservable();
 
   private data = new BehaviorSubject<AggregateText[]>([]);
 
@@ -54,7 +62,6 @@ export class StatisticsComponent implements OnInit {
 
   private filteredData = new Subject<AggregateText[]>();
   filteredData$ = this.filteredData.pipe(share());
-
 
   constructor(private maalfridService: MaalfridService) {
     combineLatest(this.selectedSeed$, this.interval$).pipe(
@@ -78,30 +85,37 @@ export class StatisticsComponent implements OnInit {
       this.filteredData.next([]);
     });
 
+    combineLatest(this.globalFilters$, this.seedFilters$).pipe(
+      map(([globalFilters, seedFilters]) => globalFilters.concat(seedFilters))
+    ).subscribe((filters: Filter[]) => {
+      if (filters.length > 0) {
+        this.filteredData.next(this.data.value.filter(predicateFromFilters(filters)));
+      } else {
+        this.filteredData.next(this.data.value);
+      }
+    });
   }
 
   ngOnInit(): void {
-    this.loadEntities();
+    this.getEntities();
+    this.getGlobalFilter();
   }
 
-  onFilterChange(_filter: object) {
-    if (_filter === null) {
-      // bypass filter if null
-      this.filteredData.next(this.data.value);
-    } else {
-      // convert filter to predicates
-      const predicates = predicatesFromFilters(_filter);
-      // filter data by combining predicates
-      this.filteredData.next(this.data.value.filter(and(predicates)));
-    }
+  onSeedFilterSelect(filters: Filter[]) {
+    this.seedFilters.next(filters);
+  }
+
+  onGlobalFilterSelect(globalFilters: Filter[]) {
+    this.globalFilters.next(globalFilters);
   }
 
   onFilterSetSelect(filterSet: FilterSet) {
-    if (filterSet) {
-      this.filters.next(filterSet.filters);
-    } else {
-      this.filters.next([]);
-    }
+    this.filterSet.next(filterSet);
+  }
+
+  onFilter(immediateFilter: Filter) {
+    const filters = this.globalFilters.value.concat(this.seedFilters.value, immediateFilter);
+    this.filteredData.next(this.data.value.filter(predicateFromFilters(filters)));
   }
 
   onFilterSave(filterSet: FilterSet) {
@@ -122,7 +136,7 @@ export class StatisticsComponent implements OnInit {
 
   onSeedSelect(seed: Seed) {
     this.selectedSeed.next(seed);
-    this.maalfridService.getFilterSets(seed).subscribe((filters) => this.filterSets.next(filters));
+    this.maalfridService.getFilterSets(seed).subscribe((filterSets) => this.filterSets.next(filterSets));
   }
 
   onIntervalChange(interval: Interval) {
@@ -137,10 +151,13 @@ export class StatisticsComponent implements OnInit {
     return this.maalfridService.getExecutions(seed, interval);
   }
 
-  private loadEntities() {
+  private getEntities() {
     this.maalfridService.getEntities().subscribe(entities => {
       this.entities.next(entities);
     });
   }
 
+  private getGlobalFilter() {
+    this.maalfridService.getFilterById('global').subscribe(_ => this.globalFilterSet.next(_));
+  }
 }

@@ -35,26 +35,6 @@ export class SliderComponent {
       };
       this.model = [domain[0], domain[1]];
     }
-    // console.log(config);
-    /*
-        this.characterCount.next({
-          range,
-          start: [range.min, range.max]
-        });
-     */
-    /*
-    if (config) {
-      if (config.start) {
-        this.model = config.start;
-      }
-      if (config.range) {
-        this.range = {...config.range};
-      }
-      if (config.step) {
-        this.step = config.step;
-      }
-    }
-    */
   }
 
   @Output()
@@ -67,6 +47,6 @@ export class SliderComponent {
   }
 
   onChange(event) {
-    // this.change.emit(this.transformFilter(this.filterModel));
+    this.change.emit(event);
   }
 }

@@ -17,9 +17,9 @@ import {ChartComponent} from './components/chart/chart.component';
 import {FilterComponent} from './components/filter/filter.component';
 import {SliderComponent} from './components/slider/slider.component';
 import {SelectComponent} from './components/select/select.component';
-import {FilterListComponent} from './components/filter-list/filter-list.component';
+import {FilterSetListComponent} from './components/filter-set-list/filter-set-list.component';
 import {NouisliderModule} from '../nouislider/ng2-nouislider';
-import {FListComponent} from './components/f-list/f-list.component';
+import {FilterSetComponent} from './components/filter-set/filter-set.component';
 
 
 @NgModule({
@@ -30,13 +30,13 @@ import {FListComponent} from './components/f-list/f-list.component';
     SeedListComponent,
     StatisticsComponent,
     UriListComponent,
-    FilterListComponent,
+    FilterSetListComponent,
     TextComponent,
     ChartComponent,
     FilterComponent,
     SliderComponent,
     SelectComponent,
-    FListComponent,
+    FilterSetComponent,
   ],
   imports: [
     SharedModule,

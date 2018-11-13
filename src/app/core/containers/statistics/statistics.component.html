@@ -19,9 +19,12 @@
       fxFlex
       (rowClick)="onSeedSelect($event)"
       [seeds]="seeds$ | async"></app-seed-list>
-    <app-f-list
-      fxFlex [filters]="filters$ | async"
-      (rowClick)="onFilterChange($event)"></app-f-list>
+    <app-filter-set
+      fxFlex [filterSet]="globalFilterSet$ | async"
+      (rowClick)="onGlobalFilterSelect($event)"></app-filter-set>
+    <app-filter-set
+      fxFlex [filterSet]="filterSet$ | async"
+      (rowClick)="onSeedFilterSelect($event)"></app-filter-set>
     <app-chart
       fxFlex
       [granularity]="granularity$ | async"
@@ -37,15 +40,17 @@
     <app-text
       fxFlex
       [text]="text$ | async"></app-text>
+    <span fxFlex="grow"></span>
   </div>
   <div class="column-right" fxFlex="20%" fxLayout="column">
-    <app-filter-list
+    <app-filter-set-list
       fxFlex
       [filterSets]="filterSets$ | async"
-      (rowClick)="onFilterSetSelect($event)"></app-filter-list>
+      (rowClick)="onFilterSetSelect($event)"></app-filter-set-list>
     <app-filter
       fxFlex="grow"
       [domain]="domain$ | async"
-      (save)="onFilterSave($event)"></app-filter>
+      (change)="onFilter($event)"
+      ></app-filter>
   </div>
 </section>

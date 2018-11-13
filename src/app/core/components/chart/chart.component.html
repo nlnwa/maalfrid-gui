@@ -1,48 +1,54 @@
 <mat-toolbar class="app-toolbar stat-toolbar" color="accent">
   <mat-icon>poll</mat-icon>&nbsp;Statistikk
+  <span fxFlex></span>
+  <button mat-icon-button (click)="onToggleVisibility()">
+    <mat-icon>{{ showHideIcon }}</mat-icon>
+  </button>
 </mat-toolbar>
 
-<div style="min-height: 300px;" fxLayout="row">
-  <div fxFlex fxLayout="column">
-    <mat-toolbar class="app-toolbar">
-      <span fxFlex>Alle tekster</span>
-      <span class="stat-count">{{nrOfTexts}}</span>
-    </mat-toolbar>
-    <nvd3 class="chart" fxFlex="grow" [options]="allTextChartOptions" [data]="allTextData"></nvd3>
+<div [fxShow]="visible">
+  <div style="min-height: 300px;" fxLayout="row">
+    <div fxFlex fxLayout="column">
+      <mat-toolbar class="app-toolbar">
+        <span fxFlex>Alle tekster</span>
+        <span class="stat-count">{{nrOfTexts}}</span>
+      </mat-toolbar>
+      <nvd3 class="chart" fxFlex="grow" [options]="allTextChartOptions" [data]="allTextData"></nvd3>
+    </div>
+
+    <mat-divider [vertical]="true"></mat-divider>
+
+    <div fxFlex fxLayout="column">
+      <mat-toolbar class="app-toolbar">
+        <span fxFlex>Korte tekster</span>
+        <span class="stat-count">{{nrOfShortTexts}}</span>
+      </mat-toolbar>
+      <nvd3 class="chart" fxFlex="grow" [options]="shortTextChartOptions" [data]="shortTextData"></nvd3>
+    </div>
+
+    <mat-divider [vertical]="true"></mat-divider>
+
+    <div fxFlex fxLayout="column">
+      <mat-toolbar class="app-toolbar">
+        <span fxFlex>Lange tekster</span>
+        <span class="stat-count">{{nrOfLongTexts}}</span>
+      </mat-toolbar>
+      <nvd3 class="chart" fxFlex="grow" [options]="longTextChartOptions" [data]="longTextData"></nvd3>
+    </div>
   </div>
 
-  <mat-divider [vertical]="true"></mat-divider>
-
-  <div fxFlex fxLayout="column">
-    <mat-toolbar class="app-toolbar">
-      <span fxFlex>Korte tekster</span>
-      <span class="stat-count">{{nrOfShortTexts}}</span>
+  <div style="min-height: 400px; height: 400px;" fxLayout="column">
+    <mat-toolbar class="app-toolbar">Per innhøsting
+      <span fxFlex></span>
+      <mat-button-toggle-group value="multiBar">
+        <mat-button-toggle value="multiBar">
+          <mat-icon>equalizer</mat-icon>
+        </mat-button-toggle>
+        <mat-button-toggle value="stackedArea">
+          <mat-icon>show_chart</mat-icon>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
     </mat-toolbar>
-    <nvd3 class="chart" fxFlex="grow" [options]="shortTextChartOptions" [data]="shortTextData"></nvd3>
+    <nvd3 class="chart" fxFlex="grow" [options]="perExecutionChartOptions" [data]="perExecutionData"></nvd3>
   </div>
-
-  <mat-divider [vertical]="true"></mat-divider>
-
-  <div fxFlex fxLayout="column">
-    <mat-toolbar class="app-toolbar">
-      <span fxFlex>Lange tekster</span>
-      <span class="stat-count">{{nrOfLongTexts}}</span>
-    </mat-toolbar>
-    <nvd3 class="chart" fxFlex="grow" [options]="longTextChartOptions" [data]="longTextData"></nvd3>
-  </div>
-</div>
-
-<div style="min-height: 400px; height: 400px;" fxLayout="column">
-  <mat-toolbar class="app-toolbar">Per innhøsting
-    <span fxFlex></span>
-    <mat-button-toggle-group value="multiBar">
-      <mat-button-toggle value="multiBar">
-        <mat-icon>equalizer</mat-icon>
-      </mat-button-toggle>
-      <mat-button-toggle value="stackedArea">
-        <mat-icon>show_chart</mat-icon>
-      </mat-button-toggle>
-    </mat-button-toggle-group>
-  </mat-toolbar>
-  <nvd3 class="chart" fxFlex="grow" [options]="perExecutionChartOptions" [data]="perExecutionData"></nvd3>
 </div>

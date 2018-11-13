@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {AggregateText, FilterSet} from '../../models/maalfrid.model';
+import {AggregateText, Filter} from '../../models/maalfrid.model';
 import {Subject} from 'rxjs';
 
 @Component({
@@ -63,13 +63,13 @@ export class FilterComponent implements OnChanges {
   disabled = false;
 
   @Input()
-  domain: AggregateText | any;
+  domain: AggregateText[] | any;
 
   @Output()
-  change: EventEmitter<FilterSet> = new EventEmitter();
+  change: EventEmitter<Filter> = new EventEmitter();
 
-  @Output()
-  save: EventEmitter<FilterSet> = new EventEmitter();
+  // @Output()
+  // save: EventEmitter<FilterSet> = new EventEmitter();
 
   constructor() {}
 
@@ -77,12 +77,16 @@ export class FilterComponent implements OnChanges {
     return this.bypass ? 'visibility_off' : 'visibility';
   }
 
+  get visible(): boolean {
+    return !!this.domain;
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes.domain) {
       if (this.domain) {
         Object.keys(this.domain).forEach((_) => {
           this[_].next({
-            name: _,
+            name: this.label[_],
             domain: this.domain[_]
           });
         });
@@ -119,6 +123,12 @@ export class FilterComponent implements OnChanges {
   }
 
   onFilterChange() {
+
+  }
+
+  onChange(value, name) {
+    console.log(value, name);
+    this.change.emit({name, value});
     // this.change.emit(this.transformFilter(this.filterModel));
   }
 

@@ -17,12 +17,17 @@ import {SelectionModel} from '@angular/cdk/collections';
         background-color: #eee;
       }
     </style>
-    <section fxLayout="column">
+    <section fxLayout="column" fxShow [fxHide]="isListEmpty">
       <mat-toolbar class="app-toolbar" color="accent">
         <mat-icon>link</mat-icon>&nbsp;URL
+        <span fxFlex></span>
+        <span>{{ url }}</span>
+        <button mat-icon-button (click)="onToggleVisibility()">
+          <mat-icon>{{ visible ? "expand_less" : "expand_more" }}</mat-icon>
+        </button>
       </mat-toolbar>
 
-      <mat-table [dataSource]="dataSource" class="table">
+      <mat-table [fxHide]="!visible" [dataSource]="dataSource" class="table">
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef>URL</mat-header-cell>
           <mat-cell *matCellDef="let row">
@@ -44,7 +49,7 @@ export class SeedListComponent implements OnChanges {
   displayedColumns = ['name'];
   dataSource = new MatTableDataSource<Seed>([]);
   selection = new SelectionModel<Seed>();
-
+  visible = true;
 
   @Input()
   seeds: Seed[] = [];
@@ -67,12 +72,20 @@ export class SeedListComponent implements OnChanges {
     }
   }
 
+  get isListEmpty(): boolean {
+    return ! (this.seeds && this.seeds.length > 0);
+  }
+
   get url(): string {
     return this.selected ? this.selected.meta.name : '';
   }
 
   get selected(): Seed {
     return this.selection.hasValue() ? this.selection.selected[0] : null;
+  }
+
+  onToggleVisibility() {
+    this.visible = !this.visible;
   }
 
   onRowClick(seed: Seed) {

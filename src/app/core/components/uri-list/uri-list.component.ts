@@ -102,8 +102,7 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
   isExtendedRow = (index, item) => true;
 
   ngOnInit() {
-    // this.dataSource.paginator = this.paginator;
-    this.onToggleVisibility();
+    // this.onToggleVisibility();
   }
 
   ngOnChanges(changes: SimpleChanges) {

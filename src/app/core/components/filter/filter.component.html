@@ -1,4 +1,4 @@
-<section fxLayout="column">
+<section fxLayout="column" [fxShow]="visible">
   <mat-toolbar class="app-toolbar" color="accent">
     <mat-icon class="icon-header">adjust</mat-icon>&nbsp;
     Filter
@@ -12,17 +12,17 @@
   </mat-toolbar>
 
   <div fxLayout="column" class="app-container__padding">
-    <app-slider [config]="characterCount$ | async"></app-slider>
-    <app-slider [config]="wordCount$ | async"></app-slider>
-    <app-slider [config]="sentenceCount$ | async"></app-slider>
-    <app-slider [config]="lix$ | async"></app-slider>
-    <app-slider [config]="longWordCount$ | async"></app-slider>
-    <app-select [config]="language$ | async"></app-select>
-    <app-select [config]="contentType$ | async"></app-select>
-    <app-select [config]="discoveryPath$ | async"></app-select>
-    <app-select [config]="requestedUri$ | async"></app-select>
-    <mat-form-field>
-      <input matInput>
+    <app-slider class="filter" (change)="onChange($event, 'characterCount')" [config]="characterCount$ | async"></app-slider>
+    <app-slider class="filter" (change)="onChange($event, 'wordCount')"[config]="wordCount$ | async"></app-slider>
+    <app-slider class="filter" (change)="onChange($event, 'sentenceCount')"[config]="sentenceCount$ | async"></app-slider>
+    <app-slider class="filter" (change)="onChange($event, 'lix')"[config]="lix$ | async"></app-slider>
+    <app-slider class="filter" (change)="onChange($event, 'longWordCount')"[config]="longWordCount$ | async"></app-slider>
+    <app-select class="filter" (change)="onChange($event, 'language')"[config]="language$ | async"></app-select>
+    <app-select class="filter" (change)="onChange($event, 'contentType')"[config]="contentType$ | async"></app-select>
+    <app-select class="filter" (change)="onChange($event, 'discoveryPath')"[config]="discoveryPath$ | async"></app-select>
+    <app-select class="filter" (change)="onChange($event, 'requestedUri')"[config]="requestedUri$ | async"></app-select>
+    <mat-form-field class="filter">
+      <input matInput placeholder="URI prefiks" (keyup.enter)="onChange($event.target.value, 'uriPrefix')">
     </mat-form-field>
   </div>
 </section>
