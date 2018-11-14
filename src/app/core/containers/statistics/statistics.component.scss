@@ -5,27 +5,16 @@ section {
 }
 
 .column-left {
-  min-width: 200px;
+  min-width: 15%;
 }
 
 .column-center {
-  height: 100%;
   overflow-y: auto;
 }
 
 .column-right {
+  min-width: 20%;
   overflow-y: auto;
-}
-
-.statistics-selection {
-  height: 100%;
-  min-height: 250px;
-}
-
-
-.stat-count {
-  font-size: 75%;
-  font-family: monospace;
 }
 
 .data-loader {

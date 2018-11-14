@@ -1,6 +1,7 @@
-<div class="container">
-  <label>{{ name }}</label>
+<div class="container" fxLayout="row">
+  <label fxFlex>{{ name }}</label>
   <app-nouislider
+    fxFlex="grow"
     [keyboard]="keyboard"
     [(ngModel)]="model"
     [step]="step"
@@ -8,6 +9,6 @@
     [connect]="connect"
     [range]="range"
     [tooltips]="tooltips"
-    (change)="onChange($event)"
+    (change)="onFilterChange($event)"
     [attr.disabled]="disabled ? '' : null"></app-nouislider>
 </div>

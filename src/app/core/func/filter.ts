@@ -23,6 +23,10 @@ export function domainOf(uri: string) {
   return match.length ? match[0] : '';
 }
 
+function not(predicate: Predicate): Predicate {
+  return (e) => !predicate(e);
+}
+
 /**
  * Compares two pairs (ranges) of numbers
  *
@@ -89,6 +93,9 @@ function urisCondition(uris: string[]): Predicate {
   return or(uris.map((uri) => uriCondition(uri)));
 }
 
+function regexpCondition(regexp: string, property: string) {
+  return (e: AggregateText) => new RegExp(`${regexp}`).test(e[property]);
+}
 
 function shortTextCondition(): Predicate {
   return (e: AggregateText) => e.wordCount <= 3500;
@@ -99,7 +106,7 @@ function mediaType(contentType: string): string {
 }
 
 // establish domain/range of fields in dataset
-function dominate(data) {
+export function dominate(data) {
   if (!data || data.length === 0) {
     return null;
   }
@@ -135,7 +142,7 @@ function dominate(data) {
   return domain;
 }
 
-function predicateFromFilters(filters: Filter[]): Predicate {
+export function predicateFromFilters(filters: Filter[]): Predicate {
   return and(predicatesFromFilters(filters));
 }
 
@@ -144,42 +151,36 @@ function predicatesFromFilters(filters: Filter[]): Predicate[] {
 }
 
 function predicateFromFilter(filter: Filter): Predicate {
-  const name = filter.name;
-  const value = filter.value;
+  const {name, field, exclusive, value} = filter;
+  let predicate;
+
   switch (name) {
     case 'language':
-      return languageCondition(value);
+      predicate = languageCondition(value);
+      break;
     case 'contentType':
-      return mimeCondition(value);
+      predicate = mimeCondition(value);
+      break;
     case 'discoveryPath':
-      return discoveryPathsCondition(value);
+      predicate = discoveryPathsCondition(value);
+      break;
     case 'requestedUri':
-      return urisCondition(value);
+      predicate = urisCondition(value);
+      break;
     case 'lix':
     case 'characterCount':
     case 'sentenceCount':
     case 'longWordCount':
     case 'wordCount':
-      return rangeCondition(value, name);
+      predicate = rangeCondition(value, name);
+      break;
+    case 'matchRegexp':
+      predicate = regexpCondition(value, field);
+      break;
     default:
       console.log('unhandled filter', name, value);
-      return;
+      return trueCondition();
   }
-}
 
-export {
-  dominate,
-  predicateFromFilters,
-  longTextCondition,
-  timeCondition,
-  codeCondition,
-  lixCondition,
-  languageCondition,
-  rangeCondition,
-  uriCondition,
-  urisCondition,
-  mimeCondition,
-  shortTextCondition,
-  wordCondition,
-  discoveryPathsCondition
-};
+  return exclusive ? not(predicate) : predicate;
+}

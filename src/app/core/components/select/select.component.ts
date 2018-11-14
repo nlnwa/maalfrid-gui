@@ -20,11 +20,14 @@ export class SelectComponent {
 
   disabled = false;
 
+  model = [];
+
   @Input()
   set config(config: any) {
     if (config) {
       this.placeholder = config.name;
       this.options = [...(config.domain as string[])];
+      this.model = [];
     }
   }
 

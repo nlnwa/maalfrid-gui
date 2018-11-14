@@ -13,9 +13,8 @@ import {FilterSet} from '../../models/maalfrid.model';
         height: 100%;
       }
 
-      .table {
-        height: 100%;
-        overflow-y: auto;
+      table {
+        width: 100%;
       }
 
       .highlight {
@@ -24,28 +23,28 @@ import {FilterSet} from '../../models/maalfrid.model';
     </style>
     <section fxLayout="column">
       <mat-toolbar class="app-toolbar" color="accent">
-        <mat-icon>business</mat-icon>&nbsp;Filtersett
+        <mat-icon>filter</mat-icon>&nbsp;Filtersett
       </mat-toolbar>
-      <mat-table class="table" [dataSource]="dataSource" matSort>
+      <table mat-table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="valid_from">
-          <mat-header-cell *matHeaderCellDef>Gyldig fra</mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            <span>{{ row.valid_from || "-" }}</span>
-          </mat-cell>
+          <th mat-header-cell *matHeaderCellDef>Gyldig fra</th>
+          <td mat-cell *matCellDef="let row">{{ row.valid_from || '&mdash;' }}</td>
         </ng-container>
 
         <ng-container matColumnDef="valid_to">
-          <mat-header-cell *matHeaderCellDef>Gyldig til</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{ row.valid_to || "-" }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef>Gyldig til</th>
+          <td mat-cell *matCellDef="let row">{{ row.valid_to || '&mdash;' }}
+          </td>
         </ng-container>
 
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
-        <mat-row *matRowDef="let row; columns: displayedColumns"
-                 [ngClass]="{'highlight': selection.isSelected(row)}"
-                 (click)="onRowClick(row)">
-        </mat-row>
-      </mat-table>
+        <tr mat-row
+            *matRowDef="let row; columns: displayedColumns"
+            [ngClass]="{'highlight': selection.isSelected(row)}"
+            (click)="onRowClick(row)">
+          </tr>
+      </table>
     </section>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

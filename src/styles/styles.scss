@@ -1,6 +1,6 @@
 @import "~nouislider/distribute/nouislider.min.css";
 
-html, body, app-root {
+html, body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -13,10 +13,6 @@ html, body, app-root {
 
 .app-container__padding {
   padding: 24px;
-}
-
-.mat-tab-body-wrapper {
-  height: 100%;
 }
 
 // noUislider customizations

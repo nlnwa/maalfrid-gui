@@ -24,9 +24,13 @@ import {_isNumberValue} from '@angular/cdk/coercion';
         height: 100%;
       }
 
-      .table {
+      .table-scroll {
         height: 100%;
         overflow-y: auto;
+      }
+
+      table {
+        width: 100%;
       }
 
       .highlight {
@@ -34,7 +38,7 @@ import {_isNumberValue} from '@angular/cdk/coercion';
       }
     </style>
     <section fxLayout="column">
-      <mat-toolbar class="app-toolbar" color="accent">
+      <mat-toolbar fxFlex class="app-toolbar" color="accent">
         <mat-icon>business</mat-icon>&nbsp;Entitet
         <span fxFlex></span>
         <button mat-icon-button (click)="onToggleFilter()">
@@ -42,33 +46,35 @@ import {_isNumberValue} from '@angular/cdk/coercion';
         </button>
       </mat-toolbar>
 
-      <mat-form-field class="app-container__padding" [fxShow]="showFilter">
+      <mat-form-field fxFlex class="app-container__padding" [fxShow]="showFilter">
         <input #filter matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
       </mat-form-field>
 
-      <mat-table class="table" [dataSource]="dataSource" matSort>
+      <div fxFlex="grow" class="table-scroll">
+        <table mat-table [dataSource]="dataSource" matSort>
 
-        <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Entitet</mat-header-cell>
-          <mat-cell *matCellDef="let row">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Entitet</th>
+            <td mat-cell *matCellDef="let row">
             <span [matTooltip]="row.meta.description"
                   [matTooltipDisabled]="row.meta.description === row.meta.name"
                   [matTooltipShowDelay]="350">{{ row.meta.name}}</span>
-          </mat-cell>
-        </ng-container>
+            </td>
+          </ng-container>
 
-        <ng-container matColumnDef="description">
-          <mat-header-cell *matHeaderCellDef>Beskrivelse</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{row.meta.description}}</mat-cell>
-        </ng-container>
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef>Beskrivelse</th>
+            <td mat-cell *matCellDef="let row">{{row.meta.description}}</td>
+          </ng-container>
 
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
-        <mat-row *matRowDef="let row; columns: displayedColumns"
-                 [ngClass]="{'highlight': selection.isSelected(row)}"
-                 (click)="onRowClick(row)">
-        </mat-row>
-      </mat-table>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"
+              [ngClass]="{'highlight': selection.isSelected(row)}"
+              (click)="onRowClick(row)">
+          </tr>
+        </table>
+      </div>
     </section>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

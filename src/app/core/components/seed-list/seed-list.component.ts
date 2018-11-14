@@ -8,9 +8,13 @@ import {SelectionModel} from '@angular/cdk/collections';
   selector: 'app-seed-list',
   template: `
     <style>
-      .table {
+      table {
         height: 100%;
-        overflow-y: auto;
+        width: 100%;
+      }
+
+      .toolbar-link {
+        font-weight: lighter;
       }
 
       .highlight {
@@ -21,27 +25,28 @@ import {SelectionModel} from '@angular/cdk/collections';
       <mat-toolbar class="app-toolbar" color="accent">
         <mat-icon>link</mat-icon>&nbsp;URL
         <span fxFlex></span>
-        <span>{{ url }}</span>
+        <span class="toolbar-link">{{ url }}</span>
+        <span fxFlex></span>
         <button mat-icon-button (click)="onToggleVisibility()">
           <mat-icon>{{ visible ? "expand_less" : "expand_more" }}</mat-icon>
         </button>
       </mat-toolbar>
 
-      <mat-table [fxHide]="!visible" [dataSource]="dataSource" class="table">
+      <table mat-table [fxHide]="!visible" [dataSource]="dataSource">
         <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef>URL</mat-header-cell>
-          <mat-cell *matCellDef="let row">
+          <th mat-header-cell *matHeaderCellDef>URL</th>
+          <td mat-cell *matCellDef="let row">
             <a style="color: inherit;" target="_blank" href="{{row.meta.name}}">{{row.meta.name}}</a>
-          </mat-cell>
+          </td>
         </ng-container>
 
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
-        <mat-row *matRowDef="let row; columns: displayedColumns"
-                 [ngClass]="{highlight: selection.isSelected(row)}"
-                 (click)="onRowClick(row)">
-        </mat-row>
-      </mat-table>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"
+            [ngClass]="{highlight: selection.isSelected(row)}"
+            (click)="onRowClick(row)">
+        </tr>
+      </table>
     </section>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -73,7 +78,7 @@ export class SeedListComponent implements OnChanges {
   }
 
   get isListEmpty(): boolean {
-    return ! (this.seeds && this.seeds.length > 0);
+    return !(this.seeds && this.seeds.length > 0);
   }
 
   get url(): string {

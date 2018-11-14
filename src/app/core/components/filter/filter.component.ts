@@ -29,6 +29,8 @@ export class FilterComponent implements OnChanges {
     discoveryPath: 'Rot'
   };
 
+  private filters: Filter[] = [];
+
   characterCount = new Subject<any>();
   characterCount$ = this.characterCount.asObservable();
 
@@ -56,26 +58,19 @@ export class FilterComponent implements OnChanges {
   requestedUri = new Subject<any>();
   requestedUri$ = this.requestedUri.asObservable();
 
-  // bypasses filter if true
-  bypass = false;
-
-
-  disabled = false;
-
   @Input()
   domain: AggregateText[] | any;
 
   @Output()
-  change: EventEmitter<Filter> = new EventEmitter();
+  change: EventEmitter<Filter[]> = new EventEmitter();
 
-  // @Output()
-  // save: EventEmitter<FilterSet> = new EventEmitter();
+  @Output()
+  setGlobalFilter: EventEmitter<Filter[]> = new EventEmitter();
+
+  @Output()
+  setSeedFilter: EventEmitter<Filter[]> = new EventEmitter();
 
   constructor() {}
-
-  get bypassIcon(): string {
-    return this.bypass ? 'visibility_off' : 'visibility';
-  }
 
   get visible(): boolean {
     return !!this.domain;
@@ -84,51 +79,35 @@ export class FilterComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.domain) {
       if (this.domain) {
-        Object.keys(this.domain).forEach((_) => {
-          this[_].next({
-            name: this.label[_],
-            domain: this.domain[_]
-          });
-        });
-        /*const range = {
-          min: this.domain.characterCount[0],
-          max: this.domain.characterCount[1]
-        };
-        this.characterCount.next({
-          range,
-          start: [range.min, range.max]
-        });
-        */
+        this.reset();
       } else {
         this.domain = undefined;
       }
     }
   }
 
-  setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
-  }
-
-  onSave() {
-    // this.save.emit(this.transformFilter(this.filterModel));
-  }
-
-  /**
-   * Toggle filter bypass. Triggered by button click.
-   */
-  onToggleBypass() {
-    this.bypass = !this.bypass;
-    this.setDisabledState(this.bypass);
-    this.bypass ? this.change.emit(null) : this.onFilterChange();
-  }
-
-  onFilterChange() {
+  onSetGlobalFilter() {
 
   }
 
-  onChange(value, name) {
-    console.log(value, name);
-    this.change.emit({name, value});
+  onSetSeedFilter() {
+
+  }
+
+  onReset() {
+    this.reset();
+    this.change.emit([]);
+  }
+
+  onFilterChange(value, name) {
+    console.log(value);
+    const index = this.filters.findIndex((filter) => filter.name === name);
+    if (index > -1) {
+      this.filters.splice(index, 1);
+    }
+    this.filters.push({name, value});
+
+    this.change.emit(this.filters);
     // this.change.emit(this.transformFilter(this.filterModel));
   }
 
@@ -138,38 +117,31 @@ export class FilterComponent implements OnChanges {
    * Called when domain is changed.
    */
   private reset() {
-    // this.filterModel = [];
-    this.bypass = false;
-    this.setDisabledState(false);
+    this.filters = [];
+    Object.keys(this.domain).forEach((_) => {
+      this[_].next({
+        name: this.label[_],
+        domain: this.domain[_]
+      });
+    });
   }
 
   /**
    * Transform filters by removing those with values matching domain values
    *
-   * @param filter {object}
+   * @param model {object}
    */
-  private transformFilter(filter: object) {
-    return Object.entries(filter).reduce((acc: any, [name, value]) => {
-      if (filter[name].length === this.domain[name].length
+  private transformFilter(model: object) {
+    return Object.entries(model).reduce((acc: any, [name, value]) => {
+      if (model[name].length === this.domain[name].length
         && this.domain[name].every((v, index) => v === value[index])) {
         return acc;
-      } else if (filter[name].length === 0) {
+      } else if (model[name].length === 0) {
         return acc;
       } else {
-        acc[name] = filter[name];
+        acc[name] = model[name];
         return acc;
       }
     }, {});
   }
-
-  /*
-    set uri(uris: string[]) {
-      if (uris.length === 0) {
-        this.uriValue = '';
-        return;
-      }
-      const re = /^https?:\/\/(.*\.)?(.+\..+$)\/?/;
-      this.uriValue = uris.map((uri) => uri.replace(re, 'https?:\/\/.*\.?$2')).join('|');
-    }
-    */
 }

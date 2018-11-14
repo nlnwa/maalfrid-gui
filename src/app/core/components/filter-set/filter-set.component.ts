@@ -13,9 +13,8 @@ import {Filter, FilterSet} from '../../models/maalfrid.model';
         height: 100%;
       }
 
-      .table {
-        height: 100%;
-        overflow-y: auto;
+      table {
+        width: 100%;
       }
 
       .highlight {
@@ -25,39 +24,42 @@ import {Filter, FilterSet} from '../../models/maalfrid.model';
     <section fxLayout="column" [fxHide]="!show">
       <mat-toolbar class="app-toolbar" color="accent">
         <mat-icon>{{ icon }}</mat-icon>&nbsp;{{ name }}
+        <span fxFlex></span>
+        <button mat-icon-button (click)="onSave()">
+          <mat-icon>save</mat-icon>
+        </button>
       </mat-toolbar>
 
 
-      <mat-table class="table" [dataSource]="dataSource" matSort>
-
+      <table mat-table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef>Navn</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{ row.name }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef>Navn</th>
+          <td mat-cell *matCellDef="let row">{{ row.name }}</td>
         </ng-container>
 
         <ng-container matColumnDef="field">
-          <mat-header-cell *matHeaderCellDef>Felt</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{ row.field }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef>Felt</th>
+          <td mat-cell *matCellDef="let row">{{ row.field }}</td>
         </ng-container>
 
 
         <ng-container matColumnDef="exclusive">
-          <mat-header-cell *matHeaderCellDef>Eksluderende</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{ row.exlusive ? 'Ja' : '' }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef>Eksluderende</th>
+          <td mat-cell *matCellDef="let row">{{ row.exlusive ? 'Ja' : '' }}</td>
         </ng-container>
 
         <ng-container matColumnDef="value">
-          <mat-header-cell *matHeaderCellDef>Verdi</mat-header-cell>
-          <mat-cell *matCellDef="let row">{{ row.value }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef>Verdi</th>
+          <td mat-cell *matCellDef="let row">{{ row.value }}</td>
         </ng-container>
 
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
-        <mat-row *matRowDef="let row; columns: displayedColumns"
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"
                  [ngClass]="{'highlight': selection.isSelected(row)}"
                  (click)="onRowClick(row)">
-        </mat-row>
-      </mat-table>
+        </tr>
+      </table>
     </section>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -71,6 +73,9 @@ export class FilterSetComponent implements OnChanges {
 
   @Output()
   rowClick = new EventEmitter<Filter[]>();
+
+  @Output()
+  save = new EventEmitter<FilterSet>();
 
   constructor() {
     this.dataSource = new MatTableDataSource([]);
@@ -93,7 +98,7 @@ export class FilterSetComponent implements OnChanges {
   }
 
   get icon(): string {
-    return this.filterSet && this.filterSet.id === 'global' ? '360' : 'trip_origin';
+    return this.filterSet && this.filterSet.id === 'global' ? 'panorama_fish_eye' : 'adjust';
   }
 
   get filters(): Filter[] {
@@ -107,6 +112,10 @@ export class FilterSetComponent implements OnChanges {
     } else {
       this.rowClick.emit([]);
     }
+  }
+
+  onSave() {
+    this.save.emit(this.filterSet);
   }
 
   ngOnChanges(changes: SimpleChanges): void {

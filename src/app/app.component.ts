@@ -6,16 +6,16 @@ import {ActivatedRoute, Router} from '@angular/router';
   selector: 'app-root',
   template: `
     <style>
+      .container {
+        height: 100%;
+      }
+
       main {
         overflow: hidden;
       }
 
-      .app-container {
-        height: 100%;
-      }
-
       .user {
-        font-family: monospace;
+        font-weight: lighter;
       }
 
       .title-link {
@@ -24,7 +24,7 @@ import {ActivatedRoute, Router} from '@angular/router';
       }
     </style>
 
-    <div class="app-container" fxLayout="column">
+    <div class="container" fxLayout="column">
       <mat-toolbar class="app-toolbar">
         <img src="assets/favicon-32x32.png">&nbsp;<a routerLink='/' class="title-link">Målfrid</a>
         <span fxFlex></span>
@@ -40,7 +40,7 @@ import {ActivatedRoute, Router} from '@angular/router';
         </a>
       </mat-toolbar>
 
-      <main fxFlex="grow">
+      <main>
         <router-outlet></router-outlet>
       </main>
     </div>

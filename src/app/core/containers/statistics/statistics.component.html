@@ -4,17 +4,14 @@
   *ngIf="loading$ | async"
   class="data-loader"></mat-spinner>
 <section fxLayout="row">
-  <div class="column-left" fxFlex="15%" fxLayout="column">
-    <app-interval
-      fxFlex
-      (granularity)="onGranularityChange($event)"
-      (change)="onIntervalChange($event)"></app-interval>
+
+  <div class="column-left" fxFlex>
     <app-entity-list
-      fxFlex="grow"
       (rowClick)="onEntitySelect($event)"
       [entities]="entities$ | async"></app-entity-list>
   </div>
-  <div class="column-center" fxLayout="column" fxFlex="grow">
+
+  <div class="column-center" fxFlex="grow" fxLayout="column">
     <app-seed-list
       fxFlex
       (rowClick)="onSeedSelect($event)"
@@ -33,7 +30,6 @@
       (shortTextElementClick)="onShortTextClick($event)"
       (longTextElementClick)="onLongTextClick($event)"
       (perExecutionElementClick)="onPerExecutionTextClick($event)"></app-chart>
-
     <app-uri-list
       fxFlex (text)="onRequestText($event)"
       [data]="filteredData$ | async"></app-uri-list>
@@ -42,7 +38,12 @@
       [text]="text$ | async"></app-text>
     <span fxFlex="grow"></span>
   </div>
-  <div class="column-right" fxFlex="20%" fxLayout="column">
+
+  <div class="column-right" fxFlex fxLayout="column">
+    <app-interval
+      fxFlex
+      (granularity)="onGranularityChange($event)"
+      (change)="onIntervalChange($event)"></app-interval>
     <app-filter-set-list
       fxFlex
       [filterSets]="filterSets$ | async"
@@ -50,7 +51,8 @@
     <app-filter
       fxFlex="grow"
       [domain]="domain$ | async"
-      (change)="onFilter($event)"
-      ></app-filter>
+      (change)="onImmediateFilter($event)"
+    ></app-filter>
   </div>
+
 </section>

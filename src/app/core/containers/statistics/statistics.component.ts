@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 
 import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
-import {catchError, exhaustMap, filter, map, share, tap} from 'rxjs/operators';
+import {catchError, exhaustMap, filter, map, share, startWith, tap} from 'rxjs/operators';
 
 import {MaalfridService} from '../../services/maalfrid-service/maalfrid.service';
 import {Entity, Seed} from '../../models/config.model';
@@ -37,14 +37,14 @@ export class StatisticsComponent implements OnInit {
   loading = new Subject<boolean>();
   loading$ = this.loading.asObservable().pipe();
 
-  private immediateFilter = new Subject<Filter>();
-  immediateFilter$ = this.immediateFilter.asObservable();
+  private globalFilters = new Subject<Filter[]>();
+  globalFilters$ = this.globalFilters.asObservable();
 
-  private seedFilters = new BehaviorSubject<Filter[]>([]);
+  private seedFilters = new Subject<Filter[]>();
   seedFilters$ = this.seedFilters.asObservable();
 
-  private globalFilters = new BehaviorSubject<Filter[]>([]);
-  globalFilters$ = this.globalFilters.asObservable();
+  private immediateFilters = new Subject<Filter[]>();
+  immediateFilters$ = this.immediateFilters.asObservable();
 
   private globalFilterSet = new Subject<FilterSet>();
   globalFilterSet$ = this.globalFilterSet.asObservable();
@@ -64,6 +64,12 @@ export class StatisticsComponent implements OnInit {
   filteredData$ = this.filteredData.pipe(share());
 
   constructor(private maalfridService: MaalfridService) {
+
+    /*
+
+    const filters = this.globalFilters.value.concat(this.seedFilters.value, immediateFilter);
+    this.filteredData.next(this.data.value.filter(predicateFromFilters(filters)));
+     */
     combineLatest(this.selectedSeed$, this.interval$).pipe(
       filter(([seed, _]) => !!seed),
       tap(() => this.loading.next(true)),
@@ -85,15 +91,30 @@ export class StatisticsComponent implements OnInit {
       this.filteredData.next([]);
     });
 
-    combineLatest(this.globalFilters$, this.seedFilters$).pipe(
-      map(([globalFilters, seedFilters]) => globalFilters.concat(seedFilters))
-    ).subscribe((filters: Filter[]) => {
-      if (filters.length > 0) {
-        this.filteredData.next(this.data.value.filter(predicateFromFilters(filters)));
-      } else {
-        this.filteredData.next(this.data.value);
-      }
-    });
+    combineLatest(
+      this.globalFilters$.pipe(startWith<Filter[]>([])),
+      this.seedFilters$.pipe(startWith<Filter[]>([])),
+      this.immediateFilters$.pipe(startWith<Filter[]>([]))
+    ).pipe(
+      map(([globalFilters, seedFilters, immediateFilters]) => this.mergeFilters(globalFilters, seedFilters, immediateFilters))
+    )
+      .subscribe((filters: Filter[]) => {
+        if (filters.length > 0) {
+          this.filteredData.next(this.data.value.filter(predicateFromFilters(filters)));
+        } else {
+          this.filteredData.next(this.data.value);
+        }
+      });
+  }
+
+  mergeFilters(a: Filter[], b: Filter[], c: Filter[]): Filter[] {
+    console.log('wtf', c, 'keyupp');
+    const filters = [...a];
+
+
+    // const merged = filters.reduce((acc: Filter[], curr: Filter[]) => [...acc].concat(...curr));
+
+    return a;
   }
 
   ngOnInit(): void {
@@ -109,14 +130,14 @@ export class StatisticsComponent implements OnInit {
     this.globalFilters.next(globalFilters);
   }
 
+  onImmediateFilter(immediateFilter: Filter[]) {
+    this.immediateFilters.next(immediateFilter);
+  }
+
   onFilterSetSelect(filterSet: FilterSet) {
     this.filterSet.next(filterSet);
   }
 
-  onFilter(immediateFilter: Filter) {
-    const filters = this.globalFilters.value.concat(this.seedFilters.value, immediateFilter);
-    this.filteredData.next(this.data.value.filter(predicateFromFilters(filters)));
-  }
 
   onFilterSave(filterSet: FilterSet) {
     this.maalfridService.saveFilter(filterSet).subscribe();
