@@ -93,8 +93,15 @@ function urisCondition(uris: string[]): Predicate {
   return or(uris.map((uri) => uriCondition(uri)));
 }
 
-function regexpCondition(regexp: string, property: string) {
-  return (e: AggregateText) => new RegExp(`${regexp}`).test(e[property]);
+function regexpCondition(regexp: string, property: string): Predicate {
+  return (e: AggregateText) => {
+    try {
+      return new RegExp(`${regexp}`).test(e[property]);
+    } catch (e) {
+      console.error(e.message);
+      return false;
+    }
+  }
 }
 
 function shortTextCondition(): Predicate {

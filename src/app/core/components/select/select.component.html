@@ -1,9 +1,17 @@
-<mat-form-field class="select">
-  <mat-select multiple
-              [(ngModel)]="model"
-              [placeholder]="placeholder"
-              [disabled]="disabled"
-              (selectionChange)="onSelectionChange($event)">
-    <mat-option *ngFor="let option of options" [value]="option">{{option || emptyOption}}</mat-option>
-  </mat-select>
-</mat-form-field>
+<div fxLayout="row" fxLayoutAlign="center center">
+  <mat-form-field class="select">
+    <mat-select multiple
+                [(ngModel)]="model"
+                [placeholder]="placeholder"
+                [disabled]="disabled"
+                (selectionChange)="onSelectionChange($event)">
+      <mat-option *ngFor="let option of options" [value]="option">{{option || emptyOption}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-checkbox
+    #checkbox
+    class="checkbox"
+    color="warn"
+    matTooltip="Exclusive"
+    (change)="onExclusiveChange(checkbox.checked)"></mat-checkbox>
+</div>

@@ -53,18 +53,27 @@ import {Filter, FilterSet} from '../../models/maalfrid.model';
           <td mat-cell *matCellDef="let row">{{ row.value }}</td>
         </ng-container>
 
+        <ng-container matColumnDef="remove">
+          <th mat-header-cell *matHeaderCellDef>Fjern</th>
+          <td mat-cell *matCellDef="let row" (click)="$event.stopPropagation()">
+            <button mat-icon-button (click)="onRemoveFilter(row)">
+              <mat-icon>clear</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
         <tr mat-row *matRowDef="let row; columns: displayedColumns"
-                 [ngClass]="{'highlight': selection.isSelected(row)}"
-                 (click)="onRowClick(row)">
+            [ngClass]="{'highlight': selection.isSelected(row)}"
+            (click)="onRowClick(row)">
         </tr>
       </table>
     </section>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterSetComponent implements OnChanges {
-  displayedColumns = ['name', 'field', 'exclusive', 'value'];
+  displayedColumns = ['name', 'field', 'exclusive', 'value', 'remove'];
   dataSource: MatTableDataSource<Filter>;
   selection = new SelectionModel<Filter>(true, []);
 
@@ -105,6 +114,24 @@ export class FilterSetComponent implements OnChanges {
     return this.filterSet ? this.filterSet.filters : [];
   }
 
+  addFilters(filters: Filter[]) {
+    this.filterSet.filters.push(...filters);
+    this.update();
+  }
+
+  onRemoveFilter(filter: Filter) {
+    const index = this.filterSet.filters.findIndex((_: Filter) =>
+      filter.name === _.name &&
+      filter.value === _.value &&
+      filter.exclusive === _.exclusive &&
+      filter.field === _.field
+    );
+    if (index > -1) {
+      this.filterSet.filters.splice(index, 1);
+      this.update();
+    }
+  }
+
   onRowClick(filter) {
     this.selection.toggle(filter);
     if (this.selection.hasValue()) {
@@ -119,7 +146,13 @@ export class FilterSetComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.filterSet && this.filterSet) {
+    if (changes.filterSet) {
+      this.update();
+    }
+  }
+
+  private update() {
+    if (this.filterSet) {
       this.dataSource.data = this.filterSet.filters;
       if (this.filters.length > 0) {
         this.selection.select(...this.filters);
@@ -127,6 +160,8 @@ export class FilterSetComponent implements OnChanges {
       } else {
         this.rowClick.emit([]);
       }
+    } else {
+      this.rowClick.emit([]);
     }
   }
 }

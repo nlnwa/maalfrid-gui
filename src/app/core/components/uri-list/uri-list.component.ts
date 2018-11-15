@@ -109,9 +109,6 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
     if (changes.data) {
       if (this.data) {
         this.dataSource.data = this.data;
-        this.visible = this.data.length > 0 ? true : false;
-      } else {
-        this.visible = false;
       }
     }
   }

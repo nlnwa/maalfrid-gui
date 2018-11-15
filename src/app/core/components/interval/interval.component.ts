@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MatDatepickerInputEvent} from '@angular/material/datepicker/typings/datepicker-input';
-import * as moment from 'moment';
 import {Moment} from 'moment';
 
 export class Interval {
@@ -15,14 +14,17 @@ export class Interval {
       section {
         height: 100%;
       }
+      field {
+        width: 100%;
+      }
     </style>
     <section fxLayout="column">
       <mat-toolbar class="app-toolbar" color="accent">
         <mat-icon class="icon-header">schedule</mat-icon>&nbsp;
         Intervall
       </mat-toolbar>
-      <div fxLayout="column" class="app-container__padding">
-        <mat-form-field>
+      <div fxLayout="column" class="app-content__padding">
+        <mat-form-field fxFlex class="field">
           <input matInput
                  [ngModel]="intervalModel.start"
                  [matDatepicker]="startTime"
@@ -31,7 +33,8 @@ export class Interval {
           <mat-datepicker-toggle matSuffix [for]="startTime"></mat-datepicker-toggle>
         </mat-form-field>
         <mat-datepicker #startTime [startView]="startView"></mat-datepicker>
-        <mat-form-field>
+
+        <mat-form-field fxFlex class="field">
           <input matInput
                  [ngModel]="intervalModel.end"
                  [matDatepicker]="endTimePicker"
@@ -41,7 +44,7 @@ export class Interval {
         </mat-form-field>
         <mat-datepicker #endTimePicker [startView]="startView"></mat-datepicker>
 
-        <mat-form-field>
+        <mat-form-field fxFlex class="field">
           <mat-select [value]="defaultUnit" (valueChange)="onGranularityChange($event)" placeholder="Granularitet">
             <mat-option *ngFor="let unit of units" [value]="unit">{{unitLanguageMap[unit] | titlecase}}</mat-option>
           </mat-select>

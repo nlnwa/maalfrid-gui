@@ -46,7 +46,7 @@ import {_isNumberValue} from '@angular/cdk/coercion';
         </button>
       </mat-toolbar>
 
-      <mat-form-field fxFlex class="app-container__padding" [fxShow]="showFilter">
+      <mat-form-field fxFlex class="app-content__padding" [fxShow]="showFilter">
         <input #filter matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
       </mat-form-field>
 

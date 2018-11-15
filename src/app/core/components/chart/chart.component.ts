@@ -5,7 +5,6 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnInit,
   Output,
   QueryList,
   ViewChild,
@@ -41,7 +40,7 @@ function timeFormat(granularity: string): string {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [WorkerService]
 })
-export class ChartComponent implements OnInit, AfterViewInit {
+export class ChartComponent implements AfterViewInit {
   visible = false;
 
   defaultMap = colorMaps['maalfrid'];
@@ -59,7 +58,6 @@ export class ChartComponent implements OnInit, AfterViewInit {
   @Input()
   set data(data) {
     if (data && Object.keys(data).length > 0) {
-      this.visible = true;
       this.workerService.transform(data).subscribe((val) => {
         this._data = val;
         this.applyData(this.mergeData(this._data, this._granularity));
@@ -107,9 +105,9 @@ export class ChartComponent implements OnInit, AfterViewInit {
 
   onToggleVisibility() {
     this.visible = !this.visible;
-  }
-
-  ngOnInit() {
+    if (this.visible) {
+      this.onRefresh();
+    }
   }
 
   reset() {
@@ -129,6 +127,10 @@ export class ChartComponent implements OnInit, AfterViewInit {
       this.charts.last.options = chartOption;
       this.charts.last.initChart(chartOption);
     });
+  }
+
+  onRefresh() {
+    this.applyData(this.mergeData(this._data, this._granularity));
   }
 
   getAllTextChartOptions() {

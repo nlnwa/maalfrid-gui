@@ -37,6 +37,10 @@ export class SelectComponent {
     this.disabled = isDisabled;
   }
 
+  onExclusiveChange(exclusive) {
+    console.log('exclusive', exclusive);
+  }
+
   onSelectionChange(event) {
     this.change.emit(event.value);
   }

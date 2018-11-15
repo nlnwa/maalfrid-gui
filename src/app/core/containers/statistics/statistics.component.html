@@ -16,12 +16,6 @@
       fxFlex
       (rowClick)="onSeedSelect($event)"
       [seeds]="seeds$ | async"></app-seed-list>
-    <app-filter-set
-      fxFlex [filterSet]="globalFilterSet$ | async"
-      (rowClick)="onGlobalFilterSelect($event)"></app-filter-set>
-    <app-filter-set
-      fxFlex [filterSet]="filterSet$ | async"
-      (rowClick)="onSeedFilterSelect($event)"></app-filter-set>
     <app-chart
       fxFlex
       [granularity]="granularity$ | async"
@@ -48,10 +42,21 @@
       fxFlex
       [filterSets]="filterSets$ | async"
       (rowClick)="onFilterSetSelect($event)"></app-filter-set-list>
+    <app-filter-set
+      fxFlex
+      [filterSet]="globalFilterSet$ | async"
+      (rowClick)="onGlobalFilterSelect($event)"></app-filter-set>
+    <app-filter-set
+      #seedFilterSet
+      fxFlex
+      [filterSet]="filterSet$ | async"
+      (rowClick)="onSeedFilterSelect($event)"></app-filter-set>
     <app-filter
       fxFlex="grow"
+      #immediateFilter
       [domain]="domain$ | async"
-      (change)="onImmediateFilter($event)"
+      (filterChange)="onImmediateFilter($event)"
+      (setSeedFilter)="seedFilterSet.addFilters(immediateFilter.getFilters())"
     ></app-filter>
   </div>
 

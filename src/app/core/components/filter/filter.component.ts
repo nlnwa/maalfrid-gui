@@ -62,7 +62,7 @@ export class FilterComponent implements OnChanges {
   domain: AggregateText[] | any;
 
   @Output()
-  change: EventEmitter<Filter[]> = new EventEmitter();
+  filterChange: EventEmitter<Filter[]> = new EventEmitter();
 
   @Output()
   setGlobalFilter: EventEmitter<Filter[]> = new EventEmitter();
@@ -76,6 +76,10 @@ export class FilterComponent implements OnChanges {
     return !!this.domain;
   }
 
+  getFilters(): Filter[] {
+    return this.filters;
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes.domain) {
       if (this.domain) {
@@ -87,28 +91,35 @@ export class FilterComponent implements OnChanges {
   }
 
   onSetGlobalFilter() {
-
+    this.setGlobalFilter.emit(this.filters);
+    this.reset();
   }
 
   onSetSeedFilter() {
-
+    this.setSeedFilter.emit(this.filters);
+    this.reset();
   }
 
   onReset() {
     this.reset();
-    this.change.emit([]);
   }
 
-  onFilterChange(value, name) {
-    console.log(value);
-    const index = this.filters.findIndex((filter) => filter.name === name);
+  onFilterChange(value, name, field, exclusive) {
+    const filter = {name, value, exclusive, field};
+    // remove filter with same name if already present in filters array
+    this.removeNamedFilterIfPresent(filter);
+    // add filter if value not in domain
+    if (!this.filterEqualsDomain(filter) && value.length > 0) {
+      this.filters.push(filter);
+    }
+    this.filterChange.emit(this.filters);
+  }
+
+  private removeNamedFilterIfPresent(filter: Filter) {
+    const index = this.filters.findIndex((_) => _.name === filter.name);
     if (index > -1) {
       this.filters.splice(index, 1);
     }
-    this.filters.push({name, value});
-
-    this.change.emit(this.filters);
-    // this.change.emit(this.transformFilter(this.filterModel));
   }
 
   /**
@@ -118,30 +129,24 @@ export class FilterComponent implements OnChanges {
    */
   private reset() {
     this.filters = [];
-    Object.keys(this.domain).forEach((_) => {
-      this[_].next({
-        name: this.label[_],
-        domain: this.domain[_]
-      });
+    this.filterChange.emit(this.filters);
+    Object.keys(this.domain).forEach((name) => {
+      this[name].next({name: this.label[name], domain: this.domain[name]});
     });
   }
 
   /**
-   * Transform filters by removing those with values matching domain values
+   * Check if filter value is similar to domain
    *
-   * @param model {object}
+   * @param filter {Filter}
    */
-  private transformFilter(model: object) {
-    return Object.entries(model).reduce((acc: any, [name, value]) => {
-      if (model[name].length === this.domain[name].length
-        && this.domain[name].every((v, index) => v === value[index])) {
-        return acc;
-      } else if (model[name].length === 0) {
-        return acc;
-      } else {
-        acc[name] = model[name];
-        return acc;
-      }
-    }, {});
+  private filterEqualsDomain(filter: Filter): boolean {
+    // filter name not in domain (e.g. matchRegexp)
+    if (!this.domain.hasOwnProperty(filter.name)) {
+      return false;
+    }
+    // check if filter has every value selected (select type filter)
+    // or if filter value equals domain range (slider type filter)
+    return this.domain[filter.name].every((value, index) => value === filter.value[index]);
   }
 }

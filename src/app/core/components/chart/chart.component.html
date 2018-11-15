@@ -1,6 +1,9 @@
 <mat-toolbar class="app-toolbar stat-toolbar" color="accent">
   <mat-icon>poll</mat-icon>&nbsp;Statistikk
   <span fxFlex></span>
+  <button mat-icon-button (click)="onRefresh()">
+    <mat-icon>refresh</mat-icon>
+  </button>
   <button mat-icon-button (click)="onToggleVisibility()">
     <mat-icon>{{ showHideIcon }}</mat-icon>
   </button>

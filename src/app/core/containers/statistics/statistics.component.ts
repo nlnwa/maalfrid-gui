@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 
 import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
-import {catchError, exhaustMap, filter, map, share, startWith, tap} from 'rxjs/operators';
+import {catchError, filter, map, share, startWith, switchMap, tap} from 'rxjs/operators';
 
 import {MaalfridService} from '../../services/maalfrid-service/maalfrid.service';
 import {Entity, Seed} from '../../models/config.model';
@@ -49,38 +49,42 @@ export class StatisticsComponent implements OnInit {
   private globalFilterSet = new Subject<FilterSet>();
   globalFilterSet$ = this.globalFilterSet.asObservable();
 
+
   private filterSet = new Subject<FilterSet>();
   filterSet$ = this.filterSet.asObservable();
 
   private filterSets = new Subject<FilterSet[]>();
   filterSets$ = this.filterSets.asObservable();
 
-  private data = new BehaviorSubject<AggregateText[]>([]);
+  private data = new Subject<AggregateText[]>();
+  data$ = this.data.asObservable();
 
   private domain = new Subject<object>();
   domain$ = this.domain.pipe(map((data) => dominate(data)));
 
-  private filteredData = new Subject<AggregateText[]>();
-  filteredData$ = this.filteredData.pipe(share());
+  private filters$ = combineLatest(
+    this.globalFilters$.pipe(startWith<Filter[]>([])),
+    this.seedFilters$.pipe(startWith<Filter[]>([])),
+    this.immediateFilters$.pipe(startWith<Filter[]>([]))
+  ).pipe(
+    map(([globalFilters, seedFilters, immediateFilters]) => this.mergeFilters(globalFilters, seedFilters, immediateFilters))
+  );
+
+  filteredData$ = combineLatest(this.data$, this.filters$).pipe(
+    map(([data, filters]) => data.filter(predicateFromFilters(filters))),
+    share()
+  );
 
   constructor(private maalfridService: MaalfridService) {
-
-    /*
-
-    const filters = this.globalFilters.value.concat(this.seedFilters.value, immediateFilter);
-    this.filteredData.next(this.data.value.filter(predicateFromFilters(filters)));
-     */
     combineLatest(this.selectedSeed$, this.interval$).pipe(
       filter(([seed, _]) => !!seed),
       tap(() => this.loading.next(true)),
-      exhaustMap(seed => {
-          return this.fetchData(this.selectedSeed.value, this.interval.value).pipe(
-            tap((_) => this.domain.next(_)),
-          );
-        }
-      ),
+      switchMap(() => this.fetchData(this.selectedSeed.value, this.interval.value)),
       tap(() => this.loading.next(false)),
-    ).subscribe((data) => this.data.next(data));
+    ).subscribe((data) => {
+      this.domain.next(data);
+      this.data.next(data);
+    });
 
     // reset when no seed is selected
     this.selectedSeed$.pipe(
@@ -88,33 +92,17 @@ export class StatisticsComponent implements OnInit {
     ).subscribe(_ => {
       this.data.next([]);
       this.domain.next(null);
-      this.filteredData.next([]);
+      // this.filteredData.next([]);
     });
-
-    combineLatest(
-      this.globalFilters$.pipe(startWith<Filter[]>([])),
-      this.seedFilters$.pipe(startWith<Filter[]>([])),
-      this.immediateFilters$.pipe(startWith<Filter[]>([]))
-    ).pipe(
-      map(([globalFilters, seedFilters, immediateFilters]) => this.mergeFilters(globalFilters, seedFilters, immediateFilters))
-    )
-      .subscribe((filters: Filter[]) => {
-        if (filters.length > 0) {
-          this.filteredData.next(this.data.value.filter(predicateFromFilters(filters)));
-        } else {
-          this.filteredData.next(this.data.value);
-        }
-      });
   }
 
   mergeFilters(a: Filter[], b: Filter[], c: Filter[]): Filter[] {
-    console.log('wtf', c, 'keyupp');
-    const filters = [...a];
+    console.log('global', a);
+    console.log('seed', b);
+    console.log('immediateFilter', c);
+    const filters = [...a, ...b, ...c];
 
-
-    // const merged = filters.reduce((acc: Filter[], curr: Filter[]) => [...acc].concat(...curr));
-
-    return a;
+    return filters;
   }
 
   ngOnInit(): void {

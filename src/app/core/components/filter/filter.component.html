@@ -14,40 +14,57 @@
     </button>
   </mat-toolbar>
 
-  <div fxLayout="column" class="app-container__padding">
-    <app-slider class="filter"
-                (change)="onFilterChange($event, 'characterCount')"
-                [config]="characterCount$ | async"></app-slider>
-    <app-slider class="filter"
-                (change)="onFilterChange($event, 'wordCount')"
-                [config]="wordCount$ | async"></app-slider>
-    <app-slider class="filter"
-                (change)="onFilterChange($event, 'sentenceCount')"
-                [config]="sentenceCount$ | async"></app-slider>
-    <app-slider class="filter"
-                (change)="onFilterChange($event, 'lix')"
-                [config]="lix$ | async"></app-slider>
-    <app-slider class="filter"
-                (change)="onFilterChange($event, 'longWordCount')"
-                [config]="longWordCount$ | async"></app-slider>
-    <app-select class="filter"
-                (change)="onFilterChange($event, 'language')"
-                [config]="language$ | async"></app-select>
-    <app-select class="filter"
-                (change)="onFilterChange($event, 'contentType')"
-                [config]="contentType$ | async"></app-select>
-    <app-select class="filter"
-                (change)="onFilterChange($event, 'discoveryPath')"
-                [config]="discoveryPath$ | async"></app-select>
-    <app-select class="filter"
-                (change)="onFilterChange($event, 'requestedUri')"
-                [config]="requestedUri$ | async"></app-select>
-    <mat-form-field class="filter">
-      <input matInput
-             #regexp
-             placeholder="URI regulært uttrykk"
-             (keyup.enter)="onFilterChange(regexp.target ? regexp.target.value : regexp.value, 'matchRegexp')">
-      <button mat-button><mat-icon></mat-icon></button>
-    </mat-form-field>
+  <div fxLayout="column" class="app-content__padding">
+    <app-slider
+      class="slider"
+      (change)="onFilterChange($event, 'characterCount')"
+      [config]="characterCount$ | async"></app-slider>
+    <app-slider
+      class="slider"
+      (change)="onFilterChange($event, 'wordCount')"
+      [config]="wordCount$ | async"></app-slider>
+    <app-slider
+      class="slider"
+      (change)="onFilterChange($event, 'sentenceCount')"
+      [config]="sentenceCount$ | async"></app-slider>
+    <app-slider
+      class="slider"
+      (change)="onFilterChange($event, 'lix')"
+      [config]="lix$ | async"></app-slider>
+    <app-slider
+      class="slider"
+      (change)="onFilterChange($event, 'longWordCount')"
+      [config]="longWordCount$ | async"></app-slider>
+    <app-select
+      class="select"
+      (change)="onFilterChange($event, 'language')"
+      [config]="language$ | async"></app-select>
+    <app-select
+      class="select"
+      (change)="onFilterChange($event, 'contentType')"
+      [config]="contentType$ | async"></app-select>
+    <app-select
+      class="select"
+      (change)="onFilterChange($event, 'discoveryPath')"
+      [config]="discoveryPath$ | async"></app-select>
+    <app-select
+      class="select"
+      (change)="onFilterChange($event, 'requestedUri')"
+      [config]="requestedUri$ | async"></app-select>
+    <div class="input" fxLayout="row" fxLayoutAlign="start center">
+      <mat-form-field class="input-field" fxFlex>
+        <input
+          matInput
+          #regexp
+          placeholder="URI regulært uttrykk"
+          (keyup.enter)="onFilterChange(regexp.value, 'matchRegexp', 'requestedUri', checkbox.checked)">
+      </mat-form-field>
+      <mat-checkbox
+        #checkbox
+        class="checkbox"
+        color="warn"
+        matTooltip="Exclusive"
+        (change)="onFilterChange(regexp.value, 'matchRegexp', 'requestedUri', checkbox.checked)"></mat-checkbox>
+    </div>
   </div>
 </section>

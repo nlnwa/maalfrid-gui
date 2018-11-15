@@ -24,6 +24,8 @@ export class SliderComponent {
   tooltips = true;
   keyboard = true;
 
+  exclusive = false;
+
   @Input()
   set config(config: any) {
     if (config) {
@@ -46,7 +48,8 @@ export class SliderComponent {
     this.disabled = isDisabled;
   }
 
-  onChange(event) {
-    this.change.emit(event);
+  onChange(event, exclusive) {
+    console.log(event, exclusive);
+    // this.change.emit(event);
   }
 }

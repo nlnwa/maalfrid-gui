@@ -43,7 +43,7 @@
 </mat-toolbar>
 
 <div fxFlex fxHide [fxShow]="visible">
-  <mat-form-field class="app-container__padding" [fxShow]="showFilter">
+  <mat-form-field class="app-content__padding" [fxShow]="showFilter">
     <input #filter matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
   </mat-form-field>
 
