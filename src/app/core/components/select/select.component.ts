@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Filter} from '../../models/maalfrid.model';
 
 @Component({
   selector: 'app-select',
@@ -7,12 +8,11 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 })
 export class SelectComponent {
   @Output()
-  change: EventEmitter<string[]> = new EventEmitter();
+  change: EventEmitter<Filter> = new EventEmitter();
 
   @Input()
   emptyOption: '';
 
-  @Input()
   placeholder = '';
 
   @Input()
@@ -21,11 +21,13 @@ export class SelectComponent {
   disabled = false;
 
   model = [];
+  name = '';
 
   @Input()
   set config(config: any) {
     if (config) {
-      this.placeholder = config.name;
+      this.name = config.name;
+      this.placeholder = config.label;
       this.options = [...(config.domain as string[])];
       this.model = [];
     }
@@ -37,11 +39,7 @@ export class SelectComponent {
     this.disabled = isDisabled;
   }
 
-  onExclusiveChange(exclusive) {
-    console.log('exclusive', exclusive);
-  }
-
-  onSelectionChange(event) {
-    this.change.emit(event.value);
+  onSelectionChange(value, exclusive) {
+    this.change.emit({value, exclusive, name: this.name});
   }
 }

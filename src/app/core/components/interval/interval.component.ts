@@ -85,6 +85,7 @@ export class IntervalComponent implements OnInit {
   }
 
   onGranularityChange(event: string) {
+    console.log('granularity change', event);
     this.granularity.emit(event);
   }
 

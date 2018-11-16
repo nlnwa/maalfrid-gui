@@ -5,8 +5,10 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   Output,
   QueryList,
+  SimpleChanges,
   ViewChild,
   ViewChildren
 } from '@angular/core';
@@ -40,32 +42,17 @@ function timeFormat(granularity: string): string {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [WorkerService]
 })
-export class ChartComponent implements AfterViewInit {
+export class ChartComponent implements AfterViewInit, OnChanges {
   visible = false;
-
   defaultMap = colorMaps['maalfrid'];
+
   private readonly colorMap;
 
-  private _granularity = 'week';
-  private _data: AggregateText[] = [];
+  @Input()
+  granularity: string;
 
   @Input()
-  set granularity(granularity: string) {
-    this._granularity = granularity;
-    this.applyData(this.mergeData(this._data, granularity));
-  }
-
-  @Input()
-  set data(data) {
-    if (data && Object.keys(data).length > 0) {
-      this.workerService.transform(data).subscribe((val) => {
-        this._data = val;
-        this.applyData(this.mergeData(this._data, this._granularity));
-      });
-    } else {
-      this.reset();
-    }
-  }
+  data: AggregateText[];
 
   @Output()
   allTextElementClick = new EventEmitter();
@@ -99,6 +86,27 @@ export class ChartComponent implements AfterViewInit {
     this.colorMap = this.defaultMap;
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.granularity) {
+      if (this.granularity && this.data) {
+        this.applyData(this.mergeData(this.data, this.granularity));
+      } else {
+        this.granularity = 'week';
+      }
+    }
+    if (changes.data) {
+      console.log('chart component data length', this.data ? this.data.length : 0);
+      if (this.data && Object.keys(this.data).length > 0 && this.granularity) {
+        this.workerService.transform(this.data).subscribe((val) => {
+          this.data = val;
+          this.applyData(this.mergeData(this.data, this.granularity));
+        });
+      } else {
+        this.reset();
+      }
+    }
+  }
+
   get showHideIcon(): string {
     return this.visible ? 'expand_less' : 'expand_more';
   }
@@ -108,16 +116,6 @@ export class ChartComponent implements AfterViewInit {
     if (this.visible) {
       this.onRefresh();
     }
-  }
-
-  reset() {
-    this.perExecutionData = [];
-    this.allTextData = [];
-    this.shortTextData = [];
-    this.longTextData = [];
-    this.nrOfLongTexts = undefined;
-    this.nrOfTexts = undefined;
-    this.nrOfShortTexts = undefined;
   }
 
   ngAfterViewInit() {
@@ -130,7 +128,7 @@ export class ChartComponent implements AfterViewInit {
   }
 
   onRefresh() {
-    this.applyData(this.mergeData(this._data, this._granularity));
+    // this.applyData(this.mergeData(this._data, this._granularity));
   }
 
   getAllTextChartOptions() {
@@ -174,13 +172,11 @@ export class ChartComponent implements AfterViewInit {
         },
       });
     // format dates differently depending on the granularity
-    options.chart.xAxis.tickFormat = (unix) => moment(unix * 1000).format(timeFormat(this._granularity));
+    options.chart.xAxis.tickFormat = (unix) => moment(unix * 1000).format(timeFormat(this.granularity));
     return options;
   }
 
   private applyData(data) {
-//     acc[curr].forEach((set) => set[0] = moment.unix(set[0]).format(timeFormat(granularity)));
-
     this.perExecutionData = Object.keys(data).map((key) =>
       ({
         key,
@@ -209,10 +205,10 @@ export class ChartComponent implements AfterViewInit {
         color: this.colorMap[language],
       }));
 
-
     this.nrOfTexts = this.allTextData.reduce((acc, curr) => curr.value + acc, 0);
     this.nrOfShortTexts = this.shortTextData.reduce((acc, curr) => curr.value + acc, 0);
     this.nrOfLongTexts = this.longTextData.reduce((acc, curr) => curr.value + acc, 0);
+
 
     this.changeDetectorRef.markForCheck();
   }
@@ -233,6 +229,17 @@ export class ChartComponent implements AfterViewInit {
       }, []);
       return acc;
     }, {});
+  }
+
+  private reset() {
+    this.data = [];
+    this.perExecutionData = [];
+    this.allTextData = [];
+    this.shortTextData = [];
+    this.longTextData = [];
+    this.nrOfLongTexts = undefined;
+    this.nrOfTexts = undefined;
+    this.nrOfShortTexts = undefined;
   }
 
   private initChartOptions() {

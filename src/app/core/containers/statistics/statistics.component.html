@@ -38,14 +38,14 @@
       fxFlex
       (granularity)="onGranularityChange($event)"
       (change)="onIntervalChange($event)"></app-interval>
-    <app-filter-set-list
-      fxFlex
-      [filterSets]="filterSets$ | async"
-      (rowClick)="onFilterSetSelect($event)"></app-filter-set-list>
     <app-filter-set
       fxFlex
       [filterSet]="globalFilterSet$ | async"
       (rowClick)="onGlobalFilterSelect($event)"></app-filter-set>
+    <app-filter-set-list
+      fxFlex
+      [filterSets]="filterSets$ | async"
+      (rowClick)="onFilterSetSelect($event)"></app-filter-set-list>
     <app-filter-set
       #seedFilterSet
       fxFlex

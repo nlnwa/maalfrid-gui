@@ -104,12 +104,11 @@ export class FilterComponent implements OnChanges {
     this.reset();
   }
 
-  onFilterChange(value, name, field, exclusive) {
-    const filter = {name, value, exclusive, field};
+  onFilterChange(filter: Filter) {
     // remove filter with same name if already present in filters array
     this.removeNamedFilterIfPresent(filter);
     // add filter if value not in domain
-    if (!this.filterEqualsDomain(filter) && value.length > 0) {
+    if (!this.filterEqualsDomain(filter) && filter.value.length > 0) {
       this.filters.push(filter);
     }
     this.filterChange.emit(this.filters);
@@ -131,7 +130,7 @@ export class FilterComponent implements OnChanges {
     this.filters = [];
     this.filterChange.emit(this.filters);
     Object.keys(this.domain).forEach((name) => {
-      this[name].next({name: this.label[name], domain: this.domain[name]});
+      this[name].next({name, label: this.label[name], domain: this.domain[name]});
     });
   }
 

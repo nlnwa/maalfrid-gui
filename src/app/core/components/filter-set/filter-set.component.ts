@@ -21,7 +21,7 @@ import {Filter, FilterSet} from '../../models/maalfrid.model';
         background-color: #eee;
       }
     </style>
-    <section fxLayout="column" [fxHide]="!show">
+    <section fxLayout="column">
       <mat-toolbar class="app-toolbar" color="accent">
         <mat-icon>{{ icon }}</mat-icon>&nbsp;{{ name }}
         <span fxFlex></span>
@@ -115,6 +115,7 @@ export class FilterSetComponent implements OnChanges {
   }
 
   addFilters(filters: Filter[]) {
+    console.log('add filters', filters);
     this.filterSet.filters.push(...filters);
     this.update();
   }
@@ -129,6 +130,8 @@ export class FilterSetComponent implements OnChanges {
     if (index > -1) {
       this.filterSet.filters.splice(index, 1);
       this.update();
+    } else {
+      console.warn('onRemoveFilter: filter not found: ' + filter);
     }
   }
 
@@ -147,6 +150,8 @@ export class FilterSetComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.filterSet) {
+      this.dataSource.data = [];
+      this.selection.clear();
       this.update();
     }
   }

@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Filter} from '../../models/maalfrid.model';
 
 @Component({
   selector: 'app-slider',
@@ -20,6 +21,7 @@ export class SliderComponent {
     max: 1
   };
 
+  label = '';
   name = '';
   tooltips = true;
   keyboard = true;
@@ -30,6 +32,7 @@ export class SliderComponent {
   set config(config: any) {
     if (config) {
       this.name = config.name;
+      this.label = config.label;
       const domain = config.domain;
       this.range = {
         min: domain[0],
@@ -40,7 +43,7 @@ export class SliderComponent {
   }
 
   @Output()
-  change: EventEmitter<number | number[] | number[][]> = new EventEmitter();
+  change: EventEmitter<Filter> = new EventEmitter();
 
   constructor() { }
 
@@ -48,8 +51,7 @@ export class SliderComponent {
     this.disabled = isDisabled;
   }
 
-  onChange(event, exclusive) {
-    console.log(event, exclusive);
-    // this.change.emit(event);
+  onChange(value: number[], exclusive: boolean) {
+    this.change.emit({value, exclusive, name: this.name});
   }
 }

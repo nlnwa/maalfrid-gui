@@ -1,7 +1,7 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 
-import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
-import {catchError, filter, map, share, startWith, switchMap, tap} from 'rxjs/operators';
+import {combineLatest, Observable, of, Subject} from 'rxjs';
+import {catchError, filter, map, publish, refCount, share, startWith, switchMap, tap} from 'rxjs/operators';
 
 import {MaalfridService} from '../../services/maalfrid-service/maalfrid.service';
 import {Entity, Seed} from '../../models/config.model';
@@ -25,17 +25,17 @@ export class StatisticsComponent implements OnInit {
   private granularity = new Subject<string>();
   granularity$ = this.granularity.asObservable();
 
-  private interval = new BehaviorSubject<Interval>(new Interval());
+  private interval = new Subject<Interval>();
   interval$ = this.interval.asObservable();
 
-  private selectedSeed = new BehaviorSubject<Seed>(null);
+  private selectedSeed = new Subject<Seed>();
   selectedSeed$ = this.selectedSeed.asObservable().pipe(share());
 
   private text = new Subject<string>();
   text$ = this.text.asObservable();
 
   loading = new Subject<boolean>();
-  loading$ = this.loading.asObservable().pipe();
+  loading$ = this.loading.asObservable();
 
   private globalFilters = new Subject<Filter[]>();
   globalFilters$ = this.globalFilters.asObservable();
@@ -71,15 +71,15 @@ export class StatisticsComponent implements OnInit {
   );
 
   filteredData$ = combineLatest(this.data$, this.filters$).pipe(
+    share(),
     map(([data, filters]) => data.filter(predicateFromFilters(filters))),
-    share()
   );
 
-  constructor(private maalfridService: MaalfridService) {
+  constructor(private maalfridService: MaalfridService, private cdr: ChangeDetectorRef) {
     combineLatest(this.selectedSeed$, this.interval$).pipe(
       filter(([seed, _]) => !!seed),
       tap(() => this.loading.next(true)),
-      switchMap(() => this.fetchData(this.selectedSeed.value, this.interval.value)),
+      switchMap(([seed, interval]) => this.fetchData(seed, interval)),
       tap(() => this.loading.next(false)),
     ).subscribe((data) => {
       this.domain.next(data);
@@ -90,18 +90,14 @@ export class StatisticsComponent implements OnInit {
     this.selectedSeed$.pipe(
       filter((seed) => !seed)
     ).subscribe(_ => {
-      this.data.next([]);
       this.domain.next(null);
-      // this.filteredData.next([]);
+      this.data.next([]);
     });
   }
 
   mergeFilters(a: Filter[], b: Filter[], c: Filter[]): Filter[] {
-    console.log('global', a);
-    console.log('seed', b);
-    console.log('immediateFilter', c);
     const filters = [...a, ...b, ...c];
-
+    console.log('filter length', filters.length);
     return filters;
   }
 
@@ -109,23 +105,6 @@ export class StatisticsComponent implements OnInit {
     this.getEntities();
     this.getGlobalFilter();
   }
-
-  onSeedFilterSelect(filters: Filter[]) {
-    this.seedFilters.next(filters);
-  }
-
-  onGlobalFilterSelect(globalFilters: Filter[]) {
-    this.globalFilters.next(globalFilters);
-  }
-
-  onImmediateFilter(immediateFilter: Filter[]) {
-    this.immediateFilters.next(immediateFilter);
-  }
-
-  onFilterSetSelect(filterSet: FilterSet) {
-    this.filterSet.next(filterSet);
-  }
-
 
   onFilterSave(filterSet: FilterSet) {
     this.maalfridService.saveFilter(filterSet).subscribe();
@@ -146,6 +125,23 @@ export class StatisticsComponent implements OnInit {
   onSeedSelect(seed: Seed) {
     this.selectedSeed.next(seed);
     this.maalfridService.getFilterSets(seed).subscribe((filterSets) => this.filterSets.next(filterSets));
+  }
+
+  onFilterSetSelect(filterSet: FilterSet) {
+    this.filterSet.next(filterSet);
+  }
+
+  onSeedFilterSelect(filters: Filter[]) {
+
+    this.seedFilters.next(filters);
+  }
+
+  onGlobalFilterSelect(globalFilters: Filter[]) {
+    this.globalFilters.next(globalFilters);
+  }
+
+  onImmediateFilter(immediateFilter: Filter[]) {
+    this.immediateFilters.next(immediateFilter);
   }
 
   onIntervalChange(interval: Interval) {

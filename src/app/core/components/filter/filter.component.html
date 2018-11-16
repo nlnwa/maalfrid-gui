@@ -17,39 +17,39 @@
   <div fxLayout="column" class="app-content__padding">
     <app-slider
       class="slider"
-      (change)="onFilterChange($event, 'characterCount')"
+      (change)="onFilterChange($event)"
       [config]="characterCount$ | async"></app-slider>
     <app-slider
       class="slider"
-      (change)="onFilterChange($event, 'wordCount')"
+      (change)="onFilterChange($event)"
       [config]="wordCount$ | async"></app-slider>
     <app-slider
       class="slider"
-      (change)="onFilterChange($event, 'sentenceCount')"
+      (change)="onFilterChange($event)"
       [config]="sentenceCount$ | async"></app-slider>
     <app-slider
       class="slider"
-      (change)="onFilterChange($event, 'lix')"
+      (change)="onFilterChange($event)"
       [config]="lix$ | async"></app-slider>
     <app-slider
       class="slider"
-      (change)="onFilterChange($event, 'longWordCount')"
+      (change)="onFilterChange($event)"
       [config]="longWordCount$ | async"></app-slider>
     <app-select
       class="select"
-      (change)="onFilterChange($event, 'language')"
+      (change)="onFilterChange($event)"
       [config]="language$ | async"></app-select>
     <app-select
       class="select"
-      (change)="onFilterChange($event, 'contentType')"
+      (change)="onFilterChange($event)"
       [config]="contentType$ | async"></app-select>
     <app-select
       class="select"
-      (change)="onFilterChange($event, 'discoveryPath')"
+      (change)="onFilterChange($event)"
       [config]="discoveryPath$ | async"></app-select>
     <app-select
       class="select"
-      (change)="onFilterChange($event, 'requestedUri')"
+      (change)="onFilterChange($event)"
       [config]="requestedUri$ | async"></app-select>
     <div class="input" fxLayout="row" fxLayoutAlign="start center">
       <mat-form-field class="input-field" fxFlex>
@@ -57,14 +57,14 @@
           matInput
           #regexp
           placeholder="URI regulært uttrykk"
-          (keyup.enter)="onFilterChange(regexp.value, 'matchRegexp', 'requestedUri', checkbox.checked)">
+          (keyup.enter)="onFilterChange({value: regexp.value, name: 'matchRegexp', field: 'requestedUri', exclusive: checkbox.checked})">
       </mat-form-field>
       <mat-checkbox
         #checkbox
         class="checkbox"
         color="warn"
         matTooltip="Exclusive"
-        (change)="onFilterChange(regexp.value, 'matchRegexp', 'requestedUri', checkbox.checked)"></mat-checkbox>
+        (change)="onFilterChange({value: regexp.value, name: 'matchRegexp', field: 'requestedUri', exclusive: checkbox.checked})"></mat-checkbox>
     </div>
   </div>
 </section>
