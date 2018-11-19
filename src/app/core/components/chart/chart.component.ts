@@ -95,7 +95,6 @@ export class ChartComponent implements AfterViewInit, OnChanges {
       }
     }
     if (changes.data) {
-      console.log('chart component data length', this.data ? this.data.length : 0);
       if (this.data && Object.keys(this.data).length > 0 && this.granularity) {
         this.workerService.transform(this.data).subscribe((val) => {
           this.data = val;
@@ -107,17 +106,6 @@ export class ChartComponent implements AfterViewInit, OnChanges {
     }
   }
 
-  get showHideIcon(): string {
-    return this.visible ? 'expand_less' : 'expand_more';
-  }
-
-  onToggleVisibility() {
-    this.visible = !this.visible;
-    if (this.visible) {
-      this.onRefresh();
-    }
-  }
-
   ngAfterViewInit() {
     this.chartToggleGroup.change.subscribe((change: MatButtonToggleChange) => {
       this.charts.last.clearElement();
@@ -125,10 +113,6 @@ export class ChartComponent implements AfterViewInit, OnChanges {
       this.charts.last.options = chartOption;
       this.charts.last.initChart(chartOption);
     });
-  }
-
-  onRefresh() {
-    // this.applyData(this.mergeData(this._data, this._granularity));
   }
 
   getAllTextChartOptions() {
@@ -209,7 +193,6 @@ export class ChartComponent implements AfterViewInit, OnChanges {
     this.nrOfShortTexts = this.shortTextData.reduce((acc, curr) => curr.value + acc, 0);
     this.nrOfLongTexts = this.longTextData.reduce((acc, curr) => curr.value + acc, 0);
 
-
     this.changeDetectorRef.markForCheck();
   }
 
@@ -240,6 +223,8 @@ export class ChartComponent implements AfterViewInit, OnChanges {
     this.nrOfLongTexts = undefined;
     this.nrOfTexts = undefined;
     this.nrOfShortTexts = undefined;
+
+    this.changeDetectorRef.markForCheck();
   }
 
   private initChartOptions() {

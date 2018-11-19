@@ -70,6 +70,9 @@ export class FilterComponent implements OnChanges {
   @Output()
   setSeedFilter: EventEmitter<Filter[]> = new EventEmitter();
 
+  uriRegexpModel = '';
+  uriRegexpExclusive = false;
+
   constructor() {}
 
   get visible(): boolean {
@@ -132,6 +135,8 @@ export class FilterComponent implements OnChanges {
     Object.keys(this.domain).forEach((name) => {
       this[name].next({name, label: this.label[name], domain: this.domain[name]});
     });
+    this.uriRegexpModel = '';
+    this.uriRegexpExclusive = false;
   }
 
   /**

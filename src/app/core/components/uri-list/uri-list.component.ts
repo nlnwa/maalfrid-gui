@@ -1,6 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -52,7 +52,7 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
   dataSource: MatTableDataSource<AggregateText | any>;
   selection = new SelectionModel<AggregateText | any>(false, []);
   showFilter = false;
-  pageSize = 10;
+  pageSize = 5;
   pageSizeOptions = [5, 10, 20, 50, 100];
   visible = false;
 
@@ -73,7 +73,8 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
   cellClick = new EventEmitter<any>();
 
   constructor(private maalfridService: MaalfridService,
-              private roleService: RoleService) {
+              private roleService: RoleService,
+              private cdr: ChangeDetectorRef) {
     if (this.roleService.isAdmin()) {
       this.displayedColumns = this.adminColumns;
     }
@@ -107,8 +108,10 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.data) {
+      console.log('uri list got changes.data');
       if (this.data) {
         this.dataSource.data = this.data;
+        this.cdr.markForCheck();
       }
     }
   }

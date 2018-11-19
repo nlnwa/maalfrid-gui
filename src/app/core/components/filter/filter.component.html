@@ -56,6 +56,7 @@
         <input
           matInput
           #regexp
+          [(ngModel)]="uriRegexpModel"
           placeholder="URI regulært uttrykk"
           (keyup.enter)="onFilterChange({value: regexp.value, name: 'matchRegexp', field: 'requestedUri', exclusive: checkbox.checked})">
       </mat-form-field>
@@ -64,6 +65,7 @@
         class="checkbox"
         color="warn"
         matTooltip="Exclusive"
+        [(ngModel)]="uriRegexpExclusive"
         (change)="onFilterChange({value: regexp.value, name: 'matchRegexp', field: 'requestedUri', exclusive: checkbox.checked})"></mat-checkbox>
     </div>
   </div>

@@ -1,10 +1,11 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {Filter} from '../../models/maalfrid.model';
 
 @Component({
   selector: 'app-slider',
   templateUrl: './slider.component.html',
-  styleUrls: ['./slider.component.scss']
+  styleUrls: ['./slider.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SliderComponent {
   model: number | number[] | number [][] = [0, 1];
