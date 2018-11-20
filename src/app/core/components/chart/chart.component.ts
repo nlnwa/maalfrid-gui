@@ -19,6 +19,7 @@ import colorMaps from './colors';
 import * as moment from 'moment';
 import {AggregateText} from '../../models/maalfrid.model';
 import {WorkerService} from './worker.service';
+import {Subject} from 'rxjs';
 
 function timeFormat(granularity: string): string {
   switch (granularity) {
@@ -46,7 +47,8 @@ export class ChartComponent implements AfterViewInit, OnChanges {
   visible = false;
   defaultMap = colorMaps['maalfrid'];
 
-  private readonly colorMap;
+  colorMap;
+  customColors;
 
   @Input()
   granularity: string;
@@ -63,10 +65,14 @@ export class ChartComponent implements AfterViewInit, OnChanges {
   @Output()
   perExecutionElementClick = new EventEmitter();
 
-  perExecutionData: any[];
-  allTextData: any[];
-  shortTextData: any[];
-  longTextData: any[];
+  perExecutionData = new Subject<any[]>();
+  perExecutionData$ = this.perExecutionData.asObservable();
+  allTextData = new Subject<any[]>();
+  allTextData$ = this.allTextData.asObservable();
+  shortTextData = new Subject<any[]>();
+  shortTextData$ = this.shortTextData.asObservable();
+  longTextData = new Subject<any[]>();
+  longTextData$ = this.longTextData.asObservable();
 
   nrOfTexts: number;
   nrOfShortTexts: number;
@@ -84,22 +90,21 @@ export class ChartComponent implements AfterViewInit, OnChanges {
               private changeDetectorRef: ChangeDetectorRef) {
     this.initChartOptions();
     this.colorMap = this.defaultMap;
+    this.customColors = Object.keys(this.colorMap).map((name) => ({name, value: this.colorMap[name]}));
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+
     if (changes.granularity) {
-      if (this.granularity && this.data) {
-        this.applyData(this.mergeData(this.data, this.granularity));
+      if (this.data && Object.keys(this.data).length > 0 && this.granularity) {
+        this.transformAndApply(this.data, this.granularity);
       } else {
         this.granularity = 'week';
       }
     }
     if (changes.data) {
       if (this.data && Object.keys(this.data).length > 0 && this.granularity) {
-        this.workerService.transform(this.data).subscribe((val) => {
-          this.data = val;
-          this.applyData(this.mergeData(this.data, this.granularity));
-        });
+        this.transformAndApply(this.data, this.granularity);
       } else {
         this.reset();
       }
@@ -160,71 +165,85 @@ export class ChartComponent implements AfterViewInit, OnChanges {
     return options;
   }
 
+  private transformAndApply(data: AggregateText[], granularity: string) {
+    this.workerService.transform(data).subscribe((transformedData) => {
+      this.applyData(this.mergeData(transformedData, granularity));
+    });
+  }
+
+  // merge data entries based on granularity (hour, day, week, etc..)
+  private mergeData(data, granularity: any) {
+    console.log('mergeData');
+    console.log(data);
+    console.log(granularity);
+
+    return data.reduce((acc, curr, index) => {
+        console.log(acc, curr, index, data[index].name);
+        if (acc.length > 0 && moment.unix(data[index - 1].name).isSame(moment.unix(curr.name), granularity)) {
+
+          // const prev = acc[index - 1];
+          // prev[1] += curr[1];
+          // prev[2] += curr[2];
+          // prev[3] += curr[3];
+        } else {
+          acc.push(curr);
+        }
+        return acc;
+    }, []);
+  }
+
   private applyData(data) {
-    this.perExecutionData = Object.keys(data).map((key) =>
+    console.log('data', data);
+    const perExecutionData = Object.keys(data).map((key) =>
       ({
         key,
         color: this.colorMap[key],
         values: data[key],
       }));
 
-    this.allTextData = this.perExecutionData.map((o) => (
+    console.log('perExecutionData', perExecutionData);
+
+    const allTextData = perExecutionData.map((o) => (
       {
-        key: o.key,
-        value: o.values.reduce((acc, curr) => acc + curr[1], 0),
-        color: this.colorMap[o.key],
+        name: o.key,
+        value: o.values.reduce((acc, curr) => acc + curr[1], 0)
       }));
 
-    this.shortTextData = Object.keys(data)
+    const shortTextData = Object.keys(data)
       .map((language) => ({
         key: language,
         value: data[language].reduce((acc, curr) => acc + curr[2], 0),
         color: this.colorMap[language],
       }));
 
-    this.longTextData = Object.keys(data)
+    const longTextData = Object.keys(data)
       .map((language) => ({
         key: language,
         value: data[language].reduce((acc, curr) => acc + curr[3], 0),
         color: this.colorMap[language],
       }));
 
-    this.nrOfTexts = this.allTextData.reduce((acc, curr) => curr.value + acc, 0);
-    this.nrOfShortTexts = this.shortTextData.reduce((acc, curr) => curr.value + acc, 0);
-    this.nrOfLongTexts = this.longTextData.reduce((acc, curr) => curr.value + acc, 0);
+    this.nrOfTexts = allTextData.reduce((acc, curr) => curr.value + acc, 0);
+    this.nrOfShortTexts = shortTextData.reduce((acc, curr) => curr.value + acc, 0);
+    this.nrOfLongTexts = longTextData.reduce((acc, curr) => curr.value + acc, 0);
+
+    this.perExecutionData.next(perExecutionData);
+    this.allTextData.next(allTextData);
+    this.shortTextData.next(shortTextData);
+    this.longTextData.next(longTextData);
 
     this.changeDetectorRef.markForCheck();
-  }
-
-  // merge data entries based on granularity (hour, day, week, etc..)
-  private mergeData(data, granularity: any) {
-    return Object.keys(data).reduce((acc, curr) => {
-      acc[curr] = data[curr].reduce((a, c) => {
-        if (a.length > 0 && moment.unix(a[a.length - 1][0]).isSame(moment.unix(c[0]), granularity)) {
-          const prev = a[a.length - 1];
-          prev[1] += c[1];
-          prev[2] += c[2];
-          prev[3] += c[3];
-        } else {
-          a.push(c);
-        }
-        return a;
-      }, []);
-      return acc;
-    }, {});
   }
 
   private reset() {
     this.data = [];
-    this.perExecutionData = [];
-    this.allTextData = [];
-    this.shortTextData = [];
-    this.longTextData = [];
+    this.perExecutionData.next([]);
+    this.allTextData.next([]);
+    this.shortTextData.next([]);
+    this.longTextData.next([]);
     this.nrOfLongTexts = undefined;
     this.nrOfTexts = undefined;
     this.nrOfShortTexts = undefined;
-
-    this.changeDetectorRef.markForCheck();
   }
 
   private initChartOptions() {

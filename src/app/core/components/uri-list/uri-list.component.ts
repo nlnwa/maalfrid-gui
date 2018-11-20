@@ -108,10 +108,9 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.data) {
-      console.log('uri list got changes.data');
       if (this.data) {
         this.dataSource.data = this.data;
-        this.cdr.markForCheck();
+        // this.cdr.markForCheck();
       }
     }
   }

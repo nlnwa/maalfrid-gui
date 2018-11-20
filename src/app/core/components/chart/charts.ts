@@ -15,7 +15,7 @@ const pieChart: nv.PieChart | any = {
   labelType: 'percent',
   labelThreshold: 0.01,
   labelSunbeamLayout: false,
-  duration: 250,
+  duration: 0, // setting this to a value triggers error when changed to fast
   noData,
 };
 

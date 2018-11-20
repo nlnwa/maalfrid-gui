@@ -4,33 +4,43 @@
 </mat-toolbar>
 
 <div>
-  <div style="min-height: 300px;" fxLayout="row">
-    <div fxFlex fxLayout="column">
+  <div class="pieCharts" fxLayout="row">
+    <div fxFlex="33%" class="pieChart" fxLayout="column">
       <mat-toolbar class="app-toolbar">
         <span fxFlex>Alle tekster</span>
         <span class="stat-count">{{nrOfTexts}}</span>
       </mat-toolbar>
-      <nvd3 class="chart" fxFlex="grow" [options]="allTextChartOptions" [data]="allTextData"></nvd3>
+      <ngx-charts-pie-chart
+        class="newChart"
+        [animations]="false"
+        [labels]="true"
+        [customColors]="customColors"
+        [legend]="true"
+        [legendTitle]="''"
+        legendPosition="below"
+        [doughnut]="true"
+        [results]="allTextData$ | async"></ngx-charts-pie-chart>
+      <!--nvd3 class="chart" fxFlex="grow" [options]="allTextChartOptions" [data]="allTextData$ | async"></nvd3-->
     </div>
 
     <mat-divider [vertical]="true"></mat-divider>
 
-    <div fxFlex fxLayout="column">
+    <div fxFlex="33%" fxLayout="column">
       <mat-toolbar class="app-toolbar">
         <span fxFlex>Korte tekster</span>
         <span class="stat-count">{{nrOfShortTexts}}</span>
       </mat-toolbar>
-      <nvd3 class="chart" fxFlex="grow" [options]="shortTextChartOptions" [data]="shortTextData"></nvd3>
+      <nvd3 class="chart" fxFlex="grow" [options]="shortTextChartOptions" [data]="shortTextData$ |async"></nvd3>
     </div>
 
     <mat-divider [vertical]="true"></mat-divider>
 
-    <div fxFlex fxLayout="column">
+    <div fxFlex="33%" fxLayout="column">
       <mat-toolbar class="app-toolbar">
         <span fxFlex>Lange tekster</span>
         <span class="stat-count">{{nrOfLongTexts}}</span>
       </mat-toolbar>
-      <nvd3 class="chart" fxFlex="grow" [options]="longTextChartOptions" [data]="longTextData"></nvd3>
+      <nvd3 class="chart" fxFlex="grow" [options]="longTextChartOptions" [data]="longTextData$ | async"></nvd3>
     </div>
   </div>
 
@@ -46,6 +56,9 @@
         </mat-button-toggle>
       </mat-button-toggle-group>
     </mat-toolbar>
-    <nvd3 class="chart" fxFlex="grow" [options]="perExecutionChartOptions" [data]="perExecutionData"></nvd3>
+    <ngx-charts-bar-vertical-stacked
+
+      [animations]="false"></ngx-charts-bar-vertical-stacked>
+    <!-- nvd3 class="chart" fxFlex="grow" [options]="perExecutionChartOptions" [data]="perExecutionData$ | async"></nvd3-->
   </div>
 </div>

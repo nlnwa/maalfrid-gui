@@ -20,6 +20,7 @@ import {SelectComponent} from './components/select/select.component';
 import {FilterSetListComponent} from './components/filter-set-list/filter-set-list.component';
 import {NouisliderModule} from '../nouislider/ng2-nouislider';
 import {FilterSetComponent} from './components/filter-set/filter-set.component';
+import {NgxChartsModule} from '@swimlane/ngx-charts';
 
 
 @NgModule({
@@ -39,6 +40,7 @@ import {FilterSetComponent} from './components/filter-set/filter-set.component';
     FilterSetComponent,
   ],
   imports: [
+    NgxChartsModule,
     SharedModule,
     NvD3Module,
     FormsModule,

@@ -14,6 +14,7 @@ export class Interval {
       section {
         height: 100%;
       }
+
       field {
         width: 100%;
       }
@@ -85,7 +86,6 @@ export class IntervalComponent implements OnInit {
   }
 
   onGranularityChange(event: string) {
-    console.log('granularity change', event);
     this.granularity.emit(event);
   }
 

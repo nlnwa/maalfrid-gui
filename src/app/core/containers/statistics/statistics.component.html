@@ -7,7 +7,7 @@
 
   <div class="column-left" fxFlex>
     <app-entity-list
-      (rowClick)="onEntitySelect($event)"
+      (rowClick)="selectedEntity.next($event)"
       [entities]="entities$ | async"></app-entity-list>
   </div>
 
@@ -32,7 +32,7 @@
   <div class="column-right" fxFlex fxLayout="column">
     <app-seed-list
       fxFlex
-      (rowClick)="onSeedSelect($event)"
+      (rowClick)="selectedSeed.next($event)"
       [seeds]="seeds$ | async"></app-seed-list>
     <app-interval
       fxFlex
@@ -45,7 +45,7 @@
     <app-filter-set-list
       fxFlex
       [filterSets]="filterSets$ | async"
-      (rowClick)="onFilterSetSelect($event)"></app-filter-set-list>
+      (rowClick)="filterSet.next($event)"></app-filter-set-list>
     <app-filter-set
       #seedFilterSet
       fxFlex

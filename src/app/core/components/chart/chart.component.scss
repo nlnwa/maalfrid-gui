@@ -8,6 +8,21 @@
   padding-bottom: 1em;
 }
 
+.pieCharts {
+  max-height: 300px;
+  min-height: 300px;
+}
+
+.pieChart {
+  border: 1px solid black;
+  height: 100%;
+}
+.newChart {
+  transform: translateY(-10%);
+  border: 1px solid gray;
+  max-height: 200px;
+}
+
 .statistics-selection {
   height: 100%;
   min-height: 250px;
