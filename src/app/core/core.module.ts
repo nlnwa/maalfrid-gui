@@ -9,9 +9,6 @@ import {SeedListComponent} from './components/seed-list/seed-list.component';
 import {UriListComponent} from './components/uri-list/uri-list.component';
 import {SharedModule} from '../shared/shared.module';
 
-import {NvD3Module} from 'ng2-nvd3';
-import 'd3';
-import 'nvd3';
 import {TextComponent} from './components/text/text.component';
 import {ChartComponent} from './components/chart/chart.component';
 import {FilterComponent} from './components/filter/filter.component';
@@ -42,7 +39,6 @@ import {NgxChartsModule} from '@swimlane/ngx-charts';
   imports: [
     NgxChartsModule,
     SharedModule,
-    NvD3Module,
     FormsModule,
     ReactiveFormsModule,
     NouisliderModule,

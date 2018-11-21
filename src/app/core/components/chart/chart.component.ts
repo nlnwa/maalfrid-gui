@@ -58,7 +58,7 @@ export class ChartComponent {
   data$ = this._data.asObservable().pipe(
     switchMap((_) => this.workerService.transform(_)),
   );
-
+  
   mergedData$ = combineLatest(this.data$, this.granularity$.pipe(startWith('week'))).pipe(
     map(([data, granularity]) => this.mergeByGranularity(data, granularity)),
     share()
