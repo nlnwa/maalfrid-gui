@@ -17,6 +17,9 @@ function onMessage(event) {
 }
 
 function processData(data) {
+  if (data.length === 0) {
+    return data;
+  }
   const languages = Array.from(new Set(data.map(_ => _.language)));
 
   // group data by end time
@@ -39,8 +42,8 @@ function processData(data) {
     });
   });
 
-  const result = Object.keys(byEndTimeByLanguage).map((time) => ({ name: time, series: byEndTimeByLanguage[time]}));
-  result.sort((a ,b) => { return a.name < b.name; })
+  const result = Object.entries(byEndTimeByLanguage).map(([name, series]) => ({name, series}));
+  result.sort((a, b) => a.name < b.name);
   return result;
   /*
   // transform data per language

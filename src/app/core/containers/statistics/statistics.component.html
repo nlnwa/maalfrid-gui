@@ -15,11 +15,7 @@
     <app-chart
       fxFlex
       [granularity]="granularity$ | async"
-      [data]="filteredData$ | async"
-      (allTextElementClick)="onAllTextClick($event)"
-      (shortTextElementClick)="onShortTextClick($event)"
-      (longTextElementClick)="onLongTextClick($event)"
-      (perExecutionElementClick)="onPerExecutionTextClick($event)"></app-chart>
+      [data]="filteredData$ | async"></app-chart>
     <app-uri-list
       fxFlex (text)="onRequestText($event)"
       [data]="filteredData$ | async"></app-uri-list>

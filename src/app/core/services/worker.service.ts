@@ -1,6 +1,6 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import {Observable, Observer} from 'rxjs';
-import {AggregateText} from '../../models/maalfrid.model';
+import {AggregateText} from '../models/maalfrid.model';
 
 @Injectable()
 export class WorkerService implements OnDestroy {
@@ -8,10 +8,10 @@ export class WorkerService implements OnDestroy {
   private pool: Worker[];
 
   constructor() {
-    this.pool = Array(1).fill(null).map(this.createWorker);
+    this.pool = [this.createWorker()];
   }
 
-  transform(data): Observable<AggregateText[]> {
+  transform(data: AggregateText[]): Observable<any> {
     const worker = this.getWorker();
     const workerObservable = Observable.create(function (observer: Observer<any>) {
       worker.onmessage = function onmessage(e: MessageEvent) {
@@ -22,8 +22,8 @@ export class WorkerService implements OnDestroy {
         observer.error(new Error('worker error'));
         observer.complete();
       };
+      worker.postMessage(data);
     });
-    worker.postMessage(data);
     return workerObservable;
   }
 

@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 
 import {combineLatest, of, Subject} from 'rxjs';
-import {catchError, filter, map, share, switchMap, tap} from 'rxjs/operators';
+import {catchError, exhaustMap, filter, map, share, switchMap, tap} from 'rxjs/operators';
 
 import {MaalfridService} from '../../services/maalfrid-service/maalfrid.service';
 import {Entity, Seed} from '../../models/config.model';
@@ -67,9 +67,7 @@ export class StatisticsComponent implements OnInit {
   );
 
   data = new Subject<AggregateText[]>();
-  data$ = this.data.asObservable().pipe(
-    tap(() => console.log('new data')),
-  );
+  data$ = this.data.asObservable().pipe();
 
   filteredData = new Subject<AggregateText[]>();
   filteredData$ = this.filteredData.asObservable().pipe(share());
@@ -91,7 +89,7 @@ export class StatisticsComponent implements OnInit {
     combineLatest(this.selectedSeed$, this.interval$).pipe(
       filter(([seed, _]) => !!seed),
       tap(() => this.loading.next(true)),
-      switchMap(([seed, interval]) => this.maalfridService.getExecutions(seed, interval)),
+      exhaustMap(([seed, interval]) => this.maalfridService.getExecutions(seed, interval)),
       tap(() => this.loading.next(false)),
     ).subscribe((data) => {
       this.data.next(data);

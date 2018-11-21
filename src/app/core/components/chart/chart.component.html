@@ -3,51 +3,63 @@
   <span fxFlex></span>
 </mat-toolbar>
 
-<div>
-  <div class="pieCharts" fxLayout="row">
-    <div fxFlex="33%" class="pieChart" fxLayout="column">
+<div style="width: 100%;" fxLayout="column">
+  <div fxFlex class="pie-charts-container" fxLayout="row">
+    <div class="pie-chart-container" fxFlex="33%" fxLayout="column">
       <mat-toolbar class="app-toolbar">
         <span fxFlex>Alle tekster</span>
         <span class="stat-count">{{nrOfTexts}}</span>
       </mat-toolbar>
-      <ngx-charts-pie-chart
-        class="newChart"
-        [animations]="false"
-        [labels]="true"
-        [customColors]="customColors"
-        [legend]="true"
-        [legendTitle]="''"
-        legendPosition="below"
-        [doughnut]="true"
-        [results]="allTextData$ | async"></ngx-charts-pie-chart>
-      <!--nvd3 class="chart" fxFlex="grow" [options]="allTextChartOptions" [data]="allTextData$ | async"></nvd3-->
+      <div class="pie-chart" fxFlex="grow">
+        <ngx-charts-pie-chart
+          [animations]="false"
+          [labels]="true"
+          [customColors]="customColors"
+          [doughnut]="doughnut"
+          [results]="allTextData$ | async"></ngx-charts-pie-chart>
+      </div>
     </div>
 
     <mat-divider [vertical]="true"></mat-divider>
 
-    <div fxFlex="33%" fxLayout="column">
+    <div class="pie-chart-container" fxFlex="33%" fxLayout="column">
       <mat-toolbar class="app-toolbar">
         <span fxFlex>Korte tekster</span>
         <span class="stat-count">{{nrOfShortTexts}}</span>
       </mat-toolbar>
-      <nvd3 class="chart" fxFlex="grow" [options]="shortTextChartOptions" [data]="shortTextData$ |async"></nvd3>
+      <div class="pie-chart" fxFlex="grow">
+        <ngx-charts-pie-chart
+          [animations]="false"
+          [labels]="true"
+          [customColors]="customColors"
+          [doughnut]="doughnut"
+          [results]="shortTextData$ | async"></ngx-charts-pie-chart>
+      </div>
     </div>
 
     <mat-divider [vertical]="true"></mat-divider>
 
-    <div fxFlex="33%" fxLayout="column">
+    <div class="pie-chart-container" fxFlex="33%" fxLayout="column">
       <mat-toolbar class="app-toolbar">
         <span fxFlex>Lange tekster</span>
         <span class="stat-count">{{nrOfLongTexts}}</span>
       </mat-toolbar>
-      <nvd3 class="chart" fxFlex="grow" [options]="longTextChartOptions" [data]="longTextData$ | async"></nvd3>
+
+      <div class="pie-chart" fxFlex="grow">
+        <ngx-charts-pie-chart
+          [animations]="false"
+          [labels]="true"
+          [customColors]="customColors"
+          [doughnut]="doughnut"
+          [results]="longTextData$ | async"></ngx-charts-pie-chart>
+      </div>
     </div>
   </div>
 
-  <div style="min-height: 400px; height: 400px;" fxLayout="column">
+  <div fxFlex="grow" class="bar-chart-container" fxLayout="column">
     <mat-toolbar class="app-toolbar">Per innhøsting
       <span fxFlex></span>
-      <mat-button-toggle-group value="multiBar">
+      <mat-button-toggle-group value="multiBar" (change)="onChartToggle($event)">
         <mat-button-toggle value="multiBar">
           <mat-icon>equalizer</mat-icon>
         </mat-button-toggle>
@@ -56,9 +68,17 @@
         </mat-button-toggle>
       </mat-button-toggle-group>
     </mat-toolbar>
-    <ngx-charts-bar-vertical-stacked
-
-      [animations]="false"></ngx-charts-bar-vertical-stacked>
+    <div class="bar-chart" fxFlex="grow">
+      <ngx-charts-bar-vertical-stacked
+        [xAxis]="true"
+        [yAxis]="true"
+        [legend]="true"
+        [animations]="false"
+        legendTitle="Språk"
+        [customColors]="customColors"
+        [results]="perExecutionData$ | async"></ngx-charts-bar-vertical-stacked>
+    </div>
     <!-- nvd3 class="chart" fxFlex="grow" [options]="perExecutionChartOptions" [data]="perExecutionData$ | async"></nvd3-->
+
   </div>
 </div>

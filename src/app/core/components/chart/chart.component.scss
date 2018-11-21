@@ -1,31 +1,23 @@
-@import url("https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.css");
-
-.chart {
-  display: inline-block;
-  height: 100%;
-  width: 100%;
-  padding-top: 1em;
-  padding-bottom: 1em;
-}
-
-.pieCharts {
+.pie-charts-container {
   max-height: 300px;
-  min-height: 300px;
 }
 
-.pieChart {
-  border: 1px solid black;
+.pie-chart-container {
   height: 100%;
-}
-.newChart {
-  transform: translateY(-10%);
-  border: 1px solid gray;
-  max-height: 200px;
 }
 
-.statistics-selection {
+.bar-chart-container {
+  min-height: 400px;
+  height: 400px;
+}
+
+.bar-chart {
   height: 100%;
-  min-height: 250px;
+  margin: 1em;
+}
+
+.pie-chart {
+  height: 100%;
 }
 
 .stat-count {
