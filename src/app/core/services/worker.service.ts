@@ -1,17 +1,20 @@
 import {Injectable, OnDestroy} from '@angular/core';
-import {Observable, Observer} from 'rxjs';
+import {Observable, Observer, of} from 'rxjs';
 import {AggregateText} from '../models/maalfrid.model';
 
 @Injectable()
 export class WorkerService implements OnDestroy {
 
-  private pool: Worker[];
+  private readonly pool: Worker[];
 
   constructor() {
     this.pool = [this.createWorker()];
   }
 
   transform(data: AggregateText[]): Observable<any> {
+    if (data.length === 0) {
+      return of([]);
+    }
     const worker = this.getWorker();
     const workerObservable = Observable.create(function (observer: Observer<any>) {
       worker.onmessage = function onmessage(e: MessageEvent) {

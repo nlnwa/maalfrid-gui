@@ -34,12 +34,16 @@ export class SliderComponent {
     if (config) {
       this.name = config.name;
       this.label = config.label;
+      this.exclusive = false;
       const domain = config.domain;
-      this.range = {
-        min: domain[0],
-        max: domain[1]
-      };
-      this.model = [domain[0], domain[1]];
+      let min = domain[0];
+      let max = domain[1];
+      if (min === max) {
+        min--;
+        max++;
+      }
+      this.range = {min, max};
+      this.model = [min, max];
     }
   }
 

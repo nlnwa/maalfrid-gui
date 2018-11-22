@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 
-import {combineLatest, of, Subject} from 'rxjs';
-import {catchError, exhaustMap, filter, map, share, switchMap, tap} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, of, Subject} from 'rxjs';
+import {catchError, distinctUntilChanged, exhaustMap, filter, map, share, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 import {MaalfridService} from '../../services/maalfrid-service/maalfrid.service';
 import {Entity, Seed} from '../../models/config.model';
@@ -29,8 +29,7 @@ export class StatisticsComponent implements OnInit {
   interval$ = this.interval.asObservable();
 
   selectedEntity = new Subject<Entity>();
-  selectedEntity$ = this.selectedEntity.asObservable().pipe(
-  );
+  selectedEntity$ = this.selectedEntity.asObservable();
 
   selectedSeed = new Subject<Seed>();
   selectedSeed$ = this.selectedSeed.asObservable().pipe(
@@ -41,7 +40,7 @@ export class StatisticsComponent implements OnInit {
   private text = new Subject<string>();
   text$ = this.text.asObservable();
 
-  loading = new Subject<boolean>();
+  loading = new BehaviorSubject<boolean>(false);
   loading$ = this.loading.asObservable();
 
   globalFilters = new Subject<Filter[]>();
@@ -63,11 +62,13 @@ export class StatisticsComponent implements OnInit {
   filterSets$ = this.filterSets.asObservable();
 
   filters$ = combineLatest(this.globalFilters$, this.seedFilters$, this.immediateFilters$).pipe(
-    map(([globalFilters, seedFilters, immediateFilters]) => [...globalFilters, ...seedFilters, ...immediateFilters])
+    map((_) => this.mergeFilters(_)),
+    share(),
+    distinctUntilChanged(),
   );
 
   data = new Subject<AggregateText[]>();
-  data$ = this.data.asObservable().pipe();
+  data$ = this.data.asObservable().pipe(share());
 
   filteredData = new Subject<AggregateText[]>();
   filteredData$ = this.filteredData.asObservable().pipe(share());
@@ -75,32 +76,33 @@ export class StatisticsComponent implements OnInit {
   domain$ = this.data$.pipe(map((data) => dominate(data)));
 
   constructor(private maalfridService: MaalfridService, private cdr: ChangeDetectorRef) {
+    // load seeds when entity is selected
     this.selectedEntity$.pipe(switchMap((entity) => this.maalfridService.getSeeds(entity)))
       .subscribe(seeds => this.seeds.next(seeds));
 
-    combineLatest(this.data$, this.filters$).pipe(
-      map(([data, filters]) => data.filter(predicateFromFilters(filters))),
+    // when filters are changed (but data not loading or has 0 length)
+    // we filter data and update with filtered data
+    this.filters$.pipe(
+      withLatestFrom(this.data$),
+      filter(([_, data]) => !this.loading.value && data.length > 0),
+      map(([filters, data]) => data.filter(predicateFromFilters(filters))),
     ).subscribe((data) => {
-      // must schedule the update in a microtask (or macrotask with setTimeout)
-      // or else the change is not always detected by angular
       Promise.resolve().then(() => this.filteredData.next(data));
     });
 
-    combineLatest(this.selectedSeed$, this.interval$).pipe(
-      filter(([seed, _]) => !!seed),
-      tap(() => this.loading.next(true)),
-      exhaustMap(([seed, interval]) => this.maalfridService.getExecutions(seed, interval)),
-      tap(() => this.loading.next(false)),
+    // when data length is 0 simply update filtered data with data
+    this.data$.pipe(
+      filter((data) => data.length === 0)
     ).subscribe((data) => {
-      this.data.next(data);
+      Promise.resolve().then(() => this.filteredData.next(data));
     });
 
-    // reset when no seed is selected
-    this.selectedSeed$.pipe(
-      filter((seed) => !seed)
-    ).subscribe(_ => {
-      this.data.next([]);
-    });
+    // load data when a seed is selected or interval is set
+    combineLatest(this.selectedSeed$, this.interval$).pipe(
+      tap(([seed, _]) => this.loading.next(!!seed)),
+      exhaustMap(([seed, interval]) => this.maalfridService.getExecutions(seed, interval)),
+      tap(() => this.loading.next(false)),
+    ).subscribe((data) => this.data.next(data));
   }
 
   ngOnInit(): void {
@@ -118,6 +120,10 @@ export class StatisticsComponent implements OnInit {
         catchError(() => of(''))
       )
       .subscribe(_ => this.text.next(_));
+  }
+
+  private mergeFilters([globalFilters, seedFilters, immediateFilters]): Filter[] {
+    return [...globalFilters, ...seedFilters, ...immediateFilters] as Filter[];
   }
 
   private loadGlobalFilter(): void {

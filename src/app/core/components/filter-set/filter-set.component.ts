@@ -25,8 +25,11 @@ import {Filter, FilterSet} from '../../models/maalfrid.model';
       <mat-toolbar class="app-toolbar" color="accent">
         <mat-icon>{{ icon }}</mat-icon>&nbsp;{{ name }}
         <span fxFlex></span>
-        <button mat-icon-button (click)="onSave()">
+        <button mat-icon-button [disabled]="isSaved" (click)="onSave()">
           <mat-icon>save</mat-icon>
+        </button>
+        <button mat-icon-button (click)="onReset()">
+          <mat-icon>refresh</mat-icon>
         </button>
       </mat-toolbar>
 
@@ -45,7 +48,7 @@ import {Filter, FilterSet} from '../../models/maalfrid.model';
 
         <ng-container matColumnDef="exclusive">
           <th mat-header-cell *matHeaderCellDef>Eksluderende</th>
-          <td mat-cell *matCellDef="let row">{{ row.exlusive ? 'Ja' : '' }}</td>
+          <td mat-cell *matCellDef="let row">{{ row.exclusive ? 'Ja' : '' }}</td>
         </ng-container>
 
         <ng-container matColumnDef="value">
@@ -86,6 +89,11 @@ export class FilterSetComponent implements OnChanges {
   @Output()
   save = new EventEmitter<FilterSet>();
 
+  @Output()
+  reset = new EventEmitter<void>();
+
+  private isSaved = true;
+
   constructor() {
     this.dataSource = new MatTableDataSource([]);
   }
@@ -114,8 +122,17 @@ export class FilterSetComponent implements OnChanges {
     return this.filterSet ? this.filterSet.filters : [];
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.filterSet) {
+      this.dataSource.data = [];
+      this.selection.clear();
+      this.isSaved = true;
+      this.update();
+    }
+  }
+
   addFilters(filters: Filter[]) {
-    console.log('add filters', filters);
+    this.isSaved = false;
     this.filterSet.filters.push(...filters);
     this.update();
   }
@@ -129,6 +146,7 @@ export class FilterSetComponent implements OnChanges {
     );
     if (index > -1) {
       this.filterSet.filters.splice(index, 1);
+      this.isSaved = false;
       this.update();
     } else {
       console.warn('onRemoveFilter: filter not found: ' + filter);
@@ -144,20 +162,18 @@ export class FilterSetComponent implements OnChanges {
     }
   }
 
-  onSave() {
-    this.save.emit(this.filterSet);
+  onReset() {
+    this.reset.emit();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.filterSet) {
-      this.dataSource.data = [];
-      this.selection.clear();
-      this.update();
-    }
+  onSave() {
+    this.isSaved = true;
+    this.save.emit(this.filterSet);
   }
 
   private update() {
     if (this.filterSet) {
+      this.selection.clear();
       this.dataSource.data = this.filterSet.filters;
       if (this.filters.length > 0) {
         this.selection.select(...this.filters);

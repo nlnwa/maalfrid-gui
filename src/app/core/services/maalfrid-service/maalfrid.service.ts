@@ -20,6 +20,9 @@ export class MaalfridService {
   }
 
   getExecutions(seed: Seed, interval: Interval, job?: CrawlJob): Observable<AggregateText[]> {
+    if (!seed) {
+      return of([]);
+    }
     const params = createQueryParams({
       seed_id: seed.id,
       job_id: job ? job.id : '',

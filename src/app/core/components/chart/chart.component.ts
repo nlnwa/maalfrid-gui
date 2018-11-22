@@ -1,11 +1,11 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from '@angular/core';
 import {MatButtonToggleChange} from '@angular/material';
 import colorMaps from './colors';
 import * as moment from 'moment';
 import {AggregateText} from '../../models/maalfrid.model';
 import {WorkerService} from '../../services/worker.service';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
-import {map, share, startWith, switchMap} from 'rxjs/operators';
+import {map, share, startWith, switchMap, tap} from 'rxjs/operators';
 
 function timeFormat(granularity: string): string {
   switch (granularity) {
@@ -36,6 +36,8 @@ export class ChartComponent {
   customColors;
   doughnut = false;
 
+  chartType = 'area-chart-stacked';
+
   @Input()
   set granularity(granularity: string) {
     this._granularity.next(granularity);
@@ -43,12 +45,7 @@ export class ChartComponent {
 
   @Input()
   set data(data: AggregateText[]) {
-    if (!data) {
-      console.log('no data');
-      this._data.next([]);
-    } else {
-      this._data.next(data);
-    }
+    this._data.next(data || []);
   }
 
   _granularity = new BehaviorSubject<string>('week');
@@ -58,7 +55,7 @@ export class ChartComponent {
   data$ = this._data.asObservable().pipe(
     switchMap((_) => this.workerService.transform(_)),
   );
-  
+
   mergedData$ = combineLatest(this.data$, this.granularity$.pipe(startWith('week'))).pipe(
     map(([data, granularity]) => this.mergeByGranularity(data, granularity)),
     share()
@@ -69,7 +66,7 @@ export class ChartComponent {
       ({
         name: moment(name).format(timeFormat(this._granularity.value)),
         series: Object.entries(series).map(([code, value]) => ({name: code, value: (<any[]>value).length}))
-      }))),
+      })))
   );
 
   totalData$ = this.mergedData$.pipe(
@@ -110,7 +107,7 @@ export class ChartComponent {
   nrOfShortTexts: number;
   nrOfLongTexts: number;
 
-  constructor(private workerService: WorkerService) {
+  constructor(private workerService: WorkerService, private cdr: ChangeDetectorRef) {
     // globally set moment's locale to norwegian bokmål
     moment.locale('nb');
     this.colorMap = this.defaultMap;
@@ -119,7 +116,8 @@ export class ChartComponent {
   }
 
   onChartToggle(change: MatButtonToggleChange) {
-    console.log('change value', change.value);
+    this.chartType = change.value;
+    this.cdr.markForCheck();
   }
 
   // merge data entries based on granularity (hour, day, week, etc..)

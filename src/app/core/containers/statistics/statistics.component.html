@@ -5,39 +5,43 @@
   class="data-loader"></mat-spinner>
 <section fxLayout="row">
 
-  <div class="column-left" fxFlex>
+  <div class="column-left" fxFlex="15%">
     <app-entity-list
       (rowClick)="selectedEntity.next($event)"
       [entities]="entities$ | async"></app-entity-list>
   </div>
 
   <div class="column-center" fxFlex="grow" fxLayout="column">
-    <app-chart
-      fxFlex
+    <app-chart fxFlex
       [granularity]="granularity$ | async"
       [data]="filteredData$ | async"></app-chart>
+    <span fxFlex></span>
     <app-uri-list
-      fxFlex (text)="onRequestText($event)"
-      [data]="filteredData$ | async"></app-uri-list>
-    <app-text
       fxFlex
-      [text]="text$ | async"></app-text>
-    <span fxFlex="grow"></span>
+      (text)="onRequestText($event)"
+      [data]="filteredData$ | async"></app-uri-list>
+    <!--app-text
+      fxFlex
+      [text]="text$ | async"></app-text-->
   </div>
 
-  <div class="column-right" fxFlex fxLayout="column">
-    <app-seed-list
-      fxFlex
-      (rowClick)="selectedSeed.next($event)"
-      [seeds]="seeds$ | async"></app-seed-list>
+  <div class="column-right" fxFlex="30%" fxLayout="column">
     <app-interval
       fxFlex
       (granularity)="granularity.next($event)"
       (change)="interval.next($event)"></app-interval>
+    <app-seed-list
+      fxFlex
+      (rowClick)="selectedSeed.next($event)"
+      [seeds]="seeds$ | async"></app-seed-list>
     <app-filter-set
       fxFlex
+      #globalFilterSet
       [filterSet]="globalFilterSet$ | async"
-      (rowClick)="globalFilters.next($event)"></app-filter-set>
+      (rowClick)="globalFilters.next($event)"
+      (save)="onFilterSave($event)"
+    (reset)="onFilterReset($event)">
+    </app-filter-set>
     <app-filter-set-list
       fxFlex
       [filterSets]="filterSets$ | async"
@@ -46,13 +50,15 @@
       #seedFilterSet
       fxFlex
       [filterSet]="filterSet$ | async"
-      (rowClick)="seedFilters.next($event)"></app-filter-set>
+      (rowClick)="seedFilters.next($event)"
+      (save)="onFilterSave($event)"></app-filter-set>
     <app-filter
       fxFlex="grow"
       #immediateFilter
       [domain]="domain$ | async"
       (filterChange)="immediateFilters.next($event)"
       (setSeedFilter)="seedFilterSet.addFilters(immediateFilter.getFilters())"
+      (setGlobalFilter)="globalFilterSet.addFilters(immediateFilter.getFilters())"
     ></app-filter>
   </div>
 

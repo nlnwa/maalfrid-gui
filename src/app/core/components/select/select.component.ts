@@ -23,11 +23,13 @@ export class SelectComponent {
 
   model = [];
   name = '';
+  exclusive = false;
 
   @Input()
   set config(config: any) {
     if (config) {
       this.name = config.name;
+      this.exclusive = false;
       this.placeholder = config.label;
       this.options = [...(config.domain as string[])];
       this.model = [];

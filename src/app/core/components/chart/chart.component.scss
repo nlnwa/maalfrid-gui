@@ -1,23 +1,22 @@
-.pie-charts-container {
-  max-height: 300px;
+section {
+  height: 100%;
 }
 
 .pie-chart-container {
+  min-height: 300px;
+}
+
+.pie-chart {
   height: 100%;
 }
 
 .bar-chart-container {
   min-height: 400px;
-  height: 400px;
 }
 
-.bar-chart {
+.chart {
   height: 100%;
-  margin: 1em;
-}
-
-.pie-chart {
-  height: 100%;
+  overflow: hidden;
 }
 
 .stat-count {

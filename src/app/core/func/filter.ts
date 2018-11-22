@@ -109,7 +109,7 @@ function shortTextCondition(): Predicate {
 }
 
 function mediaType(contentType: string): string {
-  return contentType.split(';')[0];
+  return contentType ? contentType.split(';')[0] : '';
 }
 
 // establish domain/range of fields in dataset
