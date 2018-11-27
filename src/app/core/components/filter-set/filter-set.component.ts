@@ -92,7 +92,7 @@ export class FilterSetComponent implements OnChanges {
   @Output()
   reset = new EventEmitter<void>();
 
-  private isSaved = true;
+  isSaved = true;
 
   constructor() {
     this.dataSource = new MatTableDataSource([]);

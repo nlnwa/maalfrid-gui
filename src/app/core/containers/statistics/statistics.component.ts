@@ -31,9 +31,9 @@ export class StatisticsComponent implements OnInit {
   selectedEntity = new Subject<Entity>();
   selectedEntity$ = this.selectedEntity.asObservable();
 
-  selectedSeed = new Subject<Seed>();
+  selectedSeed = new BehaviorSubject<Seed>(null);
   selectedSeed$ = this.selectedSeed.asObservable().pipe(
-    tap((seed) => this.maalfridService.getFilterSets(seed).subscribe((filterSets) => this.filterSets.next(filterSets))),
+    tap((seed) => this.loadFilterSets(seed)),
     share()
   );
 
@@ -79,14 +79,17 @@ export class StatisticsComponent implements OnInit {
     // load seeds when entity is selected
     this.selectedEntity$.pipe(switchMap((entity) => this.maalfridService.getSeeds(entity)))
       .subscribe(seeds => this.seeds.next(seeds));
-
-    // when filters are changed (but data not loading or has 0 length)
-    // we filter data and update with filtered data
+    
+    // when filters are changed
     this.filters$.pipe(
+      // we take latest data
       withLatestFrom(this.data$),
+      // but only if not loading and we got data
       filter(([_, data]) => !this.loading.value && data.length > 0),
+      // filter data
       map(([filters, data]) => data.filter(predicateFromFilters(filters))),
     ).subscribe((data) => {
+      // schedule update in a microtask (or else change deteection sometimes fails)
       Promise.resolve().then(() => this.filteredData.next(data));
     });
 
@@ -94,6 +97,7 @@ export class StatisticsComponent implements OnInit {
     this.data$.pipe(
       filter((data) => data.length === 0)
     ).subscribe((data) => {
+      // schedule update in a microtask (or else change deteection sometimes fails)
       Promise.resolve().then(() => this.filteredData.next(data));
     });
 
@@ -114,8 +118,16 @@ export class StatisticsComponent implements OnInit {
     this.maalfridService.saveFilter(filterSet).subscribe();
   }
 
-  onRequestText(warcId: string) {
-    this.maalfridService.getText(warcId)
+  onSeedFilterReset() {
+    this.loadFilterSets(this.selectedSeed.value);
+  }
+
+  onGlobalFilterReset() {
+    this.loadGlobalFilter();
+  }
+
+  onRequestText(text: AggregateText) {
+    this.maalfridService.getText(text.warcId)
       .pipe(
         catchError(() => of(''))
       )
@@ -124,6 +136,10 @@ export class StatisticsComponent implements OnInit {
 
   private mergeFilters([globalFilters, seedFilters, immediateFilters]): Filter[] {
     return [...globalFilters, ...seedFilters, ...immediateFilters] as Filter[];
+  }
+
+  private loadFilterSets(seed: Seed) {
+    this.maalfridService.getFilterSets(seed).subscribe(_ => this.filterSets.next(_));
   }
 
   private loadGlobalFilter(): void {

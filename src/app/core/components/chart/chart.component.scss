@@ -2,11 +2,11 @@ section {
   height: 100%;
 }
 
-.pie-chart-container {
-  min-height: 300px;
+.total-container {
+  min-height: 100px;
 }
 
-.pie-chart {
+.total-chart {
   height: 100%;
 }
 
@@ -17,6 +17,10 @@ section {
 .chart {
   height: 100%;
   overflow: hidden;
+}
+
+.table {
+  width: 100%;
 }
 
 .stat-count {

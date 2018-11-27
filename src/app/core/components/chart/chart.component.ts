@@ -1,11 +1,11 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {MatButtonToggleChange} from '@angular/material';
 import colorMaps from './colors';
 import * as moment from 'moment';
 import {AggregateText} from '../../models/maalfrid.model';
 import {WorkerService} from '../../services/worker.service';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
-import {map, share, startWith, switchMap, tap} from 'rxjs/operators';
+import {map, share, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
 function timeFormat(granularity: string): string {
   switch (granularity) {
@@ -34,9 +34,10 @@ export class ChartComponent {
 
   colorMap;
   customColors;
-  doughnut = false;
 
   chartType = 'area-chart-stacked';
+
+  visible = true;
 
   @Input()
   set granularity(granularity: string) {
@@ -56,7 +57,7 @@ export class ChartComponent {
     switchMap((_) => this.workerService.transform(_)),
   );
 
-  mergedData$ = combineLatest(this.data$, this.granularity$.pipe(startWith('week'))).pipe(
+  mergedData$ = combineLatest(this.data$, this.granularity$).pipe(
     map(([data, granularity]) => this.mergeByGranularity(data, granularity)),
     share()
   );
@@ -65,9 +66,30 @@ export class ChartComponent {
     map((data) => data.map(({name, series}) =>
       ({
         name: moment(name).format(timeFormat(this._granularity.value)),
-        series: Object.entries(series).map(([code, value]) => ({name: code, value: (<any[]>value).length}))
+        series: Object.entries(series)
+          .map(([code, value]) => ({name: code, value: (<string[]>value).length}))
+          .sort((a, b) => a.name < b.name ? -1 : a.name === b.name ? 0 : 1)
       })))
   );
+
+  areaData$ = this.perExecutionData$.pipe(
+    map((data) => {
+      if (data.length === 0) {
+        return [];
+      }
+      const languages = data[0].series.map((entry) => entry.name);
+      const result = languages.map((name) => ({name, series: []}));
+      data.forEach((entry) => {
+        const date = entry.name;
+        entry.series.forEach(({name, value}) => {
+          result.find((_) => _.name === name).series.push({name: date, value});
+        });
+      });
+      return result;
+    })
+  );
+
+  displayedColumns = ['name', 'short', 'shortPercent', 'long', 'longPercent', 'total', 'totalPercent'];
 
   totalData$ = this.mergedData$.pipe(
     map((mergedData) => mergedData.length > 0
@@ -76,38 +98,32 @@ export class ChartComponent {
         .reduce(this.mergeSeries)
       : []
     ),
-    share()
-  );
-
-  allTextData$ = this.totalData$.pipe(
-    map((data) => Object.entries(data).map(([name, value]) =>
+    map((data) => Object.entries(data).map(([name, texts]) =>
       ({
         name,
-        value: (<any[]>value).length
-      }))),
+        short: (<AggregateText[]>texts).filter(text => text.wordCount < 3500).length,
+        long: (<AggregateText[]>texts).filter(text => text.wordCount >= 3500).length,
+        total: (<AggregateText[]>texts).length,
+      }))
+    ),
+    tap(_ => this.totalNrOfTexts.next(_.reduce((acc, curr) => acc + curr.total, 0))),
+    share(),
   );
 
-  shortTextData$ = this.totalData$.pipe(
-    map((data) => Object.entries(data).map(([name, value]) =>
-      ({
-        name,
-        value: (<any[]>value).filter((entry: AggregateText) => entry.wordCount < 3500).length
-      }))),
+  totalNrOfTexts = new BehaviorSubject<number>(0);
+  totalNrOfTexts$ = this.totalNrOfTexts.asObservable().pipe(share());
+  totalNrOfShortTexts$ = this.totalData$.pipe(map(_ => _.reduce((acc, curr) => acc + curr.short, 0)));
+  totalNrOfShortTextsPercent$ = this.totalNrOfShortTexts$.pipe(
+    withLatestFrom(this.totalNrOfTexts$),
+    map(([short, total]) => this.formatPercent(short, total))
+  );
+  totalNrOfLongTexts$ = this.totalData$.pipe(map(_ => _.reduce((acc, curr) => acc + curr.long, 0)));
+  totalNrOfLongTextsPercent$ = this.totalNrOfLongTexts$.pipe(
+    withLatestFrom(this.totalNrOfTexts$),
+    map(([long, total]) => this.formatPercent(long, total))
   );
 
-  longTextData$ = this.totalData$.pipe(
-    map((data) => Object.entries(data).map(([name, value]) =>
-      ({
-        name,
-        value: (<any[]>value).filter((entry: AggregateText) => entry.wordCount >= 3500).length
-      }))),
-  );
-
-  nrOfTexts: number;
-  nrOfShortTexts: number;
-  nrOfLongTexts: number;
-
-  constructor(private workerService: WorkerService, private cdr: ChangeDetectorRef) {
+  constructor(private workerService: WorkerService) {
     // globally set moment's locale to norwegian bokmål
     moment.locale('nb');
     this.colorMap = this.defaultMap;
@@ -115,9 +131,35 @@ export class ChartComponent {
 
   }
 
+  get showHideIcon(): string {
+    return this.visible ? 'expand_less' : 'expand_more';
+  }
+
+  getPercent(nr: number): string {
+    return this.formatPercent(nr, this.totalNrOfTexts.value);
+  }
+
+  formatPercent(numerator: number, denominator: number): string {
+    return (((numerator / denominator) * 100) || 0).toPrecision(3) + '%';
+  }
+
+  commonName(code: string): string {
+    switch (code) {
+      case 'NOB':
+        return 'Bokmål';
+      case 'NNO':
+        return 'Nynorsk';
+      default:
+        return code;
+    }
+  }
+
+  onToggleVisibility() {
+    this.visible = !this.visible;
+  }
+
   onChartToggle(change: MatButtonToggleChange) {
     this.chartType = change.value;
-    this.cdr.markForCheck();
   }
 
   // merge data entries based on granularity (hour, day, week, etc..)

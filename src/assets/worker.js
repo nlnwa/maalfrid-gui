@@ -43,7 +43,7 @@ function processData(data) {
   });
 
   const result = Object.entries(byEndTimeByLanguage).map(([name, series]) => ({name, series}));
-  result.sort((a, b) => a.name < b.name);
+  result.sort((a, b) => a.name > b.name);
   return result;
   /*
   // transform data per language

@@ -25,8 +25,6 @@ import {SelectionModel} from '@angular/cdk/collections';
       <mat-toolbar class="app-toolbar" color="accent">
         <mat-icon>link</mat-icon>&nbsp;URL
         <span fxFlex></span>
-        <span class="toolbar-link">{{ url }}</span>
-        <span fxFlex></span>
         <button mat-icon-button (click)="onToggleVisibility()">
           <mat-icon>{{ visible ? "expand_less" : "expand_more" }}</mat-icon>
         </button>

@@ -18,6 +18,7 @@ import {FilterSetListComponent} from './components/filter-set-list/filter-set-li
 import {NouisliderModule} from '../nouislider/ng2-nouislider';
 import {FilterSetComponent} from './components/filter-set/filter-set.component';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
+import { UriComponent } from './components/uri/uri.component';
 
 
 @NgModule({
@@ -35,6 +36,7 @@ import {NgxChartsModule} from '@swimlane/ngx-charts';
     SliderComponent,
     SelectComponent,
     FilterSetComponent,
+    UriComponent,
   ],
   imports: [
     NgxChartsModule,

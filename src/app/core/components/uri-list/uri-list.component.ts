@@ -1,23 +1,13 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-  ViewChild
-} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {MaalfridService} from '../../services/maalfrid-service/maalfrid.service';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import {Entity} from '../../models/config.model';
 import {SelectionModel} from '@angular/cdk/collections';
 import {_isNumberValue} from '@angular/cdk/coercion';
 import {AggregateText} from '../../models/maalfrid.model';
 import {RoleService} from '../../../auth';
+import {groupBy} from '../../func/util';
+import {BehaviorSubject, combineLatest} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 
 @Component({
@@ -25,8 +15,11 @@ import {RoleService} from '../../../auth';
   templateUrl: './uri-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
+export class UriListComponent implements AfterViewInit {
+  private sortDirection = new BehaviorSubject<string>('asc');
+
   defaultColumns = [
+    'count',
     'requestedUri',
     'contentType',
     'lix',
@@ -34,22 +27,14 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
     'longWordCount',
     'sentenceCount',
     'language',
-    'warcId',
   ];
   adminColumns = [
-    'requestedUri',
-    'contentType',
+    ...this.defaultColumns,
     'discoveryPath',
-    'lix',
     'characterCount',
-    'wordCount',
-    'longWordCount',
-    'sentenceCount',
-    'language',
-    'warcId',
   ];
   displayedColumns = this.defaultColumns;
-  dataSource: MatTableDataSource<AggregateText | any>;
+  dataSource: MatTableDataSource<AggregateText>;
   selection = new SelectionModel<AggregateText | any>(false, []);
   showFilter = false;
   pageSize = 5;
@@ -61,25 +46,61 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
   @ViewChild('filter') filterInput: ElementRef;
 
   @Input()
-  data: (AggregateText | any)[];
-
-  @Output()
-  text: EventEmitter<string> = new EventEmitter<string>();
-
-  @Output()
-  rowClick = new EventEmitter<Entity>();
+  set data(data: AggregateText[]) {
+    this._data.next(data);
+    this.rowClick.emit([]);
+  }
 
   @Output()
   cellClick = new EventEmitter<any>();
 
+  @Output()
+  rowClick = new EventEmitter<AggregateText[]>();
+
+
+  _data = new BehaviorSubject<AggregateText[]>([]);
+  data$ = this._data.asObservable();
+
+  group: any;
+
+  mergedData$ = combineLatest(this.data$, this.sortDirection).pipe(
+    map(([data, sortDirection]) => {
+      if (!data) {
+        this.group = {};
+        return [];
+      }
+      this.group = groupBy(data, 'requestedUri');
+
+      return Object.keys(this.group).map(requestedUri => {
+        const count = this.group[requestedUri].length;
+        return this.group[requestedUri].reduce((acc, curr) => {
+          Object.keys(curr).forEach((key) => {
+            switch (key) {
+              case 'requestedUri':
+                break;
+              default:
+                if (!acc.hasOwnProperty(key)) {
+                  acc[key] = curr[key];
+                } else {
+                  acc[key] = sortDirection === 'asc'
+                    ? acc[key] > curr[key] ? acc[key] : curr[key]
+                    : acc[key] < curr[key] ? acc[key] : curr[key];
+                }
+                break;
+            }
+          });
+          return acc;
+        }, {count, requestedUri});
+      });
+    })
+  );
+
   constructor(private maalfridService: MaalfridService,
-              private roleService: RoleService,
-              private cdr: ChangeDetectorRef) {
+              private roleService: RoleService) {
     if (this.roleService.isAdmin()) {
       this.displayedColumns = this.adminColumns;
     }
     this.dataSource = new MatTableDataSource([]);
-
     this.dataSource.sortingDataAccessor = (data: any, sortHeaderId: string): string | number => {
       const value: any = data[sortHeaderId];
       return _isNumberValue(value) ? Number(value) : value;
@@ -97,22 +118,15 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
 
       return dataStr.indexOf(transformedFilter) !== -1;
     };
-
+    this.mergedData$.subscribe((_) => this.dataSource.data = _);
   }
 
-  isExtendedRow = (index, item) => true;
-
-  ngOnInit() {
-    // this.onToggleVisibility();
+  get showHideIcon(): string {
+    return this.visible ? 'expand_less' : 'expand_more';
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.data) {
-      if (this.data) {
-        this.dataSource.data = this.data;
-        // this.cdr.markForCheck();
-      }
-    }
+  formatContentType(contentType: string) {
+    return contentType.split(';')[0];
   }
 
   ngAfterViewInit() {
@@ -123,10 +137,6 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
 
   onToggleVisibility() {
     this.visible = !this.visible;
-  }
-
-  onTextClick(uri: AggregateText) {
-    this.text.emit(uri.warcId);
   }
 
   onToggleFilter() {
@@ -145,13 +155,23 @@ export class UriListComponent implements OnInit, OnChanges, AfterViewInit {
     this.cellClick.emit({[column]: row[column]});
   }
 
+  onRowClick(text: AggregateText) {
+    this.selection.toggle(text);
+    if (this.selection.hasValue()) {
+      this.rowClick.emit(this.group[text.requestedUri]);
+    } else {
+      this.rowClick.emit([]);
+    }
+  }
+
   applyFilter(filter: string) {
     this.dataSource.filter = filter;
   }
 
-  onRowClick(entity) {
-    this.rowClick.emit(entity);
+  onToggleSortDirection() {
+    this.sortDirection.next(this.sortDirection.value === 'asc' ? 'desc' : 'asc');
   }
+
 }
 
 
