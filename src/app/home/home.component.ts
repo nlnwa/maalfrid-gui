@@ -1,6 +1,6 @@
-import {Component, ChangeDetectionStrategy} from '@angular/core';
-import {AuthService} from '../auth';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {environment} from '../../environments/environment';
+import {AuthService} from '../shared/services/auth';
 
 @Component({
   selector: 'app-home',
@@ -10,7 +10,8 @@ import {environment} from '../../environments/environment';
 })
 export class HomeComponent {
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) {
+  }
 
   get isLoggedIn(): boolean {
     return this.authService.isLoggedIn;

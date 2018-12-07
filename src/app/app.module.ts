@@ -7,7 +7,7 @@ import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 
 import {AppConfig} from './app.config';
-import {AuthGuard, AuthService, RoleService, TokenInterceptor} from './auth';
+import {AuthGuard, AuthService, RoleService, TokenInterceptor} from './shared/services/auth';
 import {CoreModule} from './core/core.module';
 import {SharedModule} from './shared/shared.module';
 import {OAuthModule} from 'angular-oauth2-oidc';

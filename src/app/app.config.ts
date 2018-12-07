@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {IdpReply} from './shared/models/controller.model';
 import {Environment} from './shared/models/environment.model';
-import {AuthService} from './auth';
+import {AuthService} from './shared/services/auth';
 import {first} from 'rxjs/operators';
 
 @Injectable()

@@ -1,0 +1,73 @@
+<app-toolbar>{{title$ | async}}</app-toolbar>
+<mat-toolbar class="hide-print" color="accent" fxLayoutGap="16px">
+  <button mat-icon-button (click)="onPreviousYear()">
+    <mat-icon>keyboard_arrow_left</mat-icon>
+  </button>
+  {{ year$ | async }}
+  <button mat-icon-button (click)="onNextYear()">
+    <mat-icon>keyboard_arrow_right</mat-icon>
+  </button>
+  <mat-button-toggle-group [value]="period$ | async" (change)="onChangePeriod($event.value)">
+    <mat-button-toggle [value]="Period.Month">{{norwegianPeriod[Period.Month]}}</mat-button-toggle>
+    <mat-button-toggle [value]="Period.Quarter">{{norwegianPeriod[Period.Quarter]}}</mat-button-toggle>
+    <mat-button-toggle [value]="Period.Halfyear">{{norwegianPeriod[Period.Halfyear]}}</mat-button-toggle>
+    <mat-button-toggle [value]="Period.Year">{{norwegianPeriod[Period.Year]}}</mat-button-toggle>
+  </mat-button-toggle-group>
+  <mat-divider [vertical]="true"></mat-divider>
+  <mat-button-toggle-group [value]="selector$ | async" (change)="onChangeSelector($event.value)">
+    <mat-button-toggle [value]="Selector.Short">{{norwegianSelector[Selector.Short]}}</mat-button-toggle>
+    <mat-button-toggle [value]="Selector.Long">{{norwegianSelector[Selector.Long]}}</mat-button-toggle>
+    <mat-button-toggle [value]="Selector.Total">{{norwegianSelector[Selector.Total]}}</mat-button-toggle>
+  </mat-button-toggle-group>
+  <span fxFlex></span>
+  <button mat-icon-button *ngIf="!narrow" (click)="onToggleRowHeight()">
+    <mat-icon>unfold_less</mat-icon>
+  </button>
+  <button mat-icon-button *ngIf="narrow" (click)="onToggleRowHeight()">
+    <mat-icon>unfold_more</mat-icon>
+  </button>
+  <mat-slider
+    class="threshold-slider"
+    [(ngModel)]="threshold"
+    [thumbLabel]="true"
+    min="0"
+    max="1"
+    step="0.01" color="warn"></mat-slider>
+</mat-toolbar>
+<table mat-table matSort [dataSource]="dataSource" [ngClass]="{'narrow': narrow}">
+  <ng-container matColumnDef="entityId">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Entitet</th>
+    <td mat-cell *matCellDef="let row">{{ formatEntity(row.entityId) }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="seedId">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Seed</th>
+    <td mat-cell *matCellDef="let row">{{ formatSeed(row.seedId) }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="period_entityId">
+    <th mat-header-cell *matHeaderCellDef></th>
+  </ng-container>
+
+  <ng-container matColumnDef="period_seedId">
+    <th mat-header-cell *matHeaderCellDef></th>
+  </ng-container>
+
+  <ng-container *ngIf="periods$ | async as periods">
+    <ng-container *ngFor="let period of periods; let i = index">
+      <ng-container [matColumnDef]="period">
+        <th mat-header-cell colspan="2" class="table-header-period" *matHeaderCellDef>{{ formatPeriod(period) }}</th>
+      </ng-container>
+
+      <ng-container *ngFor="let lang of langs" [matColumnDef]="lang + i">
+        <th mat-header-cell class="table-header-language" *matHeaderCellDef mat-sort-header>{{ lang }}</th>
+        <td mat-cell *matCellDef="let row"
+            [ngStyle]="style(row, i, lang)">{{ formatValue(row, i, lang) }}</td>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="periodicColumns"></tr>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>

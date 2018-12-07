@@ -1,7 +1,9 @@
-@import url("https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.css");
-
-section {
+.container {
   height: 100%;
+}
+
+.section {
+  overflow-y: hidden;
 }
 
 .column-left {

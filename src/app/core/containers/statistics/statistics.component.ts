@@ -16,7 +16,7 @@ import {dominate, predicateFromFilters} from '../../func/filter';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatisticsComponent implements OnInit {
-  private entities = new Subject<Entity[]>();
+  private entities = new BehaviorSubject<Entity[]>([]);
   entities$ = this.entities.asObservable();
 
   private seeds = new Subject<Seed[]>();
@@ -77,9 +77,9 @@ export class StatisticsComponent implements OnInit {
 
   constructor(private maalfridService: MaalfridService, private cdr: ChangeDetectorRef) {
     // load seeds when entity is selected
-    this.selectedEntity$.pipe(switchMap((entity) => this.maalfridService.getSeeds(entity)))
+    this.selectedEntity$.pipe(switchMap((entity) => this.maalfridService.getSeedsOfEntity(entity)))
       .subscribe(seeds => this.seeds.next(seeds));
-    
+
     // when filters are changed
     this.filters$.pipe(
       // we take latest data
@@ -131,7 +131,7 @@ export class StatisticsComponent implements OnInit {
       .pipe(
         catchError(() => of(''))
       )
-      .subscribe(_ => this.text.next(_));
+      .subscribe(t => this.text.next(t));
   }
 
   private mergeFilters([globalFilters, seedFilters, immediateFilters]): Filter[] {

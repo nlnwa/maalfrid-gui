@@ -19,6 +19,7 @@ import {NouisliderModule} from '../nouislider/ng2-nouislider';
 import {FilterSetComponent} from './components/filter-set/filter-set.component';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 import { UriComponent } from './components/uri/uri.component';
+import { ReportComponent } from './containers/report/report.component';
 
 
 @NgModule({
@@ -37,6 +38,7 @@ import { UriComponent } from './components/uri/uri.component';
     SelectComponent,
     FilterSetComponent,
     UriComponent,
+    ReportComponent,
   ],
   imports: [
     NgxChartsModule,
@@ -46,6 +48,7 @@ import { UriComponent } from './components/uri/uri.component';
     NouisliderModule,
   ],
   exports: [
+    ReportComponent,
     StatisticsComponent,
   ],
 })

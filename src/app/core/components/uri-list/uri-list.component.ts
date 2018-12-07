@@ -4,7 +4,7 @@ import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {SelectionModel} from '@angular/cdk/collections';
 import {_isNumberValue} from '@angular/cdk/coercion';
 import {AggregateText} from '../../models/maalfrid.model';
-import {RoleService} from '../../../auth';
+import {RoleService} from '../../../shared/services/auth';
 import {groupBy} from '../../func/util';
 import {BehaviorSubject, combineLatest} from 'rxjs';
 import {map} from 'rxjs/operators';

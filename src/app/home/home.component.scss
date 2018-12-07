@@ -1,21 +1,25 @@
-.home-container {
-  height: 100%;
-  background: black;
+a {
+  margin: 2rem;
 }
 
+.home-container {
+  height: 100%;
+}
+
+
 .header-background {
-background: white;
-  overflow: hidden;
+  color: black;
+  background: white;
 }
 
 .header-section {
   text-align: center;
   padding-top: 60px;
+  margin-bottom: 2rem;
 }
 
 .header-headline {
-  color: black;
-  margin-bottom: 2em;
+  margin-bottom: 2rem;
 }
 
 .header-headline h1 {
@@ -39,10 +43,15 @@ background: white;
 
 
 .app-footer {
+  background: black;
   color: white;
   padding: 12px;
 }
 
 .app-version {
   font-family: monospace;
+}
+
+.logo {
+  width: 250px;
 }

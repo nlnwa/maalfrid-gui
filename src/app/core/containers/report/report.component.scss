@@ -1,0 +1,22 @@
+table {
+  width: 100%;
+}
+
+.threshold-slider {
+  min-width: 300px;
+ // transform: translateY(15px);
+}
+
+td.mat-cell, th.mat-header-cell {
+  padding-left: 4px;
+}
+
+td.mat-cell:nth-child(2n+3), th.mat-header-cell.table-header-language:nth-child(2n+3) {
+  background-color: hsla(0, 100, 0, 0.05);
+}
+
+.narrow {
+  tr.mat-row, tr.mat-footer-row {
+    height: auto;
+  }
+}

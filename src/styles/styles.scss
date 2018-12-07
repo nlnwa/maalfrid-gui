@@ -15,6 +15,11 @@ html, body {
   padding: 12px 24px 16px 24px;
 }
 
+.title-link {
+  text-decoration: none;
+  color: inherit;
+}
+
 // noUislider customizations
 
 .noUi-connect {
@@ -27,4 +32,10 @@ html, body {
 
 .noUi-tooltip {
   padding: 1px;
+}
+
+@media print {
+  .hide-print {
+    display: none !important;
+  }
 }

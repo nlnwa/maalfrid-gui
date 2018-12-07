@@ -7,13 +7,19 @@ import {CrawlJob, Entity, Seed} from '../../models/config.model';
 import {ListReply} from '../../../shared/models/controller.model';
 
 import {Observable, of} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 import {Interval} from '../../components/interval/interval.component';
+import * as moment from 'moment';
 
 @Injectable()
 export class MaalfridService {
 
   private readonly apiUrl: string;
+  private cache = {
+    statistics: new Map(),
+    entities: undefined,
+    seeds: undefined,
+  };
 
   constructor(private http: HttpClient, private appConfig: AppConfig) {
     this.apiUrl = this.appConfig.apiUrl;
@@ -42,11 +48,17 @@ export class MaalfridService {
   }
 
   getEntities(): Observable<Entity[]> {
+    if (this.cache.entities) {
+      return of(this.cache.entities);
+    }
     return this.http.get<ListReply<Entity>>(this.apiUrl + '/entities')
-      .pipe(map(reply => reply.value || []));
+      .pipe(
+        map(reply => reply.value || []),
+        tap((value => this.cache.entities = value)),
+      );
   }
 
-  getSeeds(entity: Entity): Observable<Seed[]> {
+  getSeedsOfEntity(entity: Entity): Observable<Seed[]> {
     if (!entity) {
       return of([]);
     }
@@ -54,6 +66,17 @@ export class MaalfridService {
 
     return this.http.get<ListReply<Seed>>(this.apiUrl + '/seeds', {params})
       .pipe(map(reply => reply.value || []));
+  }
+
+  getSeeds(): Observable<Seed[]> {
+    if (this.cache.seeds) {
+      return of(this.cache.seeds);
+    }
+    return this.http.get<ListReply<Seed>>(this.apiUrl + '/seeds')
+      .pipe(
+        map(reply => reply.value || []),
+        tap(value => this.cache.seeds = value),
+      );
   }
 
   getText(warcId: string): Observable<string> {
@@ -68,9 +91,7 @@ export class MaalfridService {
 
   getFilterById(id: string): Observable<FilterSet> {
     return this.http.get<Reply<FilterSet>>(this.apiUrl + '/filter/' + id)
-      .pipe(
-        map((reply) => reply.value),
-      );
+      .pipe(map((reply) => reply.value));
   }
 
   getFilterSets(seed: Seed): Observable<FilterSet[]> {
@@ -79,12 +100,25 @@ export class MaalfridService {
     }
     const params = createQueryParams({seed_id: seed.id});
     return this.http.get<Reply<FilterSet[]>>(this.apiUrl + '/filter', {params})
-      .pipe(
-        map((reply) => reply.value),
-      );
+      .pipe(map((reply) => reply.value));
   }
 
   saveFilter(filterSet: FilterSet): Observable<any> {
     return this.http.post(this.apiUrl + '/filter', filterSet);
+  }
+
+  getStatistics(year): Observable<any[]> {
+    if (this.cache.statistics.has(year)) {
+      return of(this.cache.statistics.get(year));
+    }
+    const time = moment().set('year', year);
+    const startTime = time.startOf('year').toISOString();
+    const endTime = time.endOf('year').toISOString();
+    const params = createQueryParams({start_time: startTime, end_time: endTime});
+    return this.http.get<Reply<any[]>>(this.apiUrl + '/statistics', {params})
+      .pipe(
+        map((reply) => reply.value),
+        tap(value => this.cache.statistics.set(year, value))
+      );
   }
 }

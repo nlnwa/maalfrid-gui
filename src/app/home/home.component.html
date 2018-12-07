@@ -1,17 +1,19 @@
-<section class="home-container" fxLayout="column" fxLayoutAlign="space-between">
-  <header class="header-background">
+<section class="home-container" fxLayout="column">
+  <header class="header-background" fxFlex>
     <section class="header-section">
       <div class="header-headline">
         <h1>Målfrid</h1>
         <h2>Målformsidentifisering for statstenesta</h2>
-        <a *ngIf="isLoggedIn" mat-raised-button [routerLink]="['/statistics']">Statistikk</a>
       </div>
-      <div class="header-stats">
-        <img src="assets/NB-logo-no-eng-hvit.svg"><br/>
-      </div>
+      <a *ngIf="isLoggedIn" mat-button color="primary" [routerLink]="['/statistics']">Utforsk</a>
+      <a *ngIf="isLoggedIn" mat-button color="primary" [routerLink]="['/report']">Se rapport</a>
+      <app-auth></app-auth>
     </section>
   </header>
-  <footer class="app-footer" fxLayoutAlign="space-around center">
+  <footer fxFlex="grow" class="app-footer" fxLayout="column" fxLayoutAlign="space-between center">
+    <div class="header-stats">
+      <img class="logo" src="assets/NB-logo-no-eng-hvit.svg"><br/>
+    </div>
     <span>versjon: {{ version }}</span>
   </footer>
 </section>
