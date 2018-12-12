@@ -298,26 +298,29 @@ export class ReportComponent implements OnInit {
   }
 
   private merge(data: any[]) {
-    const point = data.reduce((acc, curr) => {
+    const language = data.reduce((acc, curr) => {
       Object.entries(curr.statistic).forEach(([code, stat]) => {
-        acc[code] = [acc[code][0] + stat[0], acc[code][1] + stat[1]];
+        acc[code] = {
+          total: acc[code].total + stat['total'],
+          short: acc[code].short + stat['short']
+        };
       });
       return acc;
-    }, {'NNO': [0, 0], 'NOB': [0, 0]});
+    }, {'NNO': {total: 0, short: 0}, 'NOB': {total: 0, short: 0}});
 
-    const longNNO = point.NNO[0] - point.NNO[1]; // nr of total - nr of short
-    const longNOB = point.NOB[0] - point.NOB[1]; // nr of total - nr of short
-    const count = point.NNO[0] + point.NOB[0];   // total nr
+    const longNNO = language.NNO.total - language.NNO.short;
+    const longNOB = language.NOB.total - language.NOB.short;
+    const count = language.NNO.total + language.NOB.total;
 
     return {
       NOB: {
-        [Selector.Total]: percent(point.NOB[0], count),
-        [Selector.Short]: percent(point.NOB[1], count),
+        [Selector.Total]: percent(language.NOB.total, count),
+        [Selector.Short]: percent(language.NOB.short, count),
         [Selector.Long]: percent(longNOB, count),
       },
       NNO: {
-        [Selector.Total]: percent(point.NNO[0], count),
-        [Selector.Short]: percent(point.NNO[1], count),
+        [Selector.Total]: percent(language.NNO.total, count),
+        [Selector.Short]: percent(language.NNO.short, count),
         [Selector.Long]: percent(longNNO, count),
       },
     };
