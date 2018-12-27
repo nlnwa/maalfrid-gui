@@ -127,7 +127,7 @@ export class StatisticsComponent implements OnInit {
   }
 
   onRequestText(text: AggregateText) {
-    this.maalfridService.getText(text.warcId)
+    this.maalfridService.getText(text.warcRefersTo || text.warcId)
       .pipe(
         catchError(() => of(''))
       )

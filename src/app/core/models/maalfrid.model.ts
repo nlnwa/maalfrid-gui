@@ -28,6 +28,7 @@ export interface CrawlLog {
   requestedUri: string;
   referrer: string;
   size: number;
+  warcRefersTo?: string;
 }
 
 
