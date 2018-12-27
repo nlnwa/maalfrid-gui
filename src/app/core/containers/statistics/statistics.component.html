@@ -62,11 +62,10 @@
         (reset)="onSeedFilterReset()"></app-filter-set>
       <app-filter
         fxFlex="grow"
-        #immediateFilter
         [domain]="domain$ | async"
         (filterChange)="immediateFilters.next($event)"
-        (setSeedFilter)="seedFilterSet.addFilters(immediateFilter.getFilters())"
-        (setGlobalFilter)="globalFilterSet.addFilters(immediateFilter.getFilters())"
+        (setSeedFilter)="seedFilterSet.addFilters($event)"
+        (setGlobalFilter)="globalFilterSet.addFilters($event)"
       ></app-filter>
     </div>
   </section>

@@ -79,8 +79,8 @@ export class FilterComponent implements OnChanges {
     return !!this.domain;
   }
 
-  getFilters(): Filter[] {
-    return this.filters;
+  get copyOfFilters(): Filter[] {
+    return this.filters.map(filter => ({...filter, value: filter.value instanceof Array ? [...filter.value] : filter.value}))
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -94,12 +94,12 @@ export class FilterComponent implements OnChanges {
   }
 
   onSetGlobalFilter() {
-    this.setGlobalFilter.emit(this.filters);
+    this.setGlobalFilter.emit(this.copyOfFilters);
     this.reset();
   }
 
   onSetSeedFilter() {
-    this.setSeedFilter.emit(this.filters);
+    this.setSeedFilter.emit(this.copyOfFilters);
     this.reset();
   }
 
@@ -114,7 +114,7 @@ export class FilterComponent implements OnChanges {
     if (!this.filterEqualsDomain(filter) && filter.value.length > 0) {
       this.filters.push(filter);
     }
-    this.filterChange.emit(this.filters);
+    this.filterChange.emit(this.copyOfFilters);
   }
 
   private removeNamedFilterIfPresent(filter: Filter) {
