@@ -25,6 +25,9 @@ import {Filter, FilterSet} from '../../models/maalfrid.model';
       <mat-toolbar class="app-toolbar" color="accent">
         <mat-icon>{{ icon }}</mat-icon>&nbsp;{{ name }}
         <span fxFlex></span>
+        <button mat-icon-button (click)="onToggleBypass()">
+          <mat-icon>{{ visibilityIcon }}</mat-icon>
+        </button>
         <button mat-icon-button [disabled]="isSaved" (click)="onSave()">
           <mat-icon>save</mat-icon>
         </button>
@@ -47,7 +50,7 @@ import {Filter, FilterSet} from '../../models/maalfrid.model';
 
 
         <ng-container matColumnDef="exclusive">
-          <th mat-header-cell *matHeaderCellDef>Eksluderende</th>
+          <th mat-header-cell *matHeaderCellDef>Eksl.</th>
           <td mat-cell *matCellDef="let row">{{ row.exclusive ? 'Ja' : '' }}</td>
         </ng-container>
 
@@ -93,6 +96,7 @@ export class FilterSetComponent implements OnChanges {
   reset = new EventEmitter<void>();
 
   isSaved = true;
+  private bypass = false;
 
   constructor() {
     this.dataSource = new MatTableDataSource([]);
@@ -118,6 +122,10 @@ export class FilterSetComponent implements OnChanges {
     return this.filterSet && this.filterSet.id === 'global' ? 'panorama_fish_eye' : 'adjust';
   }
 
+  get visibilityIcon(): string {
+    return this.bypass ? 'visibility_off' : 'visibility';
+  }
+
   get filters(): Filter[] {
     return this.filterSet ? this.filterSet.filters : [];
   }
@@ -135,6 +143,11 @@ export class FilterSetComponent implements OnChanges {
     this.isSaved = false;
     this.filterSet.filters.push(...filters);
     this.update();
+  }
+
+  onToggleBypass(): void {
+    this.bypass = !this.bypass;
+    this.rowClick.emit(this.bypass ? [] : this.selection.selected);
   }
 
   onRemoveFilter(filter: Filter) {
@@ -156,7 +169,7 @@ export class FilterSetComponent implements OnChanges {
   onRowClick(filter) {
     this.selection.toggle(filter);
     if (this.selection.hasValue()) {
-      this.rowClick.emit(this.selection.selected);
+      this.rowClick.emit(this.bypass ? [] : this.selection.selected);
     } else {
       this.rowClick.emit([]);
     }
@@ -177,7 +190,7 @@ export class FilterSetComponent implements OnChanges {
       this.dataSource.data = this.filterSet.filters;
       if (this.filters.length > 0) {
         this.selection.select(...this.filters);
-        this.rowClick.emit(this.selection.selected);
+        this.rowClick.emit(this.bypass ? [] : this.selection.selected);
       } else {
         this.rowClick.emit([]);
       }
