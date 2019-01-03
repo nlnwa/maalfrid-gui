@@ -6,7 +6,7 @@
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json --configuration development",
     "build": "ng build",
-    "build:docker": "docker build -t norsknettarkiv/maalfrid-gui:$(git describe) .",
+    "build:docker": "docker build -t norsknettarkiv/maalfrid-gui:$(git describe --tags --always) .",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
