@@ -15,7 +15,6 @@
     <div class="column-center" fxFlex="grow" fxLayout="column">
       <app-chart
         fxFlex
-        [granularity]="granularity$ | async"
         [data]="filteredData$ | async"></app-chart>
       <app-uri-list
         fxFlex
@@ -35,7 +34,6 @@
     <div class="column-right" fxFlex="30%" fxLayout="column">
       <app-interval
         fxFlex
-        (granularity)="granularity.next($event)"
         (change)="interval.next($event)"></app-interval>
       <app-seed-list
         fxFlex

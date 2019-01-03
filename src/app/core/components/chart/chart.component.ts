@@ -7,19 +7,26 @@ import {WorkerService} from '../../services/worker.service';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {map, share, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
-function timeFormat(granularity: string): string {
+function timeFormat(granularity: Granularity): string {
   switch (granularity) {
-    case 'hour':
-      return 'DD.MM [kl.] HH:mm';
-    case 'day':
+    // case Granularity.HOUR:
+    //  return 'DD.MM [kl.] HH:mm';
+    case Granularity.DAY:
       return 'DD.MM.YY';
-    case 'week':
+    case Granularity.WEEK:
       return '[uke] w';
-    case 'month':
+    case Granularity.MONTH:
       return 'MMM YYYY';
-    case  'year':
+    case  Granularity.YEAR:
       return 'YYYY';
   }
+}
+
+enum Granularity {
+  DAY = 'day',
+  WEEK = 'week',
+  MONTH = 'month',
+  YEAR = 'year'
 }
 
 @Component({
@@ -30,6 +37,15 @@ function timeFormat(granularity: string): string {
   providers: [WorkerService]
 })
 export class ChartComponent {
+  readonly Granularity = Granularity;
+
+  unitLanguageMap = {
+    [Granularity.DAY]: 'dag',
+    [Granularity.WEEK]: 'uke',
+    [Granularity.MONTH]: 'måned',
+    [Granularity.YEAR]: 'år',
+  };
+
   defaultMap = colorMaps['maalfrid'];
 
   colorMap;
@@ -40,17 +56,12 @@ export class ChartComponent {
   visible = true;
 
   @Input()
-  set granularity(granularity: string) {
-    this._granularity.next(granularity);
-  }
-
-  @Input()
   set data(data: AggregateText[]) {
     this._data.next(data || []);
   }
 
-  _granularity = new BehaviorSubject<string>('week');
-  granularity$ = this._granularity.asObservable();
+  granularity = new BehaviorSubject<Granularity>(Granularity.WEEK);
+  granularity$ = this.granularity.asObservable();
 
   _data = new Subject<AggregateText[]>();
   data$ = this._data.asObservable().pipe(
@@ -65,7 +76,7 @@ export class ChartComponent {
   perExecutionData$ = this.mergedData$.pipe(
     map((data) => data.map(({name, series}) =>
       ({
-        name: moment(name).format(timeFormat(this._granularity.value)),
+        name: moment(name).format(timeFormat(this.granularity.value)),
         series: Object.entries(series)
           .map(([code, value]) => ({name: code, value: (<string[]>value).length}))
           .sort((a, b) => a.name < b.name ? -1 : a.name === b.name ? 0 : 1)
@@ -154,6 +165,10 @@ export class ChartComponent {
     }
   }
 
+  onChangeGranularity(granularity) {
+    this.granularity.next(granularity);
+  }
+
   onToggleVisibility() {
     this.visible = !this.visible;
   }
@@ -163,7 +178,7 @@ export class ChartComponent {
   }
 
   // merge data entries based on granularity (hour, day, week, etc..)
-  private mergeByGranularity(data: any[], granularity: any): any[] {
+  private mergeByGranularity(data: any[], granularity: Granularity): any[] {
     if (data.length === 0) {
       return data;
     }
@@ -172,10 +187,12 @@ export class ChartComponent {
       if (prev !== undefined && moment(prev.name).isSame(moment(curr.name), granularity)) {
         prev.series = this.mergeSeries(prev.series, curr.series);
       } else {
-        acc.push(curr);
+        // push a shallow clone of current entry since line above alters data array (prev.series = ...)
+        acc.push({...curr});
       }
       return acc;
     }, []);
+
   }
 
   private mergeSeries(a, b) {
