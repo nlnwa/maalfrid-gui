@@ -39,7 +39,7 @@ export class UriListComponent implements AfterViewInit {
   showFilter = false;
   pageSize = 5;
   pageSizeOptions = [5, 10, 20, 50, 100];
-  visible = false;
+  visible = true;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -48,6 +48,7 @@ export class UriListComponent implements AfterViewInit {
   @Input()
   set data(data: AggregateText[]) {
     this._data.next(data);
+    this.visible = data && !!data.length;
     this.rowClick.emit([]);
   }
 
