@@ -13,7 +13,7 @@
       <ng-container matColumnDef="a">
         <th mat-header-cell *matHeaderCellDef>Målform</th>
       </ng-container>
-      <ng-container *ngFor="let _ of [1, 2, 3]; let i = index">
+      <ng-container *ngFor="let _ of ['korte', 'lange', 'alle']; let i = index">
         <ng-container [matColumnDef]="'b' + i">
           <th mat-header-cell *matHeaderCellDef>Antall</th>
         </ng-container>
@@ -71,7 +71,13 @@
   </div>
 
   <div class="bar-chart-container" fxFlex fxLayout="column" [fxShow]="visible">
-    <mat-toolbar class="app-toolbar">Per innhøsting
+    <mat-toolbar class="app-toolbar">Per&nbsp;
+        <mat-button-toggle-group [value]="granularity$ | async" (change)="onChangeGranularity($event.value)">
+          <mat-button-toggle [value]="Granularity.DAY">{{unitLanguageMap[Granularity.DAY]}}</mat-button-toggle>
+          <mat-button-toggle [value]="Granularity.WEEK">{{unitLanguageMap[Granularity.WEEK]}}</mat-button-toggle>
+          <mat-button-toggle [value]="Granularity.MONTH">{{unitLanguageMap[Granularity.MONTH]}}</mat-button-toggle>
+          <mat-button-toggle [value]="Granularity.YEAR">{{unitLanguageMap[Granularity.YEAR]}}</mat-button-toggle>
+        </mat-button-toggle-group>
       <span fxFlex></span>
       <mat-button-toggle-group [value]="chartType" (change)="onChartToggle($event)">
         <mat-button-toggle value="bar-vertical-stacked">

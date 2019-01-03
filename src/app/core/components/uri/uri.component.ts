@@ -21,7 +21,7 @@ import {_isNumberValue} from '@angular/cdk/coercion';
   styleUrls: ['./uri.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UriComponent implements OnInit, OnChanges, AfterViewInit {
+export class UriComponent implements OnInit, AfterViewInit {
   defaultColumns = [
     'endTime',
     'contentType',
@@ -47,6 +47,7 @@ export class UriComponent implements OnInit, OnChanges, AfterViewInit {
   @Input()
   set data(data: AggregateText[]) {
     this.dataSource.data = data;
+    this.visible = !!data.length;
   }
 
   @Output()
@@ -76,12 +77,6 @@ export class UriComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngOnInit() {
     // this.onToggleVisibility();
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.data) {
-      console.log('changes');
-    }
   }
 
   ngAfterViewInit() {

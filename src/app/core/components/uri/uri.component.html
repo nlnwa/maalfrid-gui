@@ -43,7 +43,7 @@
     </button>
   </mat-toolbar>
 
-  <div fxFlex fxHide [fxShow]="visible">
+  <div fxFlex [fxHide]="!visible" [fxShow]="visible">
     <table mat-table matSort class="table" [dataSource]="dataSource">
       <ng-container matColumnDef="endTime">
         <th mat-header-cell class="wide" *matHeaderCellDef mat-sort-header>Dato</th>

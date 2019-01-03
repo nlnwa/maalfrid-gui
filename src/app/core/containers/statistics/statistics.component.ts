@@ -22,9 +22,6 @@ export class StatisticsComponent implements OnInit {
   private seeds = new Subject<Seed[]>();
   seeds$ = this.seeds.asObservable();
 
-  granularity = new Subject<string>();
-  granularity$ = this.granularity.asObservable();
-
   interval = new Subject<Interval>();
   interval$ = this.interval.asObservable();
 

@@ -2,6 +2,23 @@ table {
   width: 100%;
 }
 
+.toolbar.mat-toolbar-single-row {
+  min-height: 112px;
+  overflow: visible;
+}
+
+.toolbar {
+  font-size: 1rem;
+}
+
+label {
+  display: block;
+}
+
+.cell-department:first-letter {
+  text-transform: capitalize;
+}
+
 .threshold-slider {
   min-width: 300px;
  // transform: translateY(15px);
@@ -11,7 +28,7 @@ td.mat-cell, th.mat-header-cell {
   padding-left: 4px;
 }
 
-td.mat-cell:nth-child(2n+3), th.mat-header-cell.table-header-language:nth-child(2n+3) {
+td.mat-cell:nth-child(2n+4), th.mat-header-cell.table-header-language:nth-child(2n+4) {
   background-color: hsla(0, 100, 0, 0.05);
 }
 

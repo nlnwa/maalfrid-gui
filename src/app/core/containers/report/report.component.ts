@@ -22,6 +22,13 @@ enum Selector {
   Long,
 }
 
+enum Filter {
+  None = 'None',
+  Seed = 'Seed',
+  Entity = 'Entity',
+  Department = 'Department',
+}
+
 function range(nr: number) {
   return Array(nr).fill(0).map((_, i) => '' + i);
 }
@@ -43,10 +50,12 @@ function formatPercent(nr: number): string {
 export class ReportComponent implements OnInit {
   readonly Period = Period;
   readonly Selector = Selector;
+  readonly Filter = Filter;
+
   readonly months = [];
   readonly quarters = ['1. kvartal', '2. kvartal', '3. kvartal', '4. kvartal'];
   readonly halfyears = ['1. halvår', '2. halvår'];
-  readonly years = ['årlig'];
+  readonly years = [''];
   readonly periods = {
     [Period.Month]: range(Period.Month),
     [Period.Quarter]: range(Period.Quarter),
@@ -56,22 +65,37 @@ export class ReportComponent implements OnInit {
   readonly langs = ['NOB', 'NNO'];
 
   readonly norwegianPeriod = {
-    [Period.Month]: 'per måned',
-    [Period.Quarter]: 'per kvartal',
-    [Period.Halfyear]: 'per halvår',
-    [Period.Year]: 'per år',
+    [Period.Month]: 'måned',
+    [Period.Quarter]: 'kvartal',
+    [Period.Halfyear]: 'halvår',
+    [Period.Year]: 'år',
   };
 
   readonly norwegianSelector = {
-    [Selector.Total]: 'alle tekster',
-    [Selector.Short]: 'korte tekster',
-    [Selector.Long]: 'lange tekster',
+    [Selector.Total]: 'alle',
+    [Selector.Short]: 'korte',
+    [Selector.Long]: 'lange',
   };
 
+  readonly norwegianFilter = {
+    [Filter.None]: 'alt',
+    [Filter.Department]: 'departementer',
+    [Filter.Entity]: 'entiteter',
+    [Filter.Seed]: 'nettsteder',
+  };
+
+  readonly filterTitle = {
+    [Filter.None]: '',
+    [Filter.Department]: 'departementer',
+    [Filter.Entity]: 'entiteter',
+    [Filter.Seed]: 'nettsteder',
+  };
   narrow = false;
   threshold = 0.5;
 
-  readonly stickyColumns = ['entityId', 'seedId'];
+  readonly stickyColumns = ['department', 'entityId', 'seedId'];
+
+  departmentByEntityId = {};
 
   entities = new BehaviorSubject<Entity[]>([]);
   entities$ = this.entities.asObservable();
@@ -85,15 +109,20 @@ export class ReportComponent implements OnInit {
   selector = new BehaviorSubject<Selector>(Selector.Total);
   selector$ = this.selector.asObservable();
 
-  year = new BehaviorSubject<number>((new Date()).getUTCFullYear());
+  filter = new BehaviorSubject<Filter>(Filter.None);
+  filter$ = this.filter.asObservable().pipe(
+    tap(filter => this.dataSource.filter = filter === Filter.None ? '' : filter)
+  );
+
+  year = new BehaviorSubject<number>((new Date('2018-12-12T00:00:00Z')).getUTCFullYear());
   year$ = this.year.asObservable().pipe(
     tap(year => this.loadStatistics(year)),
     shareReplay(),
   );
 
-  title$ = combineLatest(this.year$, this.selector$).pipe(
-    map(([year, selector]) => {
-      return `| rapport for ${year} | ${this.norwegianSelector[selector]}`;
+  title$ = combineLatest(this.year$, this.selector$, this.filter$).pipe(
+    map(([year, selector, filter]) => {
+      return `| rapport for ${year} | ${this.norwegianSelector[selector]} tekster | ${this.filterTitle[filter]}`;
     }),
     tap(title => this.titleService.setTitle('Nasjonalbiblioteket | Målfrid ' + title))
   );
@@ -106,7 +135,7 @@ export class ReportComponent implements OnInit {
         acc[entityId] = groupBy(data as any[], 'seedId');
         return acc;
       }, {});
-      return byEntityBySeed;
+      return this.groupByDepartment(byEntityBySeed);
     }),
   );
 
@@ -116,23 +145,38 @@ export class ReportComponent implements OnInit {
   dataSource: MatTableDataSource<any>;
 
   periods$ = combineLatest(this.period$, this.statistics$).pipe(
-    map(([period, statistics]) => {
+    map(([period, byDepByEntBySeed]) => {
       this.dataSource.data = [];
 
       const periods = this.periods[period];
+      const data = [];
 
-      const perEntityPerSeed = [];
-      Object.entries(statistics).forEach(([entityId, bySeed]) => {
-        const perSeed = [];
-        const seedsOfEntity = Object.entries(bySeed);
-        seedsOfEntity.forEach(([seedId, data]) => {
-          perSeed.push({entityId, seedId, data: this.mergeInterval(this.groupByPeriod(period, data))});
+      Object.entries(byDepByEntBySeed).forEach(([department, byEntityBySeed]) => {
+        const perEntity = Object.entries(byEntityBySeed);
+
+        perEntity.forEach(([entityId, bySeed]) => {
+          const seedData = [];
+          const perSeed: Array<any> = Object.entries(bySeed);
+          perSeed.forEach(([seedId, entries]) => {
+            seedData.push({department, entityId, seedId, data: this.mergeInterval(this.groupByPeriod(period, entries))});
+          });
+          // if current entity has more than one seed we compute a total for the entity
+          if (perSeed.length > 1) {
+            const totalForEntity = perSeed.reduce((acc, [seedId, entries]) => acc.concat(...entries), []);
+            seedData.push({department, entityId, seedId: '', data: this.mergeInterval(this.groupByPeriod(period, totalForEntity))});
+          }
+          data.push(...seedData);
         });
-        if (seedsOfEntity.length > 1) {
-          const totalForEntity = seedsOfEntity.reduce((acc, [seedId, data]) => acc.concat(...data), []);
-          perSeed.push({entityId, seedId: '', data: this.mergeInterval(this.groupByPeriod(period, totalForEntity))});
+        // if current department has more than one entity we compute a total for the departement
+        if (perEntity.length > 1) {
+          const totalForDepartment = perEntity.reduce((acc, [entityId, seed]) => {
+            Object.entries(seed).forEach(([seedId, entries]) => {
+              acc.push(...(entries as any[]));
+            });
+            return acc;
+          }, []);
+          data.push({department, data: this.mergeInterval(this.groupByPeriod(period, totalForDepartment))});
         }
-        perEntityPerSeed.push(...perSeed);
       });
 
       this.periodicColumns = [...this.stickyColumns.map(_ => 'period_' + _), ...periods];
@@ -146,7 +190,7 @@ export class ReportComponent implements OnInit {
       }
       setTimeout(() => {
         this.dataSource.sort = this.sort;
-        this.dataSource.data = perEntityPerSeed;
+        this.dataSource.data = data;
       });
       return periods;
     }),
@@ -177,6 +221,21 @@ export class ReportComponent implements OnInit {
           return _isNumberValue(value) ? Number(value) : value;
       }
     };
+    this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
+      switch (filter) {
+        case Filter.Seed:
+          return data['seedId'] !== '' && data['entityId'] !== '';
+        case Filter.Entity:
+          return data['seedId'] === '' || this.dataSource.data.reduce((acc, curr) =>
+            acc + (curr['entityId'] === data['entityId'] ? 1 : 0), 0) === 1;
+        case Filter.Department:
+          return data['entityId'] === undefined && data['seedId'] === undefined;
+      }
+    };
+  }
+
+  get narrowIcon(): string {
+    return this.narrow ? 'unfold_less' : 'unfold_more';
   }
 
   formatPeriod(nr: string): string {
@@ -202,14 +261,21 @@ export class ReportComponent implements OnInit {
       : (nr * 100).toPrecision(3) + '%';
   }
 
+  formatDepartment(department: string) {
+    return department === 'none' ? 'Ikke tilordnet departement' : department;
+  }
+
   formatEntity(entityId: string) {
     const found = this.entities.value.find((entity: Entity) => entity.id === entityId);
-    return found === undefined ? '?' : found.meta.name;
+    return found === undefined ? '-' : found.meta.name;
   }
 
   formatSeed(seedId: string) {
+    if (this.filter.value === Filter.Entity) {
+      return '-';
+    }
     const found = this.seeds.value.find((seed: Seed) => seed.id === seedId);
-    return found === undefined ? '?' : found.meta.name;
+    return found === undefined ? '-' : found.meta.name;
   }
 
   style(row: any, index: number, lang: string): string | string[] | Set<string> | { [klass: string]: any } {
@@ -243,6 +309,10 @@ export class ReportComponent implements OnInit {
     this.selector.next(selector);
   }
 
+  onChangeFilter(filter: Filter) {
+    this.filter.next(filter);
+  }
+
   onToggleRowHeight() {
     this.narrow = !this.narrow;
   }
@@ -270,20 +340,12 @@ export class ReportComponent implements OnInit {
   private loadEntities(): void {
     this.maalfridService.getEntities().subscribe(entities => {
       this.entities.next(entities);
+      entities.reduce((departmentByEntityId, entity) => {
+        const departmentLabel = entity.meta.label.find(label => label.key === 'departement') || {value: 'none'};
+        departmentByEntityId[entity.id] = departmentLabel.value;
+        return departmentByEntityId;
+      }, this.departmentByEntityId);
     });
-  }
-
-  private dateIndexForPeriod(period: Period, time: string) {
-    switch (period) {
-      case Period.Month:
-        return moment(time).month();
-      case Period.Quarter:
-        return moment(time).quarter() - 1;
-      case Period.Halfyear:
-        return moment(time).quarter() < 3 ? 0 : 1;
-      case Period.Year:
-        return 0;
-    }
   }
 
   private groupByPeriod(period, data) {
@@ -291,6 +353,18 @@ export class ReportComponent implements OnInit {
       acc[this.dateIndexForPeriod(period, curr.endTime)].push(curr);
       return acc;
     }, range(period).map(() => []));
+  }
+
+  private groupByDepartment(byEntity: object) {
+    const departments: Array<any> = Array.from(new Set(Object.values(this.departmentByEntityId)));
+
+    return Object.keys(byEntity).reduce((acc, entityId) => {
+      acc[this.departmentByEntityId[entityId]][entityId] = byEntity[entityId];
+      return acc;
+    }, departments.reduce((a, curr) => {
+      a[curr] = {};
+      return a;
+    }, {}));
   }
 
   private mergeInterval(data: any[][]) {
@@ -326,4 +400,16 @@ export class ReportComponent implements OnInit {
     };
   }
 
+  private dateIndexForPeriod(period: Period, time: string) {
+    switch (period) {
+      case Period.Month:
+        return moment(time).month();
+      case Period.Quarter:
+        return moment(time).quarter() - 1;
+      case Period.Halfyear:
+        return moment(time).quarter() < 3 ? 0 : 1;
+      case Period.Year:
+        return 0;
+    }
+  }
 }
