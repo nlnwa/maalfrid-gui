@@ -51,7 +51,7 @@
         fxFlex
         [filterSets]="filterSets$ | async"
         (rowClick)="filterSet.next($event)"
-        (create)="onFilterSetCreate($event)"
+        (create)="onFilterSetCreate()"
         (save)="onFilterSetSave($event)"
         (delete)="onFilterSetDelete($event)"></app-filter-set-list>
       <app-filter-set
