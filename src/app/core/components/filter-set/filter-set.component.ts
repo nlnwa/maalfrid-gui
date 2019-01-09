@@ -21,7 +21,7 @@ import {Filter, FilterSet} from '../../models/maalfrid.model';
         background-color: #eee;
       }
     </style>
-    <section fxLayout="column">
+    <section [fxHide]="!visible" fxShow fxLayout="column">
       <mat-toolbar class="app-toolbar" color="accent">
         <mat-icon>{{ icon }}</mat-icon>&nbsp;{{ name }}
         <span fxFlex></span>
@@ -40,12 +40,12 @@ import {Filter, FilterSet} from '../../models/maalfrid.model';
       <table mat-table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef>Navn</th>
-          <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+          <td mat-cell *matCellDef="let row">{{ formatName(row.name) }}</td>
         </ng-container>
 
         <ng-container matColumnDef="field">
           <th mat-header-cell *matHeaderCellDef>Felt</th>
-          <td mat-cell *matCellDef="let row">{{ row.field }}</td>
+          <td mat-cell *matCellDef="let row">{{ formatName(row.field) }}</td>
         </ng-container>
 
 
@@ -56,7 +56,7 @@ import {Filter, FilterSet} from '../../models/maalfrid.model';
 
         <ng-container matColumnDef="value">
           <th mat-header-cell *matHeaderCellDef>Verdi</th>
-          <td mat-cell *matCellDef="let row">{{ row.value }}</td>
+          <td mat-cell *matCellDef="let row">{{ formatValue(row.value) }}</td>
         </ng-container>
 
         <ng-container matColumnDef="remove">
@@ -79,9 +79,24 @@ import {Filter, FilterSet} from '../../models/maalfrid.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterSetComponent implements OnChanges {
+  readonly nobNames = {
+    language: 'Språk',
+    contentType: 'Mediatype',
+    discoveryPath: 'Tre',
+    requestedUri: 'Domene',
+    lix: 'Lesbarhet',
+    sentenceCount: 'Setninger',
+    wordCount: 'Ord',
+    shortWordCount: 'Korte ord',
+    longWordCount: 'Lange ord',
+    characterCount: 'Tegn',
+    matchRegexp: 'Reg. uttr.'
+  };
+
   displayedColumns = ['name', 'field', 'exclusive', 'value', 'remove'];
   dataSource: MatTableDataSource<Filter>;
   selection = new SelectionModel<Filter>(true, []);
+  visible = true;
 
   @Input()
   filterSet: FilterSet;
@@ -105,9 +120,9 @@ export class FilterSetComponent implements OnChanges {
   get name(): string {
     if (this.filterSet) {
       if (this.filterSet.id === 'global') {
-        return 'Globale filtre';
+        return 'Globalt filtersett';
       } else {
-        return 'Seed filtre';
+        return 'Filtersett';
       }
     } else {
       return '';
@@ -128,6 +143,18 @@ export class FilterSetComponent implements OnChanges {
 
   get filters(): Filter[] {
     return this.filterSet ? this.filterSet.filters : [];
+  }
+
+  formatValue(value: any): string {
+    if (value instanceof Array) {
+      return value.join(', ');
+    } else {
+      return value;
+    }
+  }
+
+  formatName(name: string): string {
+    return this.nobNames[name] || name;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -194,8 +221,10 @@ export class FilterSetComponent implements OnChanges {
       } else {
         this.rowClick.emit([]);
       }
+      this.visible = true;
     } else {
       this.rowClick.emit([]);
+      this.visible = false;
     }
   }
 }

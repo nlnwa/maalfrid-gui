@@ -83,8 +83,8 @@ export interface ExecutionStatistic {
 export interface FilterSet {
   id?: string;
   seedId?: string;
-  valid_from?: string;
-  valid_to?: string;
+  validFrom?: string;
+  validTo?: string;
   filters: Filter[];
 }
 

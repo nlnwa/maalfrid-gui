@@ -7,6 +7,13 @@ import {WorkerService} from '../../services/worker.service';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {map, share, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 
+enum Granularity {
+  DAY = 'day',
+  WEEK = 'week',
+  MONTH = 'month',
+  YEAR = 'year'
+}
+
 function timeFormat(granularity: Granularity): string {
   switch (granularity) {
     // case Granularity.HOUR:
@@ -20,13 +27,6 @@ function timeFormat(granularity: Granularity): string {
     case  Granularity.YEAR:
       return 'YYYY';
   }
-}
-
-enum Granularity {
-  DAY = 'day',
-  WEEK = 'week',
-  MONTH = 'month',
-  YEAR = 'year'
 }
 
 @Component({

@@ -101,7 +101,7 @@ function regexpCondition(regexp: string, property: string): Predicate {
       console.error(e.message);
       return false;
     }
-  }
+  };
 }
 
 function shortTextCondition(): Predicate {

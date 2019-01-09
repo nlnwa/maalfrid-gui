@@ -93,7 +93,7 @@ export class ReportComponent implements OnInit {
   narrow = false;
   threshold = 0.5;
 
-  readonly stickyColumns = ['department', 'entityId', 'seedId'];
+  readonly stickyColumns = ['department', 'entityId', 'seed_id'];
 
   departmentByEntityId = {};
 
@@ -132,7 +132,7 @@ export class ReportComponent implements OnInit {
     map((statistics) => {
       const byEntity = groupBy(statistics, 'entityId');
       const byEntityBySeed = Object.entries(byEntity).reduce((acc, [entityId, data]) => {
-        acc[entityId] = groupBy(data as any[], 'seedId');
+        acc[entityId] = groupBy(data as any[], 'seed_id');
         return acc;
       }, {});
       return this.groupByDepartment(byEntityBySeed);
@@ -215,7 +215,7 @@ export class ReportComponent implements OnInit {
       switch (sortHeaderId) {
         case 'entityId':
           return this.formatEntity(value);
-        case 'seedId':
+        case 'seed_id':
           return this.formatSeed(value);
         default:
           return _isNumberValue(value) ? Number(value) : value;
@@ -224,12 +224,12 @@ export class ReportComponent implements OnInit {
     this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
       switch (filter) {
         case Filter.Seed:
-          return data['seedId'] !== '' && data['entityId'] !== '';
+          return data['seed_id'] !== '' && data['entityId'] !== '';
         case Filter.Entity:
-          return data['seedId'] === '' || this.dataSource.data.reduce((acc, curr) =>
+          return data['seed_id'] === '' || this.dataSource.data.reduce((acc, curr) =>
             acc + (curr['entityId'] === data['entityId'] ? 1 : 0), 0) === 1;
         case Filter.Department:
-          return data['entityId'] === undefined && data['seedId'] === undefined;
+          return data['entityId'] === undefined && data['seed_id'] === undefined;
       }
     };
   }

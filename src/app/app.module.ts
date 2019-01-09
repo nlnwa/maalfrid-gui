@@ -7,7 +7,7 @@ import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 
 import {AppConfig} from './app.config';
-import {AuthGuard, AuthService, RoleService, TokenInterceptor} from './shared/services/auth';
+import {AuthService, TokenInterceptor} from './shared/services/auth';
 import {CoreModule} from './core/core.module';
 import {SharedModule} from './shared/shared.module';
 import {OAuthModule} from 'angular-oauth2-oidc';
@@ -24,15 +24,12 @@ import {HomeComponent} from './home/home.component';
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
-    SharedModule,
+    SharedModule.forRoot(),
+    CoreModule,
     OAuthModule.forRoot(),
-    CoreModule.forRoot(),
   ],
   providers: [
     AppConfig,
-    AuthService,
-    RoleService,
-    AuthGuard,
     ErrorService,
     {
       provide: APP_INITIALIZER,
