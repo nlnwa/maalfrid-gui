@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {AggregateText, Filter} from '../../models/maalfrid.model';
 import {Subject} from 'rxjs';
+import {Filter} from '../../models/maalfrid.model';
 
 @Component({
   selector: 'app-filter',
@@ -58,8 +58,11 @@ export class FilterComponent implements OnChanges {
   requestedUri = new Subject<any>();
   requestedUri$ = this.requestedUri.asObservable();
 
+  fieldRegexp = new Subject<any>();
+  fieldRegexp$ = this.fieldRegexp.asObservable();
+
   @Input()
-  domain: AggregateText[] | any;
+  domain: object;
 
   @Output()
   filterChange: EventEmitter<Filter[]> = new EventEmitter();
@@ -70,8 +73,6 @@ export class FilterComponent implements OnChanges {
   @Output()
   setSeedFilter: EventEmitter<Filter[]> = new EventEmitter();
 
-  uriRegexpModel = '';
-  uriRegexpExclusive = false;
 
   constructor() {}
 
@@ -80,15 +81,15 @@ export class FilterComponent implements OnChanges {
   }
 
   get copyOfFilters(): Filter[] {
-    return this.filters.map(filter => ({...filter, value: filter.value instanceof Array ? [...filter.value] : filter.value}))
+    return this.filters.map(filter => ({...filter, value: filter.value instanceof Array ? [...filter.value] : filter.value}));
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.domain) {
+      this.filters = [];
+      this.filterChange.emit([]);
       if (this.domain) {
         this.reset();
-      } else {
-        this.domain = undefined;
       }
     }
   }
@@ -111,14 +112,14 @@ export class FilterComponent implements OnChanges {
     // remove filter with same name if already present in filters array
     this.removeNamedFilterIfPresent(filter);
     // add filter if value not in domain
-    if (!this.filterEqualsDomain(filter) && filter.value.length > 0) {
+    if (filter.value.length > 0 && (!this.filterEqualsDomain(filter) || filter.name === 'matchRegexp')) {
       this.filters.push(filter);
     }
     this.filterChange.emit(this.copyOfFilters);
   }
 
   private removeNamedFilterIfPresent(filter: Filter) {
-    const index = this.filters.findIndex((_) => _.name === filter.name);
+    const index = this.filters.findIndex((_) => filter.field ? _.name === filter.name : _.name === filter.name && _.field === filter.field);
     if (index > -1) {
       this.filters.splice(index, 1);
     }
@@ -130,13 +131,17 @@ export class FilterComponent implements OnChanges {
    * Called when domain is changed.
    */
   private reset() {
-    this.filters = [];
-    this.filterChange.emit(this.filters);
-    Object.keys(this.domain).forEach((name) => {
-      this[name].next({name, label: this.label[name], domain: this.domain[name]});
+    Object.keys(this.domain).forEach((name) => this[name].next({
+      name,
+      label: this.label[name],
+      domain: this.domain[name]
+    }));
+    this.fieldRegexp.next({
+      name: 'matchRegexp',
+      domain: ['language', 'discoveryPath', 'contentType', 'requestedUri'],
+      label: 'Regulært uttrykk',
+      multiple: false,
     });
-    this.uriRegexpModel = '';
-    this.uriRegexpExclusive = false;
   }
 
   /**

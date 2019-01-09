@@ -1,12 +1,24 @@
 .container {
   height: 100%;
+  overflow-y: hidden;
 }
 
 .section {
+  height: 100%;
   overflow-y: hidden;
 }
 
 .column-left {
+  height: 100%;
+}
+
+.entity-list {
+  overflow: hidden;
+  min-height: 152px;
+}
+
+.seed-list {
+  min-height: 152px;
 }
 
 .column-center {

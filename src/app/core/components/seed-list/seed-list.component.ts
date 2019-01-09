@@ -8,11 +8,16 @@ import {SelectionModel} from '@angular/cdk/collections';
   selector: 'app-seed-list',
   template: `
     <style>
-      table {
+      section {
         height: 100%;
+      }
+      table {
         width: 100%;
       }
-
+      .table-scroll {
+        height: 100%;
+        overflow-y: auto;
+      }
       .toolbar-link {
         font-weight: lighter;
       }
@@ -21,30 +26,29 @@ import {SelectionModel} from '@angular/cdk/collections';
         background-color: #eee;
       }
     </style>
-    <section fxLayout="column" fxShow [fxHide]="isListEmpty">
+    <section fxLayout="column">
       <mat-toolbar class="app-toolbar" color="accent">
-        <mat-icon>link</mat-icon>&nbsp;URL
+        <mat-icon>link</mat-icon>&nbsp;Nettsted
         <span fxFlex></span>
-        <button mat-icon-button (click)="onToggleVisibility()">
-          <mat-icon>{{ visible ? "expand_less" : "expand_more" }}</mat-icon>
-        </button>
       </mat-toolbar>
 
-      <table mat-table [fxHide]="!visible" [dataSource]="dataSource">
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef>URL</th>
-          <td mat-cell *matCellDef="let row">
-            <a style="color: inherit;" target="_blank" href="{{row.meta.name}}">{{row.meta.name}}</a>
-          </td>
-        </ng-container>
+      <div fxFlex="grow" class="table-scroll">
+        <table mat-table [dataSource]="dataSource">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>URL</th>
+            <td mat-cell *matCellDef="let row">
+              <a style="color: inherit;" target="_blank" href="{{row.meta.name}}">{{row.meta.name}}</a>
+            </td>
+          </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"
-            [ngClass]="{highlight: selection.isSelected(row)}"
-            (click)="onRowClick(row)">
-        </tr>
-      </table>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"
+              [ngClass]="{highlight: selection.isSelected(row)}"
+              (click)="onRowClick(row)">
+          </tr>
+        </table>
+      </div>
     </section>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -52,7 +56,6 @@ export class SeedListComponent implements OnChanges {
   displayedColumns = ['name'];
   dataSource = new MatTableDataSource<Seed>([]);
   selection = new SelectionModel<Seed>();
-  visible = true;
 
   @Input()
   seeds: Seed[] = [];
@@ -75,20 +78,8 @@ export class SeedListComponent implements OnChanges {
     }
   }
 
-  get isListEmpty(): boolean {
-    return !(this.seeds && this.seeds.length > 0);
-  }
-
-  get url(): string {
-    return this.selected ? this.selected.meta.name : '';
-  }
-
   get selected(): Seed {
     return this.selection.hasValue() ? this.selection.selected[0] : null;
-  }
-
-  onToggleVisibility() {
-    this.visible = !this.visible;
   }
 
   onRowClick(seed: Seed) {

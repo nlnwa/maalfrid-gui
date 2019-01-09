@@ -6,7 +6,7 @@
                 [placeholder]="placeholder"
                 [disabled]="disabled"
                 (selectionChange)="onSelectionChange(select.value, checkbox.checked)">
-      <mat-option *ngFor="let option of options" [value]="option">{{option || emptyOption}}</mat-option>
+      <mat-option *ngFor="let option of options" [value]="option">{{ option || emptyOption }}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-checkbox

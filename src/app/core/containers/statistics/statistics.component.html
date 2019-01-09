@@ -5,11 +5,20 @@
   class="data-loader"></mat-spinner>
 <div class="container" fxLayout="column">
   <app-toolbar>| utforsk</app-toolbar>
-  <section class="section" fxLayout="row">
-    <div class="column-left" fxFlex="15%">
-      <app-entity-list
-        (rowClick)="selectedEntity.next($event)"
-        [entities]="entities$ | async"></app-entity-list>
+  <div class="section" fxLayout="row">
+    <div class="column-left" fxLayout="column" fxFlex="15%">
+      <app-interval
+        (change)="interval.next($event)"></app-interval>
+      <div fxFlex="grow" class="entity-list">
+        <app-entity-list
+          (rowClick)="selectedEntity.next($event)"
+          [entities]="entities$ | async"></app-entity-list>
+      </div>
+      <div class="seed-list">
+        <app-seed-list fxFlex
+                       (rowClick)="selectedSeed.next($event)"
+                       [seeds]="seeds$ | async"></app-seed-list>
+      </div>
     </div>
 
     <div class="column-center" fxFlex="grow" fxLayout="column">
@@ -18,7 +27,6 @@
         [data]="filteredData$ | async"></app-chart>
       <app-uri-list
         fxFlex
-        (text)="onRequestText($event)"
         [data]="filteredData$ | async"
         (rowClick)="uri.data = $event"></app-uri-list>
       <app-uri
@@ -28,36 +36,31 @@
         fxFlex
         [text]="text$ | async"></app-text>
       <div fxFlex="grow"></div>
-
     </div>
 
     <div class="column-right" fxFlex="30%" fxLayout="column">
-      <app-interval
-        fxFlex
-        (change)="interval.next($event)"></app-interval>
-      <app-seed-list
-        fxFlex
-        (rowClick)="selectedSeed.next($event)"
-        [seeds]="seeds$ | async"></app-seed-list>
       <app-filter-set
         fxFlex
         #globalFilterSet
         [filterSet]="globalFilterSet$ | async"
         (rowClick)="globalFilters.next($event)"
-        (save)="onFilterSave($event)"
+        (save)="onFilterSetSave($event)"
         (reset)="onGlobalFilterReset()">
       </app-filter-set>
       <app-filter-set-list
         fxFlex
         [filterSets]="filterSets$ | async"
-        (rowClick)="filterSet.next($event)"></app-filter-set-list>
+        (rowClick)="filterSet.next($event)"
+        (create)="onFilterSetCreate($event)"
+        (save)="onFilterSetSave($event)"
+        (delete)="onFilterSetDelete($event)"></app-filter-set-list>
       <app-filter-set
         #seedFilterSet
         fxFlex
         [filterSet]="filterSet$ | async"
         (rowClick)="seedFilters.next($event)"
-        (save)="onFilterSave($event)"
-        (reset)="onSeedFilterReset()"></app-filter-set>
+        (save)="onFilterSetSave($event)"
+        (reset)="onSeedFilterSetReset()"></app-filter-set>
       <app-filter
         fxFlex="grow"
         [domain]="domain$ | async"
@@ -66,38 +69,5 @@
         (setGlobalFilter)="globalFilterSet.addFilters($event)"
       ></app-filter>
     </div>
-  </section>
+  </div>
 </div>
-<!--
-
-    <style>
-      .container {
-        height: 100%;
-      }
-
-      main {
-        overflow: hidden;
-      }
-
-      .user {
-        font-weight: lighter;
-      }
-
-      .title-link {
-        text-decoration: none;
-        color: inherit;
-      }
-    </style>
-
-    <div class="container" fxLayout="column">
-      <mat-toolbar class="app-toolbar">
-        <span fxFlex></span>
-
-</mat-toolbar>
-
-<main>
-  <router-outlet></router-outlet>
-</main>
-</div>
-
--->

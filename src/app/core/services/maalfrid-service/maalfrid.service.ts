@@ -86,25 +86,42 @@ export class MaalfridService {
   }
 
   identifyLanguage(text: string): Observable<Object> {
-    return this.http.post(this.apiUrl + '/detect', {value: text});
+    return this.http.post(this.apiUrl + '/action/detect-language', {text});
   }
 
-  getFilterById(id: string): Observable<FilterSet> {
+  getFilterSetById(id: string): Observable<FilterSet> {
     return this.http.get<Reply<FilterSet>>(this.apiUrl + '/filter/' + id)
       .pipe(map((reply) => reply.value));
   }
 
-  getFilterSets(seed: Seed): Observable<FilterSet[]> {
-    if (!seed) {
+  getFilterSetsBySeedId(seedId): Observable<FilterSet[]> {
+    if (!seedId) {
       return of([]);
     }
-    const params = createQueryParams({seed_id: seed.id});
+    const params = createQueryParams({seed_id: seedId});
     return this.http.get<Reply<FilterSet[]>>(this.apiUrl + '/filter', {params})
       .pipe(map((reply) => reply.value));
   }
 
+  createFilter(filterSet: FilterSet): Observable<any> {
+    return this.http.put(this.apiUrl + '/filter', filterSet);
+  }
+
   saveFilter(filterSet: FilterSet): Observable<any> {
     return this.http.post(this.apiUrl + '/filter', filterSet);
+  }
+
+  deleteFilter(filterSet: FilterSet): Observable<any> {
+    return this.http.delete(this.apiUrl + '/filter/' + filterSet.id);
+  }
+
+  applyFilter(seedId: string, startTime: string, endTime: string): Observable<any> {
+    const params = Object.assign({},
+      seedId ? {seed_id: seedId} : {},
+      startTime ? {start_time: startTime} : {},
+      endTime ? {end_time: endTime} : {}
+    );
+    return this.http.post(this.apiUrl + '/action/apply-filters', params);
   }
 
   getStatistics(year): Observable<any[]> {

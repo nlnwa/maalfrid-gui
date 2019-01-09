@@ -1,0 +1,25 @@
+<div fxLayout="row" fxLayoutGap="16px" fxLayoutAlign="start center">
+  <mat-form-field class="input" fxFlex>
+    <input
+      matInput
+      [(ngModel)]="filter.value"
+      [placeholder]="placeholder"
+      (change)="onFilterChange(); $event.stopPropagation();">
+  </mat-form-field>
+
+  <mat-form-field class="select">
+    <mat-select
+      [(ngModel)]="filter.field"
+      [placeholder]="selectPlaceholder"
+      (selectionChange)="onFilterChange()">
+      <mat-option *ngFor="let option of selectOptions" [value]="option">{{ formatOption(option) }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-checkbox
+    class="checkbox"
+    color="warn"
+    matTooltip="Exclusive"
+    [(ngModel)]="filter.exclusive"
+    (change)="onFilterChange()"></mat-checkbox>
+</div>

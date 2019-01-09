@@ -15,7 +15,7 @@ import {
   MatSelectModule,
   MatSidenavModule,
   MatSliderModule,
-  MatSlideToggleModule,
+  MatSlideToggleModule, MatSnackBarModule,
   MatSortModule,
   MatTableModule,
   MatTabsModule,
@@ -51,6 +51,7 @@ const modules = [
   MatSlideToggleModule,
   MatSliderModule,
   MatCheckboxModule,
+  MatSnackBarModule,
 ];
 
 @NgModule({

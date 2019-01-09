@@ -1,7 +1,7 @@
 <section fxLayout="column" [fxShow]="visible">
   <mat-toolbar class="app-toolbar" color="accent">
     <mat-icon class="icon-header">loupe</mat-icon>&nbsp;
-    Filter
+    Filtrer
     <span fxFlex></span>
     <button mat-icon-button (click)="onSetGlobalFilter()">
       <mat-icon>panorama_fish_eye</mat-icon>
@@ -51,22 +51,8 @@
       class="select"
       (change)="onFilterChange($event)"
       [config]="requestedUri$ | async"></app-select>
-    <div class="input" fxLayout="row" fxLayoutAlign="start center">
-      <mat-form-field class="input-field" fxFlex>
-        <input
-          matInput
-          #regexp
-          [(ngModel)]="uriRegexpModel"
-          placeholder="URI regulært uttrykk"
-          (keyup.enter)="onFilterChange({value: regexp.value, name: 'matchRegexp', field: 'requestedUri', exclusive: checkbox.checked})">
-      </mat-form-field>
-      <mat-checkbox
-        #checkbox
-        class="checkbox"
-        color="warn"
-        matTooltip="Exclusive"
-        [(ngModel)]="uriRegexpExclusive"
-        (change)="onFilterChange({value: regexp.value, name: 'matchRegexp', field: 'requestedUri', exclusive: checkbox.checked})"></mat-checkbox>
-    </div>
+    <app-regexp
+      (change)="onFilterChange($event)"
+      [config]="fieldRegexp$ | async"></app-regexp>
   </div>
 </section>

@@ -8,19 +8,10 @@ import {Filter} from '../../models/maalfrid.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectComponent {
-  @Output()
-  change: EventEmitter<Filter> = new EventEmitter();
-
-  @Input()
   emptyOption: '';
-
   placeholder = '';
-
-  @Input()
   options: string[] = [];
-
   disabled = false;
-
   model = [];
   name = '';
   exclusive = false;
@@ -33,8 +24,12 @@ export class SelectComponent {
       this.placeholder = config.label;
       this.options = [...(config.domain as string[])];
       this.model = [];
+      this.emptyOption = config.emptyOption || '';
     }
   }
+
+  @Output()
+  change: EventEmitter<Filter> = new EventEmitter();
 
   constructor() { }
 
