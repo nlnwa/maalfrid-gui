@@ -87,9 +87,10 @@ export class FilterComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.domain) {
       this.filters = [];
-      this.filterChange.emit([]);
       if (this.domain) {
         this.reset();
+      } else {
+        this.filterChange.emit([]);
       }
     }
   }
@@ -138,10 +139,10 @@ export class FilterComponent implements OnChanges {
     }));
     this.fieldRegexp.next({
       name: 'matchRegexp',
-      domain: ['language', 'discoveryPath', 'contentType', 'requestedUri'],
       label: 'Regulært uttrykk',
-      multiple: false,
+      domain: ['language', 'discoveryPath', 'contentType', 'requestedUri'],
     });
+    this.filterChange.emit([]);
   }
 
   /**
