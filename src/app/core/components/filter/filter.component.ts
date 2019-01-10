@@ -86,10 +86,10 @@ export class FilterComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.domain) {
-      this.filters = [];
       if (this.domain) {
         this.reset();
       } else {
+        this.filters = [];
         this.filterChange.emit([]);
       }
     }
@@ -132,6 +132,7 @@ export class FilterComponent implements OnChanges {
    * Called when domain is changed.
    */
   private reset() {
+    this.filters = [];
     Object.keys(this.domain).forEach((name) => this[name].next({
       name,
       label: this.label[name],
