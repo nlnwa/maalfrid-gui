@@ -52,7 +52,7 @@ import {Moment} from 'moment';
           <td mat-cell
               *matCellDef="let row">
             <mat-form-field>
-              <input matInput [matDatepicker]="startTimePicker" (dateChange)="onStartDateChange($event, row)" [ngModel]="row.validTo">
+              <input matInput [matDatepicker]="startTimePicker" (dateChange)="onStartDateChange($event, row)" [ngModel]="row.validFrom">
               <mat-datepicker-toggle matSuffix [for]="startTimePicker"></mat-datepicker-toggle>
               <mat-datepicker #startTimePicker></mat-datepicker>
             </mat-form-field>
@@ -63,7 +63,7 @@ import {Moment} from 'moment';
           <th mat-header-cell *matHeaderCellDef>Gyldig til</th>
           <td mat-cell *matCellDef="let row">
             <mat-form-field>
-              <input matInput [matDatepicker]="endTimePicker" (dateChange)="onEndDateChange($event, row)" [ngModel]="row.validFrom">
+              <input matInput [matDatepicker]="endTimePicker" (dateChange)="onEndDateChange($event, row)" [ngModel]="row.validTo">
               <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
               <mat-datepicker #endTimePicker></mat-datepicker>
             </mat-form-field>
