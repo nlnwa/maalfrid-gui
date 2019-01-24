@@ -125,18 +125,18 @@ export class FilterSetListComponent implements OnChanges {
 
   onStartDateChange(event: MatDatepickerInputEvent<Moment>, filterSet: FilterSet) {
     if (event.value) {
-      filterSet.validTo = event.value.toISOString();
+      filterSet.validFrom = event.value.toISOString();
     } else {
-      delete filterSet.validTo;
+      delete filterSet.validFrom;
     }
     this.save.emit(filterSet);
   }
 
-  onEndDateChange(event: MatDatepickerInputEvent<Moment>, filterSet) {
+  onEndDateChange(event: MatDatepickerInputEvent<Moment>, filterSet: FilterSet) {
     if (event.value) {
-      filterSet.validFrom = event.value.toISOString();
+      filterSet.validTo = event.value.toISOString();
     } else {
-      delete filterSet.validFrom;
+      delete filterSet.validTo;
     }
     this.save.emit(filterSet);
   }
