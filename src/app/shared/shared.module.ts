@@ -1,41 +1,46 @@
 import {ModuleWithProviders, NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {MaterialModule} from './material.module';
-import {AuthComponent} from './components/auth/auth.component';
-import {AppRoutingModule} from '../app-routing.module';
-import {ToolbarComponent} from './components/toolbar/toolbar.component';
-import {SnackBarService} from './services/snack-bar/snack-bar.service';
-import {AuthGuard, AuthService, RoleService, TokenInterceptor} from './services/auth';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
+import {MaterialModule} from './material.module';
+import {RouterModule} from '@angular/router';
+import {DateFnsDateAdapter, MAT_DATE_FNS_DATE_FORMATS} from './date-fns-date-adapter';
+import {DateAdapter, MAT_DATE_FORMATS} from '@angular/material';
+import {AuthComponent, ToolbarComponent} from './components';
 
 @NgModule({
-  declarations: [
-    AuthComponent,
-    ToolbarComponent
-  ],
+  declarations: [ToolbarComponent, AuthComponent],
   imports: [
-    AppRoutingModule,
     CommonModule,
     MaterialModule,
+    ReactiveFormsModule,
+    FormsModule,
+    RouterModule,
   ],
   exports: [
-    AuthComponent,
-    ToolbarComponent,
     CommonModule,
     MaterialModule,
-  ],
+    ReactiveFormsModule,
+    FormsModule,
+    ToolbarComponent,
+    AuthComponent,
+  ]
 })
 export class SharedModule {
-  public static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders {
     return {
       ngModule: SharedModule,
       providers: [
-        AuthService,
-        AuthGuard,
-        RoleService,
-        TokenInterceptor,
-        SnackBarService,
-      ],
+        DateFnsDateAdapter,
+        {
+          provide: DateAdapter,
+          useClass: DateFnsDateAdapter
+        },
+        {
+          provide: MAT_DATE_FORMATS,
+          useValue: MAT_DATE_FNS_DATE_FORMATS
+        },
+      ]
     };
   }
 }

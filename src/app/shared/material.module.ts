@@ -15,7 +15,8 @@ import {
   MatSelectModule,
   MatSidenavModule,
   MatSliderModule,
-  MatSlideToggleModule, MatSnackBarModule,
+  MatSlideToggleModule,
+  MatSnackBarModule,
   MatSortModule,
   MatTableModule,
   MatTabsModule,
@@ -24,8 +25,6 @@ import {
 } from '@angular/material';
 
 import {FlexLayoutModule} from '@angular/flex-layout';
-
-import {MatMomentDateModule} from '@angular/material-moment-adapter';
 
 const modules = [
   FlexLayoutModule,
@@ -40,7 +39,6 @@ const modules = [
   MatListModule,
   MatProgressSpinnerModule,
   MatDatepickerModule,
-  MatMomentDateModule,
   MatDividerModule,
   MatSortModule,
   MatButtonToggleModule,

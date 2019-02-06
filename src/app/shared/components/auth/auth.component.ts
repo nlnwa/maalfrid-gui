@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {AuthService} from '../../services/auth';
 import {Router} from '@angular/router';
+import {AuthService} from '../../../core/services';
 
 @Component({
   selector: 'app-auth',

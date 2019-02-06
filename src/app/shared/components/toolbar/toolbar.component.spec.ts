@@ -1,6 +1,10 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ToolbarComponent } from './toolbar.component';
+import {ToolbarComponent} from './toolbar.component';
+import {AuthComponent} from '..';
+import {AuthService} from '../../../core/services/auth';
+import {RouterTestingModule} from '@angular/router/testing';
+import {MaterialModule} from '../../material.module';
 
 describe('ToolbarComponent', () => {
   let component: ToolbarComponent;
@@ -8,7 +12,9 @@ describe('ToolbarComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ToolbarComponent ]
+      declarations: [ ToolbarComponent, AuthComponent ],
+      providers: [{provide: AuthService, useValue: {}}],
+      imports: [MaterialModule, RouterTestingModule]
     })
     .compileComponents();
   }));
