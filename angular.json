@@ -70,7 +70,8 @@
               "browserTarget": "maalfrid-gui:build:production"
             },
             "development": {
-              "baseHref": "/maalfrid"
+              "baseHref": "/maalfrid/",
+              "servePath": "/maalfrid/"
             }
           }
         },
