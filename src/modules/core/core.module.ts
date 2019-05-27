@@ -19,6 +19,7 @@ import {
 } from './services/';
 import {JwksValidationHandler, OAuthModule, OAuthService, ValidationHandler} from 'angular-oauth2-oidc';
 import {AppConfigService} from './services/app.config.service';
+import {EntityResolverService} from '../app/services/entity-resolver.service';
 
 registerLocaleData(localeNb, 'nb', localeNbExtra);
 
@@ -45,6 +46,7 @@ export function appInitializerFactory(appInitializerService: AppInitializerServi
     SnackBarService,
     ErrorService,
     TokenInterceptor,
+    EntityResolverService,
     {provide: ValidationHandler, useClass: JwksValidationHandler},
     {
       provide: APP_INITIALIZER,

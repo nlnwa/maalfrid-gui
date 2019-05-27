@@ -7,11 +7,13 @@ import {AppComponent, HomeComponent} from './components';
 import {AppRoutingModule} from './routing/app-routing.module';
 import {SharedModule} from '../shared/shared.module';
 import {CoreModule} from '../core/core.module';
+import { EntitySelectorComponent } from './components/entity-selector/entity-selector.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
+    EntitySelectorComponent,
   ],
   imports: [
     BrowserModule,

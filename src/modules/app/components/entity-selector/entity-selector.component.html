@@ -1,0 +1,13 @@
+<form>
+  <mat-form-field>
+    <input type="text" placeholder="Velg statsorgan" aria-label="Valg statsorgan"
+           matInput
+           [formControl]="term"
+           [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete"
+                      (optionSelected)="onSelectEntity($event)"
+                      [displayWith]="displayFn">
+      <mat-option *ngFor="let option of option$ | async" [value]="option">{{ option.meta.name }}</mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+</form>
