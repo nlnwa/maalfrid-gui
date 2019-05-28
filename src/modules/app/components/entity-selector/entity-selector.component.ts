@@ -1,9 +1,18 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {Entity} from '../../../shared/models';
-import {FormControl} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormGroup} from '@angular/forms';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
-import {MatAutocompleteSelectedEvent} from '@angular/material';
+import {MatAutocompleteSelectedEvent, MatAutocompleteTrigger} from '@angular/material';
+
+export interface DepartmentGroup {
+  name: string;
+  entities: Entity[];
+}
+
+const DEPARTMENT_LABEL_KEY = 'departement';
+
+const DEPARTMENT_NONE = 'Ikke tilknyttet departement';
 
 @Component({
   selector: 'app-entity-selector',
@@ -19,30 +28,67 @@ export class EntitySelectorComponent implements OnChanges {
   @Output()
   selectEntity: EventEmitter<Entity> = new EventEmitter();
 
-  term = new FormControl();
+  form: FormGroup;
 
-  private options = new BehaviorSubject<Entity[]>([]);
-  option$: Observable<Entity[]>;
+  @ViewChild(MatAutocompleteTrigger)
+  private trigger: MatAutocompleteTrigger;
 
-  constructor() {
-    this.option$ = this.term.valueChanges
+  private departments = new BehaviorSubject<DepartmentGroup[]>([]);
+  department$: Observable<DepartmentGroup[]>;
+
+  constructor(private fb: FormBuilder) {
+    this.form = this.fb.group({
+      entity: ''
+    });
+
+    this.department$ = this.entity.valueChanges
       .pipe(
         startWith<string | Entity>(''),
         map(value => typeof value === 'string' ? value : value.meta.name),
         map((term) =>
-          this.options.value.filter(option =>
-            option.meta.name.toLocaleLowerCase().includes(term.toLocaleLowerCase()))),
+          term === ''
+            ? this.departments.value
+            : this.departments.value.reduce((acc, curr) => {
+              const entities = curr.entities.filter(entity =>
+                entity.meta.name.toLocaleLowerCase().includes(term.toLocaleLowerCase()));
+              return entities.length > 0 ? [...acc, {...curr, entities}] : acc;
+            }, []))
       );
+  }
+
+  get entity(): AbstractControl {
+    return this.form.get('entity');
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.entities) {
-      this.options.next(this.entities);
+      // group entities by department
+      const entityByDepartment = this.entities.reduce((acc, entity) => {
+        const found = entity.meta.label.find(label => label.key === DEPARTMENT_LABEL_KEY);
+        const department = found
+          ? found.value.charAt(0).toUpperCase() + found.value.slice(1)
+          : DEPARTMENT_NONE;
+        (acc[department] = acc[department] || []).push(entity);
+        return acc;
+      }, {});
+
+      const departmentGroups = Object.entries(entityByDepartment)
+        .map(([name, entities]: [string, Entity[]]) => ({
+          name,
+          entities: entities.sort((a, b) => a.meta.name > b.meta.name ? 1 : a.meta.name < b.meta.name ? -1 : 0)
+        })).sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
+
+      this.departments.next(departmentGroups);
     }
   }
 
   onSelectEntity(event: MatAutocompleteSelectedEvent) {
     this.selectEntity.emit(event.option.value);
+  }
+
+  onClear() {
+    this.form.setValue({entity: ''});
+    setTimeout(() => this.trigger.openPanel());
   }
 
   displayFn(entity?: Entity): string | undefined {

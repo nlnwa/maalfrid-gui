@@ -1,13 +1,18 @@
-<form>
-  <mat-form-field>
-    <input type="text" placeholder="Velg statsorgan" aria-label="Valg statsorgan"
+<form [formGroup]="form">
+  <mat-form-field class="form">
+    <input #term type="text" placeholder="Velg statsorgan" aria-label="Valg statsorgan"
            matInput
-           [formControl]="term"
+           formControlName="entity"
            [matAutocomplete]="auto">
+    <button mat-button *ngIf="term.value" matSuffix mat-icon-button aria-label="Clear" (click)="onClear()">
+      <mat-icon>close</mat-icon>
+    </button>
     <mat-autocomplete #auto="matAutocomplete"
                       (optionSelected)="onSelectEntity($event)"
                       [displayWith]="displayFn">
-      <mat-option *ngFor="let option of option$ | async" [value]="option">{{ option.meta.name }}</mat-option>
+      <mat-optgroup *ngFor="let department of department$ | async" [label]="department.name">
+        <mat-option *ngFor="let option of department.entities" [value]="option">{{ option.meta.name }}</mat-option>
+      </mat-optgroup>
     </mat-autocomplete>
   </mat-form-field>
 </form>

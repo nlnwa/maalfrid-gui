@@ -4,7 +4,7 @@
     <h2>Målformsidentifisering for statstenesta</h2>
   </header>
   <main fxLayoutAlign="center">
-    <app-entity-selector [entities]="entity$ | async"
+    <app-entity-selector class="entity-selector" [entities]="entity$ | async"
     (selectEntity)="onSelectEntity($event)"></app-entity-selector>
   </main>
 </div>
