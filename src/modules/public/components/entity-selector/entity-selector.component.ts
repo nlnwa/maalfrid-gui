@@ -10,7 +10,7 @@ export interface DepartmentGroup {
   entities: Entity[];
 }
 
-const DEPARTMENT_LABEL_KEY = 'departement';
+export const DEPARTMENT_LABEL_KEY = 'departement';
 
 const DEPARTMENT_NONE = 'Ikke tilknyttet departement';
 

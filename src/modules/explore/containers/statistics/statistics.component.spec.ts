@@ -2,7 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {StatisticsComponent} from './statistics.component';
 import {ExploreModule} from '../../explore.module';
-import {AuthService, AuthService} from '../../../core/services/auth';
+import {AuthService} from '../../../core/services/auth';
 import {MaalfridService, SnackBarService} from '../../../core/services';
 import {of} from 'rxjs';
 import {RouterTestingModule} from '@angular/router/testing';
@@ -26,7 +26,6 @@ describe('StatisticsComponent', () => {
           }
         },
         {provide: SnackBarService, useValue: {}},
-        {provide: AuthService, useValue: {}},
         {
           provide: AuthService, useValue: {
             isAdmin: true

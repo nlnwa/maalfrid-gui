@@ -1,18 +1,13 @@
 import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
-import {HomeComponent} from '../components';
 import {AuthGuard} from '../../core/services';
 import {Role} from '../../shared/models';
-import {EntityResolverService} from '../services/entity-resolver.service';
 
 
 const routes: Routes = [
   {
     path: '',
-    component: HomeComponent,
-    resolve: {
-      entities: EntityResolverService
-    },
+    loadChildren: '../../public/public.module#PublicModule',
     pathMatch: 'full',
   },
   {

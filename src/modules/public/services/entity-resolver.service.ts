@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
-import {Entity} from '../../shared/models';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
 import {Observable, of} from 'rxjs';
-import {MaalfridService} from '../../core/services';
 import {catchError} from 'rxjs/operators';
+
+import {Entity} from '../../shared/models';
+import {MaalfridService} from '../../core/services';
 
 @Injectable()
 export class EntityResolverService implements Resolve<Entity[]> {
