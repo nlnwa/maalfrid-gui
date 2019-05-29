@@ -3,7 +3,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {TextCompositionComponent} from './text-composition.component';
 import {MaterialModule} from '../../../shared/material.module';
 
-fdescribe('TextCompositionComponent', () => {
+describe('TextCompositionComponent', () => {
   let component: TextCompositionComponent;
   let fixture: ComponentFixture<TextCompositionComponent>;
 
