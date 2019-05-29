@@ -5,7 +5,7 @@ import {MaterialModule} from '../../../shared/material.module';
 import {SeedStatistic} from '../../../shared/models';
 import {SimpleChange} from '@angular/core';
 
-fdescribe('SeedListComponent', () => {
+describe('SeedListComponent', () => {
   let component: SeedListComponent;
   let fixture: ComponentFixture<SeedListComponent>;
 
