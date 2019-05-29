@@ -39,3 +39,8 @@ html, body {
     display: none !important;
   }
 }
+
+// Custom panel height
+div.mat-autocomplete-panel {
+  max-height: 400px;
+}

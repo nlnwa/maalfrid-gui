@@ -1,6 +1,8 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {AppInitializerService, AuthService} from '../../../core/services';
-import {AppConfigService} from '../../../core/services/app.config.service';
+import {ReplaySubject} from 'rxjs';
+import {Entity} from '../../../shared/models';
+import {ActivatedRoute} from '@angular/router';
+import {take} from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -10,24 +12,15 @@ import {AppConfigService} from '../../../core/services/app.config.service';
 })
 export class HomeComponent {
 
-  constructor(private appInitializerService: AppInitializerService,
-              private appConfigService: AppConfigService,
-              private authService: AuthService) {
+  private entities = new ReplaySubject<Entity[]>(1);
+  entity$ = this.entities.asObservable();
+
+  constructor(private route: ActivatedRoute) {
+    this.route.data
+      .pipe(take(1))
+      .subscribe((data: { entities: Entity[] }) => this.entities.next(data.entities));
   }
 
-  get name(): string {
-    return this.authService.name;
-  }
-
-  get version(): string {
-    return this.appConfigService.version;
-  }
-
-  get initialized(): boolean {
-    return this.appInitializerService.initialized;
-  }
-
-  get error(): string {
-    return this.appInitializerService.error.message;
+  onSelectEntity(entity: Entity) {
   }
 }

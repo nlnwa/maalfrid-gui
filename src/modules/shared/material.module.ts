@@ -22,6 +22,8 @@ import {
   MatTabsModule,
   MatToolbarModule,
   MatTooltipModule,
+  MatAutocompleteModule,
+  MatCardModule
 } from '@angular/material';
 
 import {FlexLayoutModule} from '@angular/flex-layout';
@@ -50,6 +52,8 @@ const modules = [
   MatSliderModule,
   MatCheckboxModule,
   MatSnackBarModule,
+  MatAutocompleteModule,
+  MatCardModule
 ];
 
 @NgModule({
