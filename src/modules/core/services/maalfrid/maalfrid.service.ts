@@ -11,7 +11,7 @@ import {AppConfigService} from '../app.config.service';
 @Injectable()
 export class MaalfridService {
 
-  private readonly apiUrl: string;;
+  private readonly apiUrl: string;
   private cache = {
     statistics: new Map(),
     entities: undefined,
