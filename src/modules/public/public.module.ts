@@ -3,12 +3,14 @@ import {PublicRoutingModule} from './routing/public-routing.module';
 import {SharedModule} from '../shared/shared.module';
 import {EntitySelectorComponent, LanguageCompositionComponent} from './components';
 import {HomeComponent} from './containers';
+import { TextCompositionComponent } from './components/text-composition/text-composition.component';
 
 @NgModule({
   declarations: [
     HomeComponent,
     EntitySelectorComponent,
-    LanguageCompositionComponent
+    LanguageCompositionComponent,
+    TextCompositionComponent
   ],
   imports: [
     PublicRoutingModule,
