@@ -5,7 +5,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {of} from 'rxjs';
 import {MaalfridService} from '../../core/services';
 
-fdescribe('EntityResolverService', () => {
+describe('EntityResolverService', () => {
   beforeEach(() => TestBed.configureTestingModule({
     providers: [
       EntityResolverService,
