@@ -98,5 +98,11 @@ export interface Filter {
 export interface LanguageComposition {
   nbPercentage: number;
   nnPercentage: number;
+}
 
+export interface TextCount {
+  nbLongCount: number;
+  nnLongCount: number;
+  nbShortCount: number;
+  nnShortCount: number;
 }
