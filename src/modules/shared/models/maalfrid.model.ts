@@ -94,3 +94,9 @@ export interface Filter {
   exclusive?: boolean;
   field?: string;
 }
+
+export interface LanguageComposition {
+  nbPercentage: number;
+  nnPercentage: number;
+
+}
