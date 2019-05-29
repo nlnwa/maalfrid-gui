@@ -1,0 +1,31 @@
+<section fxLayout="column">
+  <mat-form-field fxFlex class="app-content__padding">
+    <input #filter matInput (keyup)="onApplyFilter(filter.value)" placeholder="Søk virksomhet">
+  </mat-form-field>
+
+  <div fxFlex="grow" class="table-scroll">
+    <table mat-table [dataSource]="dataSource" matSort>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Virksomhet</th>
+        <td mat-cell *matCellDef="let row">
+            <span [matTooltip]="row.meta.description"
+                  [matTooltipDisabled]="row.meta.description === row.meta.name"
+                  [matTooltipShowDelay]="350">{{ row.meta.name}}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef>Beskrivelse</th>
+        <td mat-cell *matCellDef="let row">{{row.meta.description}}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"
+          [ngClass]="{'highlight': selection.isSelected(row)}"
+          (click)="onRowClick(row)">
+      </tr>
+    </table>
+  </div>
+</section>
