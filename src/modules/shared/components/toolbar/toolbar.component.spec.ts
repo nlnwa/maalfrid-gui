@@ -4,7 +4,9 @@ import {ToolbarComponent} from './toolbar.component';
 import {AuthComponent} from '..';
 import {AuthService} from '../../../core/services/auth';
 import {RouterTestingModule} from '@angular/router/testing';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MaterialModule} from '../../material.module';
+import {SnackBarService} from '../../../core/services';
 
 describe('ToolbarComponent', () => {
   let component: ToolbarComponent;
@@ -12,9 +14,12 @@ describe('ToolbarComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ToolbarComponent, AuthComponent ],
-      providers: [{provide: AuthService, useValue: {}}],
-      imports: [MaterialModule, RouterTestingModule]
+      declarations: [ AuthComponent, ToolbarComponent ],
+      providers: [
+        SnackBarService,
+        {provide: AuthService, useValue: {}},
+      ],
+      imports: [MaterialModule, HttpClientTestingModule, RouterTestingModule]
     })
     .compileComponents();
   }));
