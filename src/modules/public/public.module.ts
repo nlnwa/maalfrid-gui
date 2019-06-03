@@ -1,7 +1,13 @@
 import {NgModule} from '@angular/core';
 import {PublicRoutingModule} from './routing/public-routing.module';
 import {SharedModule} from '../shared/shared.module';
-import {EntityListComponent, EntitySelectorComponent, LanguageCompositionComponent, TextCompositionComponent} from './components';
+import {
+  EntityListComponent,
+  EntitySelectorComponent,
+  LanguageCompositionComponent,
+  SeedListComponent,
+  TextCompositionComponent
+} from './components';
 import {HomeComponent} from './containers';
 
 @NgModule({
@@ -11,7 +17,8 @@ import {HomeComponent} from './containers';
     EntityListComponent,
     LanguageCompositionComponent,
     TextCompositionComponent,
-    EntityListComponent
+    EntityListComponent,
+    SeedListComponent
   ],
   imports: [
     PublicRoutingModule,

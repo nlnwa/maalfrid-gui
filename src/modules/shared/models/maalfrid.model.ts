@@ -106,3 +106,9 @@ export interface TextCount {
   nbShortCount: number;
   nnShortCount: number;
 }
+
+export interface SeedStatistic {
+  uri: string;
+  nbPercentage: number;
+  nnPercentage: number;
+}
