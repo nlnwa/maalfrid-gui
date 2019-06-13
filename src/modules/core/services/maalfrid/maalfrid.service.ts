@@ -23,15 +23,15 @@ export class MaalfridService {
     this.apiUrl = appConfigService.apiUrl;
   }
 
-  getExecutions(seed: Seed, interval: Interval, job?: CrawlJob): Observable<AggregateText[]> {
+  getExecutions(seed: Seed, interval?: Interval, job?: CrawlJob): Observable<AggregateText[]> {
     if (!seed) {
       return of([]);
     }
     const params = createQueryParams({
       seed_id: seed.id,
       job_id: job ? job.id : '',
-      start_time: interval.start ? startOfDay(interval.start).toJSON() : '',
-      end_time: interval.end ? startOfDay(interval.end).toJSON() : '',
+      start_time: interval ? interval.start ? startOfDay(interval.start).toJSON() : '' : startOfYear(new Date()).toJSON(),
+      end_time: interval ? interval.end ? startOfDay(interval.end).toJSON() : '' : endOfYear(new Date()).toJSON(),
     });
     return this.http.get<MaalfridReply>(`${this.apiUrl}/executions`, {params})
       .pipe(map(reply => reply.value || []));
