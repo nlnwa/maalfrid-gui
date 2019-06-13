@@ -9,6 +9,8 @@ import {
   TextCompositionComponent
 } from './components';
 import {HomeComponent} from './containers';
+import { ChartComponent } from './components/chart/chart.component';
+import {NgxChartsModule} from '@swimlane/ngx-charts';
 
 @NgModule({
   declarations: [
@@ -18,11 +20,13 @@ import {HomeComponent} from './containers';
     LanguageCompositionComponent,
     TextCompositionComponent,
     EntityListComponent,
-    SeedListComponent
+    SeedListComponent,
+    ChartComponent
   ],
   imports: [
     PublicRoutingModule,
     SharedModule,
+    NgxChartsModule,
   ]
 })
 export class PublicModule {
