@@ -5,7 +5,7 @@ import {AggregateText, CrawlJob, createQueryParams, Entity, FilterSet, ListReply
 import {Observable, of} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 import {Interval} from '../../../explore/components/interval/interval.component';
-import {endOfYear, setYear, startOfDay, startOfYear} from 'date-fns';
+import {endOfMonth, endOfYear, setMonth, setYear, startOfDay, startOfMonth, startOfYear} from 'date-fns';
 import {AppConfigService} from '../app.config.service';
 
 @Injectable()
@@ -114,18 +114,38 @@ export class MaalfridService {
     return this.http.post(this.apiUrl + '/action/apply-filters', params);
   }
 
-  getStatistics(year: number): Observable<any[]> {
+  getStatistics(year: number, entityId?: string): Observable<any[]> {
     if (this.cache.statistics.has(year)) {
       return of(this.cache.statistics.get(year));
+    } else {
+      const time = setYear(new Date(), year);
+      const startTime = startOfYear(time);
+      const endTime = endOfYear(time);
+      return this.getStatisticsInterval(startTime, endTime, entityId).pipe(
+        tap(value => this.cache.statistics.set(year, value))
+      );
     }
-    const time = setYear(new Date(), year);
-    const startTime = startOfYear(time).toISOString();
-    const endTime = endOfYear(time).toISOString();
-    const params = createQueryParams({start_time: startTime, end_time: endTime});
+  }
+
+  /**
+   *
+   * @param month 0-11
+   * @param entityId
+   */
+  getStatisticsForMonth(time: Date, entityId?: string): Observable<any> {
+    const startTime = startOfMonth(time);
+    const endTime = endOfMonth(time);
+    return this.getStatisticsInterval(startTime, endTime, entityId)
+  }
+
+  getStatisticsInterval(startTime: Date, endTime: Date, entityId?: string): Observable<any> {
+    const start_time = startTime.toISOString();
+    const end_time = endTime.toISOString();
+    const params = createQueryParams(
+      Object.assign({start_time, end_time}, entityId ? {entity_id: entityId} :  {}));
     return this.http.get<Reply<any[]>>(this.apiUrl + '/statistics', {params})
       .pipe(
         map((reply) => reply.value),
-        tap(value => this.cache.statistics.set(year, value))
       );
   }
 }

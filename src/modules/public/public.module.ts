@@ -8,7 +8,7 @@ import {
   SeedListComponent,
   TextCompositionComponent
 } from './components';
-import {HomeComponent} from './containers';
+import {HomeComponent, EntityDetailsComponent} from './containers';
 import { ChartComponent } from './components/chart/chart.component';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 
@@ -21,13 +21,14 @@ import {NgxChartsModule} from '@swimlane/ngx-charts';
     TextCompositionComponent,
     EntityListComponent,
     SeedListComponent,
-    ChartComponent
+    ChartComponent,
+    EntityDetailsComponent
   ],
   imports: [
     PublicRoutingModule,
     SharedModule,
     NgxChartsModule,
-  ]
+  ],
 })
 export class PublicModule {
 }

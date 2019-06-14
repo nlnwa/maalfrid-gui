@@ -1,12 +1,12 @@
 <div fxLayout="column">
-  <mat-toolbar>Per&nbsp;
+  <div>
     <mat-button-toggle-group [value]="granularity$ | async" (change)="onChangeGranularity($event.value)">
       <mat-button-toggle [value]="Granularity.DAY">{{unitLanguageMap[Granularity.DAY]}}</mat-button-toggle>
       <mat-button-toggle [value]="Granularity.WEEK">{{unitLanguageMap[Granularity.WEEK]}}</mat-button-toggle>
       <mat-button-toggle [value]="Granularity.MONTH">{{unitLanguageMap[Granularity.MONTH]}}</mat-button-toggle>
       <mat-button-toggle [value]="Granularity.YEAR">{{unitLanguageMap[Granularity.YEAR]}}</mat-button-toggle>
     </mat-button-toggle-group>
-  </mat-toolbar>
+  </div>
   <div *ngIf="mergedData$ | async as results">
     <ngx-charts-bar-vertical-stacked
       [xAxis]="true"

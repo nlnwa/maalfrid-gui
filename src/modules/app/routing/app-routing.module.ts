@@ -7,8 +7,13 @@ import {Role} from '../../shared/models';
 const routes: Routes = [
   {
     path: '',
-    loadChildren: '../../public/public.module#PublicModule',
     pathMatch: 'full',
+    redirectTo: 'public'
+  },
+  {
+    path: 'public',
+    pathMatch: 'prefix',
+    loadChildren: '../../public/public.module#PublicModule',
   },
   {
     path: 'rapport',
@@ -28,10 +33,6 @@ const routes: Routes = [
       allowedRoles: [Role.READONLY, Role.ADMIN, Role.CURATOR],
     },
   },
-  {
-    path: '**',
-    redirectTo: '',
-  }
 ];
 
 @NgModule({
