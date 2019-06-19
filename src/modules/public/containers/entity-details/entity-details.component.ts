@@ -1,7 +1,7 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {WorkerService} from '../../../explore/services';
-import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
-import {AggregateText, Entity, LanguageComposition, Seed, SeedStatistic, TextCount} from '../../../shared/models';
+import {combineLatest, Observable, of, Subject} from 'rxjs';
+import {AggregateText, Entity, LanguageComposition, SeedStatistic, TextCount} from '../../../shared/models';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MaalfridService} from '../../../core/services';
 import {distinctUntilChanged, map, share, startWith, switchMap, takeUntil} from 'rxjs/operators';
@@ -17,10 +17,9 @@ import {getYear, isSameMonth} from 'date-fns';
 })
 export class EntityDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  private entities = new BehaviorSubject<Entity[]>([]);
   private ngUnsubscribe: Subject<void>;
 
-  entitie$: Observable<Entity[]>;
+  entities: Entity[];
 
   selectedEntityId = new Subject<string>();
   selectedEntityId$: Observable<string>;
@@ -30,14 +29,11 @@ export class EntityDetailsComponent implements OnInit, AfterViewInit, OnDestroy 
 
   year$: Observable<number>;
 
-
   entityName$: Observable<string>;
 
   data$: Observable<AggregateText[]>;
 
-  seeds$: Observable<Seed[]>;
-
-  seedstats$: Observable<SeedStatistic[]>;
+  seedStats$: Observable<SeedStatistic[]>;
 
   language$: Observable<LanguageComposition>;
 
@@ -57,22 +53,22 @@ export class EntityDetailsComponent implements OnInit, AfterViewInit, OnDestroy 
 
     this.year$ = of(getYear(new Date()));
 
+    this.entities = this.route.snapshot.data.entities;
+
     this.selectedEntityId$ = this.selectedEntityId.asObservable().pipe(
       distinctUntilChanged(),
       share()
     );
 
-    this.entitie$ = this.entities.asObservable();
-
     this.entityName$ = this.selectedEntityId.pipe(
       map((entityId: string) => {
-          const found = this.entities.value.find(entity => entity.id === entityId);
+          const found = this.entities.find(entity => entity.id === entityId);
           return found ? found.meta.name : '';
         }
       )
     );
 
-    this.seeds$ = this.selectedEntityId$.pipe(
+    const seeds$ = this.selectedEntityId$.pipe(
       switchMap((entityId) => this.maalfridService.getSeedsOfEntity(entityId)),
       share()
     );
@@ -104,7 +100,7 @@ export class EntityDetailsComponent implements OnInit, AfterViewInit, OnDestroy 
       share()
     );
 
-    this.seedstats$ = combineLatest([statsPerMonth$, this.seeds$]).pipe(
+    this.seedStats$ = combineLatest([statsPerMonth$, seeds$]).pipe(
       map(([stats, seeds]) => [groupBy(stats, 'seedId'), seeds]),
       map(([statsBySeed, seeds]) => seeds.map(seed => {
         if (!statsBySeed[seed.id]) {
@@ -120,11 +116,10 @@ export class EntityDetailsComponent implements OnInit, AfterViewInit, OnDestroy 
       }))
     );
 
-
     this.language$ = this.textCount$.pipe(
       map((perMonth: any) => {
         const nbTotal = perMonth.nbShortCount + perMonth.nbLongCount;
-        const nnTotal = + perMonth.nnShortCount + perMonth.nnLongCount;
+        const nnTotal = +perMonth.nnShortCount + perMonth.nnLongCount;
         const total = nbTotal + nnTotal;
         const nbPercentage = nbTotal / total;
         const nnPercentage = nnTotal / total;
@@ -134,7 +129,6 @@ export class EntityDetailsComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngOnInit() {
-    this.entities.next(this.route.snapshot.data.entities);
   }
 
   ngOnDestroy(): void {
@@ -152,7 +146,7 @@ export class EntityDetailsComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   redirect(): void {
-    this.router.navigate(['/public'], {relativeTo: this.route});
+    this.router.navigate(['..'], {relativeTo: this.route.root});
   }
 
   ngAfterViewInit(): void {
@@ -161,5 +155,4 @@ export class EntityDetailsComponent implements OnInit, AfterViewInit, OnDestroy 
       takeUntil(this.ngUnsubscribe)
     ).subscribe(id => this.selectedEntityId.next(id));
   }
-
 }

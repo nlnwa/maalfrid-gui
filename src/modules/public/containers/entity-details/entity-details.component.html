@@ -1,24 +1,22 @@
 <div class="container" fxLayout="column">
   <mat-toolbar>
-    <button mat-mini-fab (click)="redirect()">
+    <button color="primary" mat-mini-fab (click)="redirect()">
       <mat-icon>arrow_back</mat-icon>
     </button>
     <span fxFlex></span>
     <span *ngIf="entityName$ | async as name">{{name}}</span>
     <span fxFlex></span>
   </mat-toolbar>
-
-  <div fxLayout="row" fxLayoutGap="24px" style="overflow-y: hidden; height: 100%; padding: 1rem">
-
+  <div class="content" fxLayout="row" fxFlex="grow" fxLayoutGap="24px" fxLayoutAlign="space-between stretch">
     <app-entity-list fxFlex="20"
                      (rowClick)="onSelectEntity($event)"
-                     [entities]="entitie$ | async"
+                     [entities]="entities"
                      [id]="selectedEntityId$ | async">
     </app-entity-list>
 
-    <div fxLayout="column" fxFlex="60" fxLayoutGap="24px">
-      <app-chart fxFlex [data]="data$ | async" (month)="onSelectMonth($event)"></app-chart>
-      <app-seed-list fxFlex [seeds]="seedstats$ | async"></app-seed-list>
+    <div class="center-column" fxLayout="column" fxFlex="50" fxLayoutGap="24px">
+      <app-chart fxFlex="50" [data]="data$ | async" (month)="onSelectMonth($event)"></app-chart>
+      <app-seed-list fxFlex="50" [seeds]="seedStats$ | async"></app-seed-list>
     </div>
 
 

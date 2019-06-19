@@ -2,7 +2,6 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ReplaySubject} from 'rxjs';
 import {Entity} from '../../../shared/models';
 import {ActivatedRoute, Router} from '@angular/router';
-import {take} from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -12,14 +11,11 @@ import {take} from 'rxjs/operators';
 })
 export class HomeComponent {
 
-  private entities = new ReplaySubject<Entity[]>(1);
-  entity$ = this.entities.asObservable();
+  entities: Entity[];
 
   constructor(private route: ActivatedRoute,
               private router: Router) {
-    this.route.data
-      .pipe(take(1))
-      .subscribe((data: { entities: Entity[] }) => this.entities.next(data.entities));
+    this.entities = this.route.snapshot.data.entities;
   }
 
   onSelectEntity(entity: Entity) {

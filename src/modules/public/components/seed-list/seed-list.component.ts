@@ -20,7 +20,7 @@ export class SeedListComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.seeds) {
+    if (changes.seeds && this.seeds) {
       this.dataSource.data = this.seeds || [];
     }
   }

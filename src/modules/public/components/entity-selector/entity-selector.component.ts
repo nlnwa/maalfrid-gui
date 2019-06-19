@@ -61,7 +61,7 @@ export class EntitySelectorComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.entities) {
+    if (changes.entities && this.entities) {
       // group entities by department
       const entityByDepartment = this.entities.reduce((acc, entity) => {
         const found = entity.meta.label.find(label => label.key === DEPARTMENT_LABEL_KEY);
