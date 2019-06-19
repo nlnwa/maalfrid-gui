@@ -1,20 +1,15 @@
-<div fxLayout="column">
-  <div>
-    <mat-button-toggle-group [value]="granularity$ | async" (change)="onChangeGranularity($event.value)">
-      <mat-button-toggle [value]="Granularity.DAY">{{unitLanguageMap[Granularity.DAY]}}</mat-button-toggle>
-      <mat-button-toggle [value]="Granularity.WEEK">{{unitLanguageMap[Granularity.WEEK]}}</mat-button-toggle>
-      <mat-button-toggle [value]="Granularity.MONTH">{{unitLanguageMap[Granularity.MONTH]}}</mat-button-toggle>
-      <mat-button-toggle [value]="Granularity.YEAR">{{unitLanguageMap[Granularity.YEAR]}}</mat-button-toggle>
-    </mat-button-toggle-group>
-  </div>
-  <div *ngIf="mergedData$ | async as results">
-    <ngx-charts-bar-vertical-stacked
-      [xAxis]="true"
-      [yAxis]="true"
-      [animations]="false"
-      [legend]="true"
-      [legendTitle]="'Tegnforklaring'"
-      [customColors]="customColors"
-      [results]="results"></ngx-charts-bar-vertical-stacked>
-  </div>
+<div class="container" *ngIf="chartData$ | async as results">
+  <ngx-charts-bar-vertical-normalized
+    [xAxis]="true"
+    [yAxis]="true"
+    [animations]="false"
+    [legend]="true"
+    [legendTitle]="'Tegnforklaring'"
+    [customColors]="customColors"
+    [results]="results"
+    (select)="onSelect($event)">
+  </ngx-charts-bar-vertical-normalized>
 </div>
+
+
+

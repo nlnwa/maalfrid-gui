@@ -1,11 +1,12 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {WorkerService} from '../../../explore/services';
-import {BehaviorSubject, combineLatest, from, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
 import {AggregateText, Entity, LanguageComposition, Seed, SeedStatistic, TextCount} from '../../../shared/models';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MaalfridService} from '../../../core/services';
-import {map, mergeMap, share, switchMap, tap} from 'rxjs/operators';
+import {distinctUntilChanged, map, share, startWith, switchMap, takeUntil} from 'rxjs/operators';
 import {groupBy} from '../../../shared/func';
+import {getYear, isSameMonth} from 'date-fns';
 
 @Component({
   selector: 'app-entity-details',
@@ -14,17 +15,21 @@ import {groupBy} from '../../../shared/func';
   providers: [WorkerService],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EntityDetailsComponent implements OnInit {
+export class EntityDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private entities = new BehaviorSubject<Entity[]>([]);
+  private ngUnsubscribe: Subject<void>;
 
-  entities$: Observable<Entity[]>;
+  entitie$: Observable<Entity[]>;
 
-  selectedEntity = new Subject<Entity>();
-  selectedEntity$: Observable<Entity>;
+  selectedEntityId = new Subject<string>();
+  selectedEntityId$: Observable<string>;
 
-  month: Subject<Date>;
+  private month: Subject<Date>;
   month$: Observable<Date>;
+
+  year$: Observable<number>;
+
 
   entityName$: Observable<string>;
 
@@ -38,39 +43,68 @@ export class EntityDetailsComponent implements OnInit {
 
   textCount$: Observable<TextCount>;
 
+
   constructor(private maalfridService: MaalfridService,
               private router: Router,
               private route: ActivatedRoute) {
-    this.month$ = of(new Date(2019, 0, 1));
 
-    this.selectedEntity$ = this.selectedEntity.asObservable().pipe(share());
+    this.ngUnsubscribe = new Subject();
 
-    this.entityName$ = this.selectedEntity.pipe(
-      map((entity: Entity) => entity ? entity.meta.name : '')
+    this.month = new Subject<Date>();
+    this.month$ = this.month.asObservable().pipe(
+      startWith(new Date())
     );
 
-    this.seeds$ = this.selectedEntity$.pipe(
-      switchMap((entity) => this.maalfridService.getSeedsOfEntity(entity))
-    );
+    this.year$ = of(getYear(new Date()));
 
-    const noname$ = combineLatest([this.month$, this.selectedEntity$]).pipe(
-      switchMap(([month, entity]: [Date, Entity]) => this.maalfridService.getStatisticsForMonth(month, entity.id)),
-      tap(console.log),
+    this.selectedEntityId$ = this.selectedEntityId.asObservable().pipe(
+      distinctUntilChanged(),
       share()
     );
 
-    this.textCount$ = noname$.pipe(
-      map(stats => {
-        console.log(stats);
-        const nnLongCount = stats.reduce((acc, curr) => acc + curr.statistic.NNO ? curr.statistic.NNO.total - curr.statistic.NNO.short : 0, 0);
-        const nnShortCount = stats.reduce((acc, curr) => acc + curr.statistic.NNO ? curr.statistic.NNO.short : 0, 0);
-        const nbShortCount = stats.reduce((acc, curr) => acc + curr.statistic.NOB ? curr.statistic.NOB.short : 0, 0);
-        const nbLongCount = stats.reduce((acc, curr) => acc + curr.statistic.NOB ? curr.statistic.NOB.total - curr.statistic.NOB.short : 0, 0);
-        return {nnLongCount, nnShortCount, nbLongCount, nbShortCount};
-      })
+    this.entitie$ = this.entities.asObservable();
+
+    this.entityName$ = this.selectedEntityId.pipe(
+      map((entityId: string) => {
+          const found = this.entities.value.find(entity => entity.id === entityId);
+          return found ? found.meta.name : '';
+        }
+      )
     );
 
-    this.seedstats$ = combineLatest([noname$, this.seeds$]).pipe(
+    this.seeds$ = this.selectedEntityId$.pipe(
+      switchMap((entityId) => this.maalfridService.getSeedsOfEntity(entityId)),
+      share()
+    );
+
+    this.data$ = combineLatest([this.year$, this.selectedEntityId$]).pipe(
+      switchMap(([year, entityId]) => this.maalfridService.getStatistics(year, entityId)),
+      share()
+    );
+
+    const statsPerMonth$ = combineLatest([this.month$, this.data$]).pipe(
+      map(([month, data]: [Date, any]) => {
+        return data.filter(row => isSameMonth(new Date(row.endTime), month));
+      }),
+      share()
+    );
+
+    this.textCount$ = statsPerMonth$.pipe(
+      map(stats => {
+        const nnLongCount =
+          stats.reduce((acc, curr) => acc + (curr.statistic.NNO ? curr.statistic.NNO.total - curr.statistic.NNO.short : 0), 0);
+        const nnShortCount =
+          stats.reduce((acc, curr) => acc + (curr.statistic.NNO ? curr.statistic.NNO.short : 0), 0);
+        const nbShortCount =
+          stats.reduce((acc, curr) => acc + (curr.statistic.NOB ? curr.statistic.NOB.short : 0), 0);
+        const nbLongCount =
+          stats.reduce((acc, curr) => acc + (curr.statistic.NOB ? curr.statistic.NOB.total - curr.statistic.NOB.short : 0), 0);
+        return {nnLongCount, nnShortCount, nbLongCount, nbShortCount};
+      }),
+      share()
+    );
+
+    this.seedstats$ = combineLatest([statsPerMonth$, this.seeds$]).pipe(
       map(([stats, seeds]) => [groupBy(stats, 'seedId'), seeds]),
       map(([statsBySeed, seeds]) => seeds.map(seed => {
         if (!statsBySeed[seed.id]) {
@@ -87,43 +121,45 @@ export class EntityDetailsComponent implements OnInit {
     );
 
 
-    this.data$ = this.seeds$.pipe(
-      switchMap(seeds =>
-        from(seeds).pipe(
-          mergeMap(seed => this.maalfridService.getExecutions(seed))
-        )
-      ),
-    );
-
-    this.language$ = this.seedstats$.pipe(
-      map((seedStatistics: SeedStatistic[]) => {
-        const total = seedStatistics.length;
-        const nbPercentage = seedStatistics.reduce((acc, curr) => curr.nbPercentage + acc, 0) / total;
-        const nnPercentage = seedStatistics.reduce((acc, curr) => curr.nnPercentage + acc, 0) / total;
+    this.language$ = this.textCount$.pipe(
+      map((perMonth: any) => {
+        const nbTotal = perMonth.nbShortCount + perMonth.nbLongCount;
+        const nnTotal = + perMonth.nnShortCount + perMonth.nnLongCount;
+        const total = nbTotal + nnTotal;
+        const nbPercentage = nbTotal / total;
+        const nnPercentage = nnTotal / total;
         return {nbPercentage, nnPercentage};
       })
     );
-
-    this.textCount$ = new Subject();
-
-    this.entities$ = this.entities.asObservable();
   }
 
   ngOnInit() {
-    this.loadEntities();
+    this.entities.next(this.route.snapshot.data.entities);
+  }
+
+  ngOnDestroy(): void {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   onSelectEntity(entity: Entity) {
-    this.selectedEntity.next(entity);
+    this.router.navigate([], {queryParams: {id: entity.id}, relativeTo: this.route})
+      .catch(error => console.error(error));
+  }
+
+  onSelectMonth(month: Date) {
+    this.month.next(month);
   }
 
   redirect(): void {
-    this.router.navigate(['../public'], {relativeTo: this.route});
+    this.router.navigate(['/public'], {relativeTo: this.route});
   }
 
-  private loadEntities(): void {
-    this.maalfridService.getEntities().subscribe(entities => {
-      this.entities.next(entities);
-    });
+  ngAfterViewInit(): void {
+    this.route.queryParamMap.pipe(
+      map(queryParamMap => queryParamMap.get('id')),
+      takeUntil(this.ngUnsubscribe)
+    ).subscribe(id => this.selectedEntityId.next(id));
   }
+
 }

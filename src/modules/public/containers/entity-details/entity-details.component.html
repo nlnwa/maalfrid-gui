@@ -1,5 +1,5 @@
-<div fxFlex fxLayout="column">
-  <mat-toolbar fxLayout="row "  style="margin-bottom: 50px">
+<div class="container" fxLayout="column">
+  <mat-toolbar>
     <button mat-mini-fab (click)="redirect()">
       <mat-icon>arrow_back</mat-icon>
     </button>
@@ -7,18 +7,26 @@
     <span *ngIf="entityName$ | async as name">{{name}}</span>
     <span fxFlex></span>
   </mat-toolbar>
-  <div fxLayout="row" fxFlex fxLayoutGap="24px">
-    <app-entity-list fxFlex="20" fxLayout="column" (rowClick)="onSelectEntity($event)"
-                     [entities]="entities$ | async">
+
+  <div fxLayout="row" fxLayoutGap="24px" style="overflow-y: hidden; height: 100%; padding: 1rem">
+
+    <app-entity-list fxFlex="20"
+                     (rowClick)="onSelectEntity($event)"
+                     [entities]="entitie$ | async"
+                     [id]="selectedEntityId$ | async">
     </app-entity-list>
-    <div fxLayout="column" fxFlex="60">
-      <app-chart [data]="data$ | async"></app-chart>
-      <app-seed-list [seeds]="seedstats$ | async"></app-seed-list>
+
+    <div fxLayout="column" fxFlex="60" fxLayoutGap="24px">
+      <app-chart fxFlex [data]="data$ | async" (month)="onSelectMonth($event)"></app-chart>
+      <app-seed-list fxFlex [seeds]="seedstats$ | async"></app-seed-list>
     </div>
-    <div fxLayout="column"  fxFlex="20" style="margin-right: 0px">
-      <h3>Valgt måned</h3>
-      <app-language-composition [language]="language$ | async" style="margin-bottom: 25px"></app-language-composition>
+
+
+    <div fxLayout="column" fxFlex="20" fxLayoutGap="24px">
+      <h3 *ngIf="month$ | async as month">Valgt måned {{month | date : 'MMMM' }}</h3>
+      <app-language-composition [language]="language$ | async"></app-language-composition>
       <app-text-composition [textCount]="textCount$ | async"></app-text-composition>
     </div>
+
   </div>
 </div>

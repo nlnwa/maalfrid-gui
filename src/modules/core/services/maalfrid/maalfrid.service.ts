@@ -48,11 +48,11 @@ export class MaalfridService {
       );
   }
 
-  getSeedsOfEntity(entity: Entity): Observable<Seed[]> {
-    if (!entity) {
+  getSeedsOfEntity(entityId: string): Observable<Seed[]> {
+    if (!entityId) {
       return of([]);
     }
-    const params = createQueryParams({entity_id: entity.id});
+    const params = createQueryParams({entity_id: entityId});
 
     return this.http.get<ListReply<Seed>>(this.apiUrl + '/seeds', {params})
       .pipe(map(reply => reply.value || []));
@@ -115,14 +115,14 @@ export class MaalfridService {
   }
 
   getStatistics(year: number, entityId?: string): Observable<any[]> {
-    if (this.cache.statistics.has(year)) {
-      return of(this.cache.statistics.get(year));
+    if (this.cache.statistics.has(year + entityId)) {
+      return of(this.cache.statistics.get(year + entityId));
     } else {
       const time = setYear(new Date(), year);
       const startTime = startOfYear(time);
       const endTime = endOfYear(time);
       return this.getStatisticsInterval(startTime, endTime, entityId).pipe(
-        tap(value => this.cache.statistics.set(year, value))
+        tap(value => this.cache.statistics.set(year + entityId, value))
       );
     }
   }
@@ -135,7 +135,7 @@ export class MaalfridService {
   getStatisticsForMonth(time: Date, entityId?: string): Observable<any> {
     const startTime = startOfMonth(time);
     const endTime = endOfMonth(time);
-    return this.getStatisticsInterval(startTime, endTime, entityId)
+    return this.getStatisticsInterval(startTime, endTime, entityId);
   }
 
   getStatisticsInterval(startTime: Date, endTime: Date, entityId?: string): Observable<any> {

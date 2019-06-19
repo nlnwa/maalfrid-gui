@@ -1,11 +1,9 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {AggregateText} from '../../../shared/models';
-import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
-import {WorkerService} from '../../../explore/services';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
+import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {Granularity, isSame} from '../../../shared/func';
 import colorMaps from '../../../explore/components/chart/colors';
-import {format} from 'date-fns';
+import {format, parse} from 'date-fns';
 import * as locale from 'date-fns/locale/nb';
 
 function timeFormat(granularity: Granularity): string {
@@ -31,55 +29,65 @@ function timeFormat(granularity: Granularity): string {
 })
 export class ChartComponent {
 
-  readonly Granularity = Granularity;
-
-  unitLanguageMap = {
-    [Granularity.DAY]: 'dag',
-    [Granularity.WEEK]: 'uke',
-    [Granularity.MONTH]: 'måned',
-    [Granularity.YEAR]: 'år',
-  };
-
   defaultMap = colorMaps['maalfrid'];
 
   colorMap;
   customColors;
 
   @Input()
-  set data(data: AggregateText[]) {
+  set data(data: any) {
     this._data.next(data || []);
   }
 
-  granularity = new BehaviorSubject<Granularity>(Granularity.WEEK);
-  granularity$ = this.granularity.asObservable();
+  @Output()
+  month: EventEmitter<Date> = new EventEmitter<Date>();
 
-  _data = new Subject<AggregateText[]>();
-  data$ = this._data.asObservable().pipe(
-    switchMap((_) => this.workerService.transform(_)),
-  );
+  granularity = new BehaviorSubject<Granularity>(Granularity.MONTH);
+  granularity$: Observable<Granularity>;
 
-  mergedData$ = combineLatest([this.data$, this.granularity$])
-    .pipe(
-      map(([data, granularity]) => this.mergeByGranularity(data, granularity)),
-      map((data) => data.map(({name, series}) => {
-          return ({
-            name: format(new Date(name), timeFormat(this.granularity.value), {locale}),
-            series: Object.entries(series)
-              .map(([code, value]) => ({name: code, value: (<string[]>value).length}))
-              .sort((a, b) => a.name < b.name ? -1 : a.name === b.name ? 0 : 1)
-          });
-        }
-      ))
-    );
+  _data = new Subject<any>();
+  data$: Observable<any>;
 
-  constructor(private workerService: WorkerService) {
+  chartData$: Observable<any>;
+
+  constructor() {
     this.colorMap = this.defaultMap;
     this.customColors = Object.keys(this.colorMap).map((name) => ({name, value: this.colorMap[name]}));
+
+    this.granularity$ = this.granularity.asObservable();
+
+    this.data$ = this._data.asObservable().pipe(
+      map(data => data.map(datum => ({
+        endTime: datum.endTime,
+        statistic: Object.entries(datum.statistic)
+            .map(([code, values]) => {
+              return {[code]: values['total']};
+            })
+            .reduce((acc, curr) => Object.assign(acc, curr))
+      }))),
+      map(data => data.sort((a, b) => a.endTime < b.endTime ? -1 : a.endTime === b.endTime ? 0 : 1))
+    );
+
+    this.chartData$ = combineLatest([this.data$, this.granularity$])
+      .pipe(
+        map(([data, granularity]) => this.mergeByGranularity(data, granularity)),
+        map((data) => data.map(({endTime, statistic}) => {
+
+            return ({
+              name: format(new Date(endTime), timeFormat(this.granularity.value), {locale}),
+              series: Object.entries(statistic)
+                .map(([name, value]) => ({name, value}))
+                .sort((a, b) => a.name < b.name ? -1 : a.name === b.name ? 0 : 1)
+            });
+          }
+        ))
+      );
   }
 
-
-  onChangeGranularity(granularity) {
-    this.granularity.next(granularity);
+  onSelect(event: any) {
+    const series = event.series;
+    const month = parse(series, 'MMM yyyy', new Date(0), {locale});
+    this.month.emit(month);
   }
 
   // merge data entries based on granularity (hour, day, week, etc..)
@@ -87,24 +95,23 @@ export class ChartComponent {
     if (data.length === 0) {
       return data;
     }
+
     return data.reduce((acc, curr) => {
       const prev = acc[acc.length - 1];
-      if (prev !== undefined && isSame[granularity](new Date(prev.name), new Date(curr.name))) {
-        prev.series = this.mergeSeries(prev.series, curr.series);
+      if (prev !== undefined && isSame[granularity](new Date(prev.endTime), new Date(curr.endTime))) {
+        prev.statistic = this.mergeSeries(prev.statistic, curr.statistic);
       } else {
-        // push a shallow clone of current entry since line above alters data array (prev.series = ...)
-        acc.push({...curr});
+        acc.push(curr);
       }
       return acc;
     }, []);
-
   }
 
   private mergeSeries(a, b) {
     const c = {...a, ...b};
     Object.keys(a).forEach((key) => {
       if (b.hasOwnProperty(key)) {
-        c[key] = a[key].concat(b[key]);
+        c[key] = a[key] + b[key];
       }
     });
     return c;
