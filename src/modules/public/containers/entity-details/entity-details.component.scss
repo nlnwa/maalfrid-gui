@@ -1,9 +1,11 @@
 .container {
   height: 100%;
+
 }
 
 .content {
   padding: 24px 24px 0 0;
+  overflow-y: hidden;
 }
 
 .center-column {
