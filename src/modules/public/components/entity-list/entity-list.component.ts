@@ -9,7 +9,8 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import {MatSort, MatTableDataSource} from '@angular/material';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
 import {_isNumberValue} from '@angular/cdk/coercion';
 
@@ -28,10 +29,13 @@ export class EntityListComponent implements OnChanges, AfterViewInit {
   selection = new SelectionModel<Entity>(false, []);
   showFilter = false;
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   @Input()
   entities: Entity[];
+
+  @Input()
+  id: string;
 
   @Output()
   rowClick = new EventEmitter<Entity>();
@@ -71,12 +75,11 @@ export class EntityListComponent implements OnChanges, AfterViewInit {
   }
 
   onRowClick(entity) {
-    this.selection.toggle(entity);
     if (this.selection.hasValue()) {
-      this.rowClick.emit(entity);
-    } else {
-      this.rowClick.emit(null);
+      this.selection.clear();
     }
+    this.selection.select(entity);
+    this.rowClick.emit(entity);
   }
 
   ngAfterViewInit() {
@@ -88,6 +91,13 @@ export class EntityListComponent implements OnChanges, AfterViewInit {
     if (changes.entities && this.entities) {
       this.entities.sort((a, b) => a.meta.name < b.meta.name ? -1 : (a.meta.name === b.meta.name ? 0 : 1));
       this.dataSource.data = this.entities;
+    }
+
+    if (changes.id && this.id) {
+      const found = this.entities.find(entity => entity.id === this.id);
+      if (found) {
+        this.selection.select(found);
+      }
     }
   }
 }

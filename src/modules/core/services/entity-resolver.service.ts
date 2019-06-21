@@ -4,7 +4,7 @@ import {Observable, of} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 
 import {Entity} from '../../shared/models';
-import {MaalfridService} from '../../core/services';
+import {MaalfridService} from './index';
 
 @Injectable()
 export class EntityResolverService implements Resolve<Entity[]> {

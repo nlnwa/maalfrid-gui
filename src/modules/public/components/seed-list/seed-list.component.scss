@@ -2,8 +2,16 @@ table {
   width: 100%;
 }
 
+a {
+  color: inherit;
+}
+
 .container {
   height: 100%;
+}
+
+.content {
+  overflow-y: hidden;
 }
 
 .table-scroll {

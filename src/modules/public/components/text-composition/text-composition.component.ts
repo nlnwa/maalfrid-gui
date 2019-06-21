@@ -1,33 +1,30 @@
-import {Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {TextCount} from '../../../shared/models';
 
 @Component({
   selector: 'app-text-composition',
   templateUrl: './text-composition.component.html',
-  styleUrls: ['./text-composition.component.scss']
+  styleUrls: ['./text-composition.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TextCompositionComponent {
 
+  nbLongCount: number;
+  nbShortCount: number;
+  nnLongCount: number;
+  nnShortCount: number;
+
   @Input()
-  textCount: TextCount;
+  set textCount(textCount: TextCount) {
+    if (!textCount) {
+      return;
+    }
+    this.nbLongCount = textCount.nbLongCount;
+    this.nbShortCount = textCount.nbShortCount;
+    this.nnLongCount = textCount.nnLongCount;
+    this.nnShortCount = textCount.nnShortCount;
+  }
 
   constructor() {
   }
-
-  get nbLongCount() {
-    return this.textCount.nbLongCount;
-  }
-
-  get nbShortCount() {
-    return this.textCount.nbShortCount;
-  }
-
-  get nnLongCount() {
-    return this.textCount.nnLongCount;
-  }
-
-  get nnShortCount() {
-    return this.textCount.nnShortCount;
-  }
-
 }

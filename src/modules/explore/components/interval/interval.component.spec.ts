@@ -5,7 +5,7 @@ import {FormsModule} from '@angular/forms';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {IntervalComponent} from './interval.component';
 import {DateFnsDateAdapter, MAT_DATE_FNS_DATE_FORMATS} from '../../../shared/date-fns-date-adapter';
-import {DateAdapter, MAT_DATE_FORMATS} from '@angular/material';
+import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 
 describe('IntervalComponent', () => {
   let component: IntervalComponent;

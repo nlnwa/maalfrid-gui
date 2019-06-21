@@ -3,7 +3,7 @@ import {Entity} from '../../../shared/models';
 import {AbstractControl, FormBuilder, FormGroup} from '@angular/forms';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
-import {MatAutocompleteSelectedEvent, MatAutocompleteTrigger} from '@angular/material';
+import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 
 export interface DepartmentGroup {
   name: string;
@@ -30,7 +30,7 @@ export class EntitySelectorComponent implements OnChanges {
 
   form: FormGroup;
 
-  @ViewChild(MatAutocompleteTrigger)
+  @ViewChild(MatAutocompleteTrigger, { static: true })
   private trigger: MatAutocompleteTrigger;
 
   private departments = new BehaviorSubject<DepartmentGroup[]>([]);
@@ -61,7 +61,7 @@ export class EntitySelectorComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.entities) {
+    if (changes.entities && this.entities) {
       // group entities by department
       const entityByDepartment = this.entities.reduce((acc, entity) => {
         const found = entity.meta.label.find(label => label.key === DEPARTMENT_LABEL_KEY);

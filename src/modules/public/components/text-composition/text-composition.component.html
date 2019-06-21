@@ -1,13 +1,16 @@
 <mat-card>
   <mat-card-content>
     <mat-list>
-      <span matSubheader>Antall lange tekster (Over 3500 ord)</span>
-      <mat-list-item>{{nbLongCount}} Bokmål</mat-list-item>
-      <mat-list-item>{{nnLongCount}} Nynorsk</mat-list-item>
-      <mat-divider></mat-divider>
-      <span matSubheader>Antall korte tekster (under 3500 ord)</span>
-      <mat-list-item> {{nbShortCount}} Bokmål</mat-list-item>
-      <mat-list-item>{{nnShortCount}} Nynorsk</mat-list-item>
+      <h2 matSubheader>Antall lange tekster (Over 3500 ord)</h2>
+      <mat-list-item>
+        <p mat-line>{{nbLongCount}} Bokmål</p>
+        <p mat-line>{{nnLongCount}} Nynorsk</p>
+      </mat-list-item>
+      <h2 matSubheader>Antall korte tekster (under 3500 ord)</h2>
+      <mat-list-item>
+        <p mat-line>{{nbShortCount}} Bokmål</p>
+        <p mat-line>{{nnShortCount}} Nynorsk</p>
+      </mat-list-item>
     </mat-list>
   </mat-card-content>
 </mat-card>

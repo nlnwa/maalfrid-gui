@@ -1,27 +1,23 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {AggregateText} from '../../../shared/models';
-import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
-import {WorkerService} from '../../../explore/services';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
+import {Observable, Subject} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {Granularity, isSame} from '../../../shared/func';
 import colorMaps from '../../../explore/components/chart/colors';
-import {format} from 'date-fns';
+import {format, getMonth, setMonth} from 'date-fns';
 import * as locale from 'date-fns/locale/nb';
+import {parseWithOptions} from 'date-fns/fp';
 
-function timeFormat(granularity: Granularity): string {
-  switch (granularity) {
-    // case Granularity.HOUR:
-    //  return 'DD.MM [kl.] HH:mm';
-    case Granularity.DAY:
-      return 'dd.MM.yy';
-    case Granularity.WEEK:
-      return '\'uke\' w';
-    case Granularity.MONTH:
-      return 'MMM yyyy';
-    case  Granularity.YEAR:
-      return 'yyyy';
-  }
-}
+const timeFormatByGranularity = {
+  [Granularity.MONTH]: 'MMM yyyy',
+  // [Granularity.HOUR]: 'DD.MM [kl.] HH:mm',
+  [Granularity.DAY]: 'dd.MM.yy',
+  [Granularity.WEEK]: '\'uke\' w',
+  [Granularity.YEAR]: 'yyyy'
+};
+
+const dateStringParse = {
+  [Granularity.MONTH]: parseWithOptions({locale})(new Date(0))('MMM yyyy')
+};
 
 @Component({
   selector: 'app-chart',
@@ -31,80 +27,95 @@ function timeFormat(granularity: Granularity): string {
 })
 export class ChartComponent {
 
-  readonly Granularity = Granularity;
-
-  unitLanguageMap = {
-    [Granularity.DAY]: 'dag',
-    [Granularity.WEEK]: 'uke',
-    [Granularity.MONTH]: 'måned',
-    [Granularity.YEAR]: 'år',
-  };
-
-  defaultMap = colorMaps['maalfrid'];
-
-  colorMap;
-  customColors;
+  private _data = new Subject<any>();
 
   @Input()
-  set data(data: AggregateText[]) {
+  set data(data: any) {
     this._data.next(data || []);
   }
 
-  granularity = new BehaviorSubject<Granularity>(Granularity.WEEK);
-  granularity$ = this.granularity.asObservable();
+  @Output()
+  month: EventEmitter<Date> = new EventEmitter<Date>();
 
-  _data = new Subject<AggregateText[]>();
-  data$ = this._data.asObservable().pipe(
-    switchMap((_) => this.workerService.transform(_)),
-  );
+  customColors;
 
-  mergedData$ = combineLatest([this.data$, this.granularity$])
-    .pipe(
-      map(([data, granularity]) => this.mergeByGranularity(data, granularity)),
-      map((data) => data.map(({name, series}) => {
-          return ({
-            name: format(new Date(name), timeFormat(this.granularity.value), {locale}),
-            series: Object.entries(series)
-              .map(([code, value]) => ({name: code, value: (<string[]>value).length}))
-              .sort((a, b) => a.name < b.name ? -1 : a.name === b.name ? 0 : 1)
-          });
+  chartData$: Observable<any>;
+
+  constructor() {
+    Object.defineProperty(Array.prototype, 'flat', {
+      value: function (depth = 1) {
+        return this.reduce(function (flat, toFlatten) {
+          return flat.concat((Array.isArray(toFlatten) && (depth > 1)) ? toFlatten['flat'](depth - 1) : toFlatten);
+        }, []);
+      }
+    });
+
+    const colorMap = colorMaps['maalfrid'];
+    this.customColors = Object.keys(colorMap).map((name) => ({name, value: colorMap[name]}));
+
+    const granularity = Granularity.MONTH;
+
+    this.chartData$ = this._data.pipe(
+      map(data => data.map(({endTime, statistic}) => ({
+        endTime,
+        statistic: Object.entries(statistic)
+          .map(([code, values]) => ({[code]: values['total']}))
+          .reduce((acc, curr) => Object.assign(acc, curr))
+      }))),
+      map(data => this.mergeByGranularity(data, granularity)),
+      // insert empty series where no data
+      map(data => {
+        const months = data.map(datum => getMonth(datum.endTime));
+        for (let i = 0; i < 12; i++) {
+          const found = months.find(month => month === i);
+          if (!found) {
+            data.push({endTime: setMonth(new Date(), i), statistic: {}});
+          }
         }
-      ))
+        return data;
+      }),
+      // map to chart input format
+      map(data => data.map(({endTime, statistic}) => ({
+        name: format(endTime, timeFormatByGranularity[granularity], {locale}),
+        series: Object.entries(statistic)
+          .map(([name, value]) => ({name, value}))
+          .sort((a, b) => a.name < b.name ? -1 : a.name === b.name ? 0 : 1)
+      })))
     );
-
-  constructor(private workerService: WorkerService) {
-    this.colorMap = this.defaultMap;
-    this.customColors = Object.keys(this.colorMap).map((name) => ({name, value: this.colorMap[name]}));
   }
 
-
-  onChangeGranularity(granularity) {
-    this.granularity.next(granularity);
+  onSelect(event: any) {
+    const month = dateStringParse[Granularity.MONTH](event.series);
+    this.month.emit(month);
   }
 
-  // merge data entries based on granularity (hour, day, week, etc..)
+  /**
+   * Merge data entries based on granularity (hour, day, week, etc..)
+   *
+   * @param data Data array sorted on endTime
+   * @param granularity Size of time interval to merge, e.g. day, month, etc..
+   */
   private mergeByGranularity(data: any[], granularity: Granularity): any[] {
     if (data.length === 0) {
-      return data;
+      return [];
     }
+    const first = data.shift();
     return data.reduce((acc, curr) => {
       const prev = acc[acc.length - 1];
-      if (prev !== undefined && isSame[granularity](new Date(prev.name), new Date(curr.name))) {
-        prev.series = this.mergeSeries(prev.series, curr.series);
+      if (isSame[granularity](prev.endTime, curr.endTime)) {
+        prev.statistic = this.mergeSeries(prev.statistic, curr.statistic);
+        return acc;
       } else {
-        // push a shallow clone of current entry since line above alters data array (prev.series = ...)
-        acc.push({...curr});
+        return acc.concat(curr);
       }
-      return acc;
-    }, []);
-
+    }, [first]);
   }
 
   private mergeSeries(a, b) {
     const c = {...a, ...b};
-    Object.keys(a).forEach((key) => {
+    Object.keys(a).forEach(key => {
       if (b.hasOwnProperty(key)) {
-        c[key] = a[key].concat(b[key]);
+        c[key] = a[key] + b[key];
       }
     });
     return c;

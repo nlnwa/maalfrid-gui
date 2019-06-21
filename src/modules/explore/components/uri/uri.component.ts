@@ -1,5 +1,7 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
 import {_isNumberValue} from '@angular/cdk/coercion';
 
@@ -31,8 +33,8 @@ export class UriComponent implements OnInit, AfterViewInit {
   pageSizeOptions = [5, 10, 20, 50, 100];
   visible = false;
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   @Input()
   set data(data: AggregateText[]) {

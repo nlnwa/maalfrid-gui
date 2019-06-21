@@ -5,8 +5,8 @@
   <mat-card-content>
     <div>
       <mat-list>
-        <mat-list-item>{{nbPercentage}}% Bokmål</mat-list-item>
-        <mat-list-item>{{nnPercentage}}% Nynorsk</mat-list-item>
+        <mat-list-item>{{nbPercentage | percent : '1.0-2'}} Bokmål</mat-list-item>
+        <mat-list-item>{{nnPercentage | percent : '1.0-2'}} Nynorsk</mat-list-item>
       </mat-list>
     </div>
   </mat-card-content>
