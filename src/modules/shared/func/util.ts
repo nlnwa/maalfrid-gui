@@ -1,9 +1,10 @@
-import {isSameDay, isSameMonth, isSameWeek, isSameYear} from 'date-fns';
+import {isSameDay, isSameMonth, isSameQuarter, isSameWeek, isSameYear} from 'date-fns';
 
 export enum Granularity {
   DAY = 'day',
   WEEK = 'week',
   MONTH = 'month',
+  QUARTER = 'quarter',
   YEAR = 'year'
 }
 
@@ -22,5 +23,6 @@ export const isSame = {
   [Granularity.DAY]: isSameDay,
   [Granularity.WEEK]: isSameWeek,
   [Granularity.MONTH]: isSameMonth,
+  [Granularity.QUARTER]: isSameQuarter,
   [Granularity.YEAR]: isSameYear,
 };

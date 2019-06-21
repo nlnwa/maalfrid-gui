@@ -2,10 +2,12 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {isDepartment, isEntity, isSeed, ReportComponent, Statistic} from './report.component';
 import {RouterTestingModule} from '@angular/router/testing';
-import {AuthService, MaalfridService} from '../../../core/services';
+import {MaalfridService} from '../../../core/services';
 import {of} from 'rxjs';
 import {SharedModule} from '../../../shared/shared.module';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {CoreModule} from '../../../core/core.module';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 describe('ReportComponent', () => {
   let component: ReportComponent;
@@ -16,7 +18,9 @@ describe('ReportComponent', () => {
       declarations: [ReportComponent],
       imports: [
         RouterTestingModule,
-        SharedModule,
+        HttpClientTestingModule,
+        CoreModule,
+        SharedModule.forRoot(),
         NoopAnimationsModule
       ],
       providers: [
@@ -24,10 +28,10 @@ describe('ReportComponent', () => {
           provide: MaalfridService, useValue: {
             getEntities: () => of([]),
             getSeeds: () => of([]),
-            getStatistics: () => of([])
+            getStatistics: () => of([]),
+            getExecutions: () => of([]),
           }
         },
-        {provide: AuthService, useValue: {}}
       ]
     })
       .compileComponents();

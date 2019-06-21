@@ -22,7 +22,7 @@ export class StatisticsComponent implements OnInit {
   selectedEntity$ = this.selectedEntity.asObservable();
 
   seeds$ = this.selectedEntity$.pipe(
-    switchMap((entity) => this.maalfridService.getSeedsOfEntity(entity))
+    switchMap((entity) => this.maalfridService.getSeedsOfEntity(entity.id))
   );
 
   interval = new Subject<Interval>();
@@ -63,7 +63,7 @@ export class StatisticsComponent implements OnInit {
   );
 
   data = new Subject<AggregateText[]>();
-  data$ = combineLatest(this.selectedSeed$, this.interval$).pipe(
+  data$ = combineLatest([this.selectedSeed$, this.interval$]).pipe(
     tap(([seed]) => this.loading.next(!!seed)),
     exhaustMap(([seed, interval]) => this.maalfridService.getExecutions(seed, interval)),
     tap(() => this.loading.next(false)),

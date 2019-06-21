@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {MatDatepickerInputEvent, MatTableDataSource} from '@angular/material';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { MatTableDataSource } from '@angular/material/table';
 
 import {SelectionModel} from '@angular/cdk/collections';
 import {FilterSet} from '../../../shared/';

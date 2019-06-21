@@ -1,0 +1,18 @@
+@import "../../../../../src/styles/theme";
+
+section {
+  height: 100%;
+}
+
+.table-scroll {
+  height: 100%;
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.highlight {
+  background-color: $background;
+}

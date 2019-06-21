@@ -1,0 +1,10 @@
+<div class="container" fxLayout="column">
+  <header class="mat-elevation-z1">
+    <h1>Målfrid</h1>
+    <h2>Målformsidentifisering for statstenesta</h2>
+  </header>
+  <main fxLayoutAlign="center">
+    <app-entity-selector class="entity-selector" [entities]="entities"
+    (selectEntity)="onSelectEntity($event)"></app-entity-selector>
+  </main>
+</div>

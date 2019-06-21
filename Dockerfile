@@ -6,9 +6,9 @@ ARG VERSION
 
 RUN apk add --update --no-cache git
 
-COPY package.json yarn.lock /usr/src/app/
+COPY package.json yarn.lock .yarnrc /usr/src/app/
 WORKDIR /usr/src/app
-RUN yarn install
+RUN yarn
 
 COPY . .
 

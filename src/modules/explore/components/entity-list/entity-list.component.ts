@@ -10,7 +10,8 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import {MatSort, MatTableDataSource} from '@angular/material';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
 import {_isNumberValue} from '@angular/cdk/coercion';
 
@@ -85,8 +86,8 @@ export class EntityListComponent implements OnChanges, AfterViewInit {
   selection = new SelectionModel<Entity>(false, []);
   showFilter = false;
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild('filter') filterInput: ElementRef;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild('filter', { static: true }) filterInput: ElementRef;
 
   @Input()
   entities: Entity[];

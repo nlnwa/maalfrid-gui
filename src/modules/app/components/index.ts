@@ -1,5 +1,5 @@
 import {AppComponent} from './app/app.component';
-import {HomeComponent} from './home/home.component';
+import {HomeComponent} from '../../public/containers/home/home.component';
 
 export {
   AppComponent,

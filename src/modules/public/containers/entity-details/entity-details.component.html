@@ -1,0 +1,30 @@
+<div class="container" fxLayout="column">
+  <mat-toolbar>
+    <a color="primary" mat-icon-button routerLink="/">
+      <mat-icon>arrow_back</mat-icon>
+    </a>
+    <span fxFlex></span>
+    <span *ngIf="entityName$ | async as name">{{name}}</span>
+    <span fxFlex></span>
+  </mat-toolbar>
+  <div class="content" fxLayout="row" fxFlex="grow" fxLayoutGap="24px" fxLayoutAlign="space-between stretch">
+    <app-entity-list fxFlex="20"
+                     (rowClick)="onSelectEntity($event)"
+                     [entities]="entities"
+                     [id]="entityId$ | async">
+    </app-entity-list>
+
+    <div class="center-column" fxLayout="column" fxFlex="grow" fxLayoutGap="24px">
+      <app-chart fxFlex="50" [data]="data$ | async" (month)="onSelectMonth($event)"></app-chart>
+      <app-seed-list fxFlex="50" [seeds]="seedStats$ | async"></app-seed-list>
+    </div>
+
+
+    <div fxLayout="column" fxFlex="20" fxLayoutGap="24px">
+      <h2 *ngIf="month$ | async as month">{{month | date : 'MMMM yyyy' }}</h2>
+      <app-language-composition [language]="language$ | async"></app-language-composition>
+      <app-text-composition [textCount]="textCount$ | async"></app-text-composition>
+    </div>
+
+  </div>
+</div>

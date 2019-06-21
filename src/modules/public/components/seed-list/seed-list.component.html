@@ -1,0 +1,34 @@
+<mat-card class="container" fxLayout="column">
+  <mat-card-header>
+    <mat-card-title>Nettsider inkludert i målformanalysen</mat-card-title>
+  </mat-card-header>
+  <mat-card-content fxFlex="grow" class="content">
+    <div class="table-scroll">
+      <table mat-table [dataSource]="dataSource">
+        <ng-container matColumnDef="uri">
+          <th mat-header-cell *matHeaderCellDef>Nettside</th>
+          <td mat-cell *matCellDef="let row">
+            <a target="_blank" href="{{row.uri}}">{{row.uri}}</a>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="nb">
+          <th mat-header-cell *matHeaderCellDef>Bokmål</th>
+          <td mat-cell *matCellDef="let row">
+            {{row.nbPercentage | percent : '1.1-2'}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="nn">
+          <th mat-header-cell *matHeaderCellDef>Nynorsk</th>
+          <td mat-cell *matCellDef="let row">
+            {{row.nnPercentage | percent : '1.1-2'}}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns">
+        </tr>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

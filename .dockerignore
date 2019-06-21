@@ -1,0 +1,7 @@
+**
+!.git/
+!*.json
+!yarn.lock
+!.yarnrc
+!src/
+!nginx/

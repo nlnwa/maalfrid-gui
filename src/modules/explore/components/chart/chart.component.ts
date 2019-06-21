@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {MatButtonToggleChange} from '@angular/material';
+import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import colorMaps from './colors';
 import {AggregateText} from '../../../shared/models/';
 import {WorkerService} from '../../services/';

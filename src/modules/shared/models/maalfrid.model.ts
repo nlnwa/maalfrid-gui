@@ -10,7 +10,7 @@ export interface MaalfridReply {
 
 export interface ExtractedText {
   warcId: string;
-  text: string;
+  text?: string;
   sentenceCount: number;
   wordCount: number;
   longWordCount: number;
@@ -26,9 +26,11 @@ export interface CrawlLog {
   discoveryPath: string;
   recordType: string;
   requestedUri: string;
-  referrer: string;
+  referrer?: string;
   size: number;
   warcRefersTo?: string;
+  timeStamp?: string;
+  collectionFinalName?: string;
 }
 
 
@@ -56,14 +58,14 @@ export enum JobExecutionState {
 }
 
 export interface Execution {
-  startTime: number;
-  endTime: number;
+  startTime?: number | string;
+  endTime?: number | string;
 
   jobExecutionId: string;
-  jobId: string;
+  jobId?: string;
   seedId: string;
   executionId: string;
-  state: ExecutionState;
+  state?: ExecutionState;
 }
 
 export interface AggregateText extends ExtractedText, CrawlLog, Execution {}
@@ -93,4 +95,22 @@ export interface Filter {
   value: any;
   exclusive?: boolean;
   field?: string;
+}
+
+export interface LanguageComposition {
+  nbPercentage: number;
+  nnPercentage: number;
+}
+
+export interface TextCount {
+  nbLongCount: number;
+  nnLongCount: number;
+  nbShortCount: number;
+  nnShortCount: number;
+}
+
+export interface SeedStatistic {
+  uri: string;
+  nbPercentage: number;
+  nnPercentage: number;
 }

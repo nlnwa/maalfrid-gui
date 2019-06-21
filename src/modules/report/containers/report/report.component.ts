@@ -2,7 +2,8 @@ import {ChangeDetectionStrategy, Component, OnInit, ViewChild} from '@angular/co
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {Entity, Seed} from '../../../shared/models/';
 import {map, shareReplay, tap} from 'rxjs/operators';
-import {MatSort, MatTableDataSource} from '@angular/material';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {_isNumberValue} from '@angular/cdk/coercion';
 import {Title} from '@angular/platform-browser';
 import {groupBy} from '../../../shared/func/';
@@ -283,7 +284,7 @@ export class ReportComponent implements OnInit {
     }),
   );
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(private titleService: Title, private maalfridService: MaalfridService) {
     this.dataSource = new MatTableDataSource([]);
@@ -413,7 +414,7 @@ export class ReportComponent implements OnInit {
   }
 
   private loadStatistics(year: number) {
-    this.maalfridService.getStatistics(year).subscribe(statistics => {
+    this.maalfridService.getStatisticByYear(year).subscribe(statistics => {
       this.statistics.next(statistics);
     });
   }
