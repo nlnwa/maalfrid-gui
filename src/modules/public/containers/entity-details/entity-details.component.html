@@ -1,4 +1,4 @@
-<div class="container" fxLayout="column">
+<div class="container" fxLayout="column" *ngIf="!print; else printit">
   <mat-toolbar>
     <button color="primary" mat-mini-fab (click)="redirect()">
       <mat-icon>arrow_back</mat-icon>
@@ -6,6 +6,9 @@
     <span fxFlex></span>
     <span *ngIf="entityName$ | async as name">{{name}}</span>
     <span fxFlex></span>
+    <button mat-icon-button (click)="onPrint()">
+      <mat-icon>print</mat-icon>
+    </button>
   </mat-toolbar>
   <div class="content" fxLayout="row" fxFlex="grow" fxLayoutGap="24px" fxLayoutAlign="space-between stretch">
     <app-entity-list fxFlex="20"
@@ -21,10 +24,36 @@
 
 
     <div fxLayout="column" fxFlex="20" fxLayoutGap="24px">
-      <h3 *ngIf="month$ | async as month">Valgt måned {{month | date : 'MMMM' }}</h3>
+      <h3 *ngIf="month$ | async as month">{{month | date : 'MMMM yyyy'| titlecase  }}</h3>
       <app-language-composition [language]="language$ | async"></app-language-composition>
       <app-text-composition [textCount]="textCount$ | async"></app-text-composition>
     </div>
 
   </div>
 </div>
+
+
+<ng-template #printit>
+  <div class="print-page">
+  <span>
+    <button color="primary" mat-mini-fab (click)="onDisplay()" class="hide-print">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <ng-container *ngIf="entityName$ | async as name">
+      <div *ngIf="month$ | async as month">
+  <h1 class="print-entityName">{{name}} {{month | date : 'MMMM yyyy'| titlecase  }}</h1>
+      </div>
+    </ng-container>
+</span>
+    <div class="print-chart-container">
+      <app-chart class="container" [data]="data$ | async"></app-chart>
+    </div>
+    <div class="print-stats" >
+      <app-language-composition  [language]="language$ | async"></app-language-composition>
+      <app-text-composition  [textCount]="textCount$ | async"></app-text-composition>
+    </div>
+    <div class="print-seed-list">
+      <app-seed-list [seeds]="seedStats$ | async"></app-seed-list>
+    </div>
+  </div>
+</ng-template>

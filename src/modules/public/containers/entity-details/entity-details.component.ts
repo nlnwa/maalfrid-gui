@@ -1,6 +1,6 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {WorkerService} from '../../../explore/services';
-import {combineLatest, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
 import {AggregateText, Entity, LanguageComposition, SeedStatistic, TextCount} from '../../../shared/models';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MaalfridService} from '../../../core/services';
@@ -21,7 +21,7 @@ export class EntityDetailsComponent implements OnInit, AfterViewInit, OnDestroy 
 
   entities: Entity[];
 
-  selectedEntityId = new Subject<string>();
+  selectedEntityId = new BehaviorSubject<string>('');
   selectedEntityId$: Observable<string>;
 
   private month: Subject<Date>;
@@ -38,6 +38,8 @@ export class EntityDetailsComponent implements OnInit, AfterViewInit, OnDestroy 
   language$: Observable<LanguageComposition>;
 
   textCount$: Observable<TextCount>;
+
+  print = false;
 
 
   constructor(private maalfridService: MaalfridService,
@@ -149,10 +151,42 @@ export class EntityDetailsComponent implements OnInit, AfterViewInit, OnDestroy 
     this.router.navigate(['..'], {relativeTo: this.route.root});
   }
 
+  onPrint(): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        print: true
+      },
+      queryParamsHandling: 'merge',
+      skipLocationChange: false
+    });
+  }
+
+  onDisplay(): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        print: null
+      },
+      queryParamsHandling: 'merge',
+      skipLocationChange: false
+    });
+    this.print = false;
+  }
+
   ngAfterViewInit(): void {
     this.route.queryParamMap.pipe(
-      map(queryParamMap => queryParamMap.get('id')),
       takeUntil(this.ngUnsubscribe)
-    ).subscribe(id => this.selectedEntityId.next(id));
+    ).subscribe(queryParamMap => {
+      const id = queryParamMap.get('id');
+      const print = queryParamMap.get('print');
+
+      if (id) {
+        this.selectedEntityId.next(id);
+      }
+      if (print === 'true') {
+        this.print = true;
+      }
+    });
   }
 }
