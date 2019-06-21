@@ -95,45 +95,53 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
       share()
     );
 
-    this.seedStats$ = dataForMonth$.pipe(
+    const dataForMonthPerSeed$ = dataForMonth$.pipe(
       map(data => groupBy(data, 'seedId')),
       withLatestFrom(seed$),
       map(([statsBySeedId, seeds]) => seeds.map(seed => {
-          const stats = statsBySeedId[seed.id];
-          if (!stats) {
-            return {
-              uri: seed.meta.name,
-              nbPercentage: 0,
-              nnPercentage: 0
-            };
-          }
-          const nobTotal = stats.reduce(
-            (total, curr) => curr.statistic.NOB ? curr.statistic.NOB.total : 0, 0);
-          const nnoTotal = stats.reduce(
-            (total, curr) => curr.statistic.NNO ? curr.statistic.NNO.total : 0, 0);
-          return {
-            uri: seed.meta.name,
-            nbPercentage: nobTotal / (nobTotal + nnoTotal),
-            nnPercentage: nnoTotal / (nobTotal + nnoTotal),
-          };
+          const data = statsBySeedId[seed.id];
+
+          const uri = seed.meta.name;
+
+          const nnLongCount = data ? data.reduce((acc, curr) =>
+            acc + (curr.statistic.NNO ? curr.statistic.NNO.total - curr.statistic.NNO.short : 0), 0) : 0;
+
+          const nnShortCount = data ? data.reduce((acc, curr) =>
+            acc + (curr.statistic.NNO ? curr.statistic.NNO.short : 0), 0) : 0;
+
+          const nbShortCount = data ? data.reduce((acc, curr) =>
+            acc + (curr.statistic.NOB ? curr.statistic.NOB.short : 0), 0) : 0;
+
+          const nbLongCount = data ? data.reduce((acc, curr) =>
+            acc + (curr.statistic.NOB ? curr.statistic.NOB.total - curr.statistic.NOB.short : 0), 0) : 0;
+
+          const nbTotalCount = nbLongCount + nbShortCount;
+
+          const nnTotalCount = nnLongCount + nnShortCount;
+
+          const total = nbTotalCount + nnTotalCount;
+
+          return {uri, nnLongCount, nnShortCount, nbShortCount, nbLongCount, nbTotalCount, nnTotalCount, total};
         })
       )
     );
 
-    this.textCount$ = dataForMonth$.pipe(
+    this.seedStats$ = dataForMonthPerSeed$.pipe(
+      map(data => data.map(datum => {
+        return {
+          uri: datum.uri,
+          nbPercentage: datum.nbTotalCount / datum.total,
+          nnPercentage: datum.nnTotalCount / datum.total
+        };
+      }))
+    );
+
+    this.textCount$ = dataForMonthPerSeed$.pipe(
       map((data: any[]) => ({
-        nnLongCount:
-          data.reduce((acc, curr) => acc +
-            (curr.statistic.NNO ? curr.statistic.NNO.total - curr.statistic.NNO.short : 0), 0),
-        nnShortCount:
-          data.reduce((acc, curr) => acc +
-            (curr.statistic.NNO ? curr.statistic.NNO.short : 0), 0),
-        nbShortCount:
-          data.reduce((acc, curr) => acc +
-            (curr.statistic.NOB ? curr.statistic.NOB.short : 0), 0),
-        nbLongCount:
-          data.reduce((acc, curr) => acc +
-            (curr.statistic.NOB ? curr.statistic.NOB.total - curr.statistic.NOB.short : 0), 0)
+        nnLongCount: data.reduce((acc, curr) => acc + curr.nnLongCount, 0),
+        nnShortCount: data.reduce((acc, curr) => acc + curr.nnShortCount, 0),
+        nbShortCount: data.reduce((acc, curr) => acc + curr.nbShortCount, 0),
+        nbLongCount: data.reduce((acc, curr) => acc + curr.nbLongCount, 0)
       })),
       share()
     );

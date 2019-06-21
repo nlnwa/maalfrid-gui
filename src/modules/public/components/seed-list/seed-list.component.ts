@@ -13,7 +13,7 @@ export class SeedListComponent {
   @Input()
   set seeds(seeds: SeedStatistic[]) {
     this.dataSource.data = seeds || [];
-  };
+  }
 
   displayedColumns = ['uri', 'nb', 'nn'];
   dataSource = new MatTableDataSource<SeedStatistic>([]);
