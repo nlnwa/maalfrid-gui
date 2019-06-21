@@ -3,8 +3,9 @@ import {Observable, Subject} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Granularity, isSame} from '../../../shared/func';
 import colorMaps from '../../../explore/components/chart/colors';
-import {compareAsc, format, getMonth, parse, setMonth} from 'date-fns';
+import {format, getMonth, setMonth} from 'date-fns';
 import * as locale from 'date-fns/locale/nb';
+import {parseWithOptions} from 'date-fns/fp';
 
 const timeFormatByGranularity = {
   [Granularity.MONTH]: 'MMM yyyy',
@@ -12,6 +13,10 @@ const timeFormatByGranularity = {
   [Granularity.DAY]: 'dd.MM.yy',
   [Granularity.WEEK]: '\'uke\' w',
   [Granularity.YEAR]: 'yyyy'
+};
+
+const dateStringParse = {
+  [Granularity.MONTH]: parseWithOptions({locale})(new Date(0))('MMM yyyy')
 };
 
 @Component({
@@ -37,6 +42,14 @@ export class ChartComponent {
   chartData$: Observable<any>;
 
   constructor() {
+    Object.defineProperty(Array.prototype, 'flat', {
+      value: function (depth = 1) {
+        return this.reduce(function (flat, toFlatten) {
+          return flat.concat((Array.isArray(toFlatten) && (depth > 1)) ? toFlatten['flat'](depth - 1) : toFlatten);
+        }, []);
+      }
+    });
+
     const colorMap = colorMaps['maalfrid'];
     this.customColors = Object.keys(colorMap).map((name) => ({name, value: colorMap[name]}));
 
@@ -44,13 +57,11 @@ export class ChartComponent {
 
     this.chartData$ = this._data.pipe(
       map(data => data.map(({endTime, statistic}) => ({
-        endTime: new Date(endTime),
+        endTime,
         statistic: Object.entries(statistic)
           .map(([code, values]) => ({[code]: values['total']}))
           .reduce((acc, curr) => Object.assign(acc, curr))
       }))),
-      // sort must happen before mergeByGranularity below
-      map(data => data.sort((a, b) => compareAsc(a.endTime, b.endTime))),
       map(data => this.mergeByGranularity(data, granularity)),
       // insert empty series where no data
       map(data => {
@@ -74,7 +85,7 @@ export class ChartComponent {
   }
 
   onSelect(event: any) {
-    const month = parse(event.series, 'MMM yyyy', new Date(0), {locale});
+    const month = dateStringParse[Granularity.MONTH](event.series);
     this.month.emit(month);
   }
 
@@ -91,7 +102,7 @@ export class ChartComponent {
     const first = data.shift();
     return data.reduce((acc, curr) => {
       const prev = acc[acc.length - 1];
-      if (isSame[granularity](new Date(prev.endTime), new Date(curr.endTime))) {
+      if (isSame[granularity](prev.endTime, curr.endTime)) {
         prev.statistic = this.mergeSeries(prev.statistic, curr.statistic);
         return acc;
       } else {

@@ -3,7 +3,7 @@ import {TestBed} from '@angular/core/testing';
 import {EntityResolverService} from './entity-resolver.service';
 import {RouterTestingModule} from '@angular/router/testing';
 import {of} from 'rxjs';
-import {MaalfridService} from '../../core/services';
+import {MaalfridService} from './index';
 
 describe('EntityResolverService', () => {
   beforeEach(() => TestBed.configureTestingModule({

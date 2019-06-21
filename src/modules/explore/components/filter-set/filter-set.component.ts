@@ -9,7 +9,9 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 
 import {SelectionModel} from '@angular/cdk/collections';
 import {Filter, FilterSet} from '../../../shared/';
@@ -130,8 +132,8 @@ export class FilterSetComponent implements OnChanges, AfterViewInit {
   reset = new EventEmitter<void>();
 
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   isSaved = true;
   private bypass = false;

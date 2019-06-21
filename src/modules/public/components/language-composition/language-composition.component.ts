@@ -9,17 +9,15 @@ import {LanguageComposition} from '../../../shared/models';
 })
 export class LanguageCompositionComponent {
 
+  nbPercentage: number;
+  nnPercentage: number;
+
   @Input()
-  language: LanguageComposition;
-
-  constructor() {
-  }
-
-  get nbPercentage() {
-    return this.language ? this.language.nbPercentage : 0;
-  }
-
-  get nnPercentage() {
-    return this.language ? this.language.nnPercentage : 0;
+  set language(language: LanguageComposition) {
+    if (!language) {
+      return;
+    }
+    this.nbPercentage = language.nbPercentage;
+    this.nnPercentage = language.nnPercentage;
   }
 }

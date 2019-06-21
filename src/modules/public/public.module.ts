@@ -1,16 +1,16 @@
 import {NgModule} from '@angular/core';
-import {PublicRoutingModule} from './routing/public-routing.module';
 import {SharedModule} from '../shared/shared.module';
 import {
+  ChartComponent,
   EntityListComponent,
   EntitySelectorComponent,
   LanguageCompositionComponent,
   SeedListComponent,
   TextCompositionComponent
 } from './components';
-import {HomeComponent, EntityDetailsComponent} from './containers';
-import { ChartComponent } from './components/chart/chart.component';
+import {EntityDetailsComponent, HomeComponent} from './containers';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -19,16 +19,19 @@ import {NgxChartsModule} from '@swimlane/ngx-charts';
     EntityListComponent,
     LanguageCompositionComponent,
     TextCompositionComponent,
-    EntityListComponent,
     SeedListComponent,
     ChartComponent,
     EntityDetailsComponent
   ],
   imports: [
-    PublicRoutingModule,
+    RouterModule,
     SharedModule,
     NgxChartsModule,
   ],
+  exports: [
+    HomeComponent,
+    EntityDetailsComponent
+  ]
 })
 export class PublicModule {
 }

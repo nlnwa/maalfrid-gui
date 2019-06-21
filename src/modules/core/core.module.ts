@@ -19,7 +19,7 @@ import {
 } from './services/';
 import {JwksValidationHandler, OAuthModule, OAuthService, ValidationHandler} from 'angular-oauth2-oidc';
 import {AppConfigService} from './services/app.config.service';
-import {EntityResolverService} from '../public/services/entity-resolver.service';
+import {EntityResolverService} from './services/entity-resolver.service';
 
 registerLocaleData(localeNb, 'nb', localeNbExtra);
 

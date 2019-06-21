@@ -1,5 +1,5 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {MatTableDataSource} from '@angular/material';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {MatTableDataSource} from '@angular/material/table';
 import {SeedStatistic} from '../../../shared/models';
 
 @Component({
@@ -8,21 +8,13 @@ import {SeedStatistic} from '../../../shared/models';
   styleUrls: ['./seed-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SeedListComponent implements OnChanges {
+export class SeedListComponent {
 
   @Input()
-  seeds: SeedStatistic[] = [];
+  set seeds(seeds: SeedStatistic[]) {
+    this.dataSource.data = seeds || [];
+  };
 
   displayedColumns = ['uri', 'nb', 'nn'];
   dataSource = new MatTableDataSource<SeedStatistic>([]);
-
-  constructor() {
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.seeds && this.seeds) {
-      this.dataSource.data = this.seeds || [];
-    }
-  }
-
 }

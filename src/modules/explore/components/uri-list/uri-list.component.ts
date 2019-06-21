@@ -1,5 +1,7 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {SelectionModel} from '@angular/cdk/collections';
 import {_isNumberValue} from '@angular/cdk/coercion';
 import {BehaviorSubject, combineLatest} from 'rxjs';
@@ -39,9 +41,9 @@ export class UriListComponent implements AfterViewInit {
   pageSizeOptions = [5, 10, 20, 50, 100];
   visible = true;
 
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild('filter') filterInput: ElementRef;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild('filter', { static: true }) filterInput: ElementRef;
 
   @Input()
   set data(data: AggregateText[]) {

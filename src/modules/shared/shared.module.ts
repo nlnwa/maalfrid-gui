@@ -5,7 +5,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MaterialModule} from './material.module';
 import {RouterModule} from '@angular/router';
 import {DateFnsDateAdapter, MAT_DATE_FNS_DATE_FORMATS} from './date-fns-date-adapter';
-import {DateAdapter, MAT_DATE_FORMATS} from '@angular/material';
+import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import {AuthComponent, ToolbarComponent} from './components';
 
 @NgModule({
