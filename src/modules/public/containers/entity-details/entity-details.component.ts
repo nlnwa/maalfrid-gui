@@ -42,6 +42,8 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
 
   textCount$: Observable<TextCount>;
 
+  print = false;
+
 
   constructor(private maalfridService: MaalfridService,
               private router: Router,
@@ -173,10 +175,46 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
     this.month.next(month);
   }
 
+  redirect(): void {
+    this.router.navigate(['..'], {relativeTo: this.route.root});
+  }
+
+  onPrint(): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        print: true
+      },
+      queryParamsHandling: 'merge',
+      skipLocationChange: false
+    });
+  }
+
+  onDisplay(): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        print: null
+      },
+      queryParamsHandling: 'merge',
+      skipLocationChange: false
+    });
+    this.print = false;
+  }
+
   ngAfterViewInit(): void {
     this.route.queryParamMap.pipe(
-      map(queryParamMap => queryParamMap.get('id')),
       takeUntil(this.ngUnsubscribe)
-    ).subscribe(id => this.entityId.next(id));
+    ).subscribe(queryParamMap => {
+      const id = queryParamMap.get('id');
+      const print = queryParamMap.get('print');
+
+      if (id) {
+        this.entityId.next(id);
+      }
+      if (print === 'true') {
+        this.print = true;
+      }
+    });
   }
 }
