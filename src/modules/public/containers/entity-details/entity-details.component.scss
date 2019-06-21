@@ -16,7 +16,6 @@
   max-width: 210mm;
   max-height: 297mm;
   margin: 10px;
-  border: 1px solid red;
 
 }
 
@@ -26,17 +25,14 @@
 
 .print-chart-container {
   max-width: 100%;height: 500px;
-  border: 1px solid blue;
 }
 
 .print-stats {
   max-width: 100%;
-  border: 1px solid green;
   page-break-after: always;
 }
 
 .print-seed-list {
   max-width: 100%;
- border: 1px solid orange;
 }
 
