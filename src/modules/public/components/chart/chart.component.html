@@ -1,5 +1,7 @@
-<mat-card class="container">
-  <mat-card-content fxFlex="grow">
+<!--<mat-card class="container">-->
+<!--  <mat-card-content fxFlex="grow">-->
+<div class="container">
+  <div fxFlex="grow">
       <ngx-charts-bar-vertical-normalized
         *ngIf="chartData$ | async as results"
         [xAxis]="true"
@@ -11,5 +13,7 @@
         [results]="results"
         (select)="onSelect($event)">
       </ngx-charts-bar-vertical-normalized>
-  </mat-card-content>
-</mat-card>
+  </div>
+</div>
+<!--  </mat-card-content>-->
+<!--</mat-card>-->

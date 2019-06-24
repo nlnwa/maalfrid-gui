@@ -29,10 +29,15 @@
 
 .print-stats {
   max-width: 100%;
-  page-break-after: always;
 }
 
 .print-seed-list {
   max-width: 100%;
+}
+
+@media print {
+  .seed-list {
+    page-break-before: always;
+  }
 }
 

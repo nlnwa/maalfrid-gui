@@ -1,59 +1,73 @@
-<div class="container" fxLayout="column" *ngIf="!print; else printit">
-  <mat-toolbar>
-    <a color="primary" mat-icon-button routerLink="/">
-      <mat-icon>arrow_back</mat-icon>
-    </a>
-    <span fxFlex></span>
-    <span *ngIf="entityName$ | async as name">{{name}}</span>
-    <span fxFlex></span>
-    <button mat-icon-button (click)="onPrint()">
-      <mat-icon>print</mat-icon>
-    </button>
-  </mat-toolbar>
-  <div class="content" fxLayout="row" fxFlex="grow" fxLayoutGap="24px" fxLayoutAlign="space-between stretch">
-    <app-entity-list fxFlex="20"
-                     (rowClick)="onSelectEntity($event)"
-                     [entities]="entities"
-                     [id]="entityId$ | async">
-    </app-entity-list>
+<div class="container" fxLayout="column">
+  <ng-container *ngIf="{
+      entityId: entityId$ | async,
+      data: data$ | async,
+      seedStats: seedStats$ | async,
+      language: language$ | async,
+      textCount: textCount$ | async,
+      month: month$ | async,
+      entityName: entityName$ | async
+    } as data">
 
-    <div class="center-column" fxLayout="column" fxFlex="grow" fxLayoutGap="24px">
-      <app-chart fxFlex="50" [data]="data$ | async" (month)="onSelectMonth($event)"></app-chart>
-      <app-seed-list fxFlex="50" [seeds]="seedStats$ | async"></app-seed-list>
-    </div>
+    <ng-container *ngIf="!print">
 
+      <mat-toolbar>
+        <a color="primary" mat-icon-button routerLink="/">
+          <mat-icon>arrow_back</mat-icon>
+        </a>
+        <span fxFlex></span>
+        <span *ngIf="data.entityName as name">{{name}}</span>
+        <span fxFlex></span>
+        <button mat-icon-button (click)="onPrint()">
+          <mat-icon>print</mat-icon>
+        </button>
+      </mat-toolbar>
 
-    <div fxLayout="column" fxFlex="20" fxLayoutGap="24px">
-      <h2 *ngIf="month$ | async as month">{{month | date : 'MMMM yyyy' }}</h2>
-      <app-language-composition [language]="language$ | async"></app-language-composition>
-      <app-text-composition [textCount]="textCount$ | async"></app-text-composition>
-    </div>
+      <div class="content" fxLayout="row" fxFlex="grow" fxLayoutGap="24px" fxLayoutAlign="space-between stretch">
+        <app-entity-list fxFlex="20"
+                         (rowClick)="onSelectEntity($event)"
+                         [entities]="entities"
+                         [id]="data.entityId">
+        </app-entity-list>
 
-  </div>
-</div>
+        <div class="center-column" fxLayout="column" fxFlex="grow" fxLayoutGap="24px">
+          <app-chart fxFlex="50" [data]="data.data" (month)="onSelectMonth($event)"></app-chart>
+          <app-seed-list fxFlex="50" [seeds]="data.seedStats" [month]="data.month"></app-seed-list>
+        </div>
 
-
-<ng-template #printit>
-  <div class="print-page">
-  <span>
-    <button color="primary" mat-mini-fab (click)="onDisplay()" class="hide-print">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <ng-container *ngIf="entityName$ | async as name">
-      <div *ngIf="month$ | async as month">
-  <h1 class="print-entityName">{{name}} {{month | date : 'MMMM yyyy'| titlecase  }}</h1>
+        <div fxLayout="column" fxFlex="20" fxLayoutGap="24px">
+          <h2 *ngIf="data.month">{{data.month | date : 'MMMM yyyy' }}</h2>
+          <app-language-composition [language]="data.language"></app-language-composition>
+          <app-text-composition [textCount]="data.textCount"></app-text-composition>
+        </div>
       </div>
     </ng-container>
-</span>
-    <div class="print-chart-container">
-      <app-chart class="container" [data]="data$ | async"></app-chart>
-    </div>
-    <div class="print-stats" >
-      <app-language-composition  [language]="language$ | async"></app-language-composition>
-      <app-text-composition  [textCount]="textCount$ | async"></app-text-composition>
-    </div>
-    <div class="print-seed-list">
-      <app-seed-list [seeds]="seedStats$ | async"></app-seed-list>
-    </div>
-  </div>
-</ng-template>
+
+
+    <ng-container *ngIf="print">
+      <div class="print-page">
+        <button color="primary" mat-mini-fab (click)="onDisplay()" class="hide-print">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <ng-container *ngIf="data.entityName as name">
+          <div *ngIf="data.month as month">
+            <h1 class="print-entityName">{{name}} {{month | date : 'MMMM yyyy'}}</h1>
+          </div>
+        </ng-container>
+
+        <div class="print-chart-container">
+          <app-chart class="container" [data]="data.data"></app-chart>
+        </div>
+
+        <div class="print-stats">
+          <app-language-composition [language]="data.language"></app-language-composition>
+          <app-text-composition [textCount]="data.textCount"></app-text-composition>
+        </div>
+
+        <div class="seed-list">
+          <app-seed-list [seeds]="data.seedStats" [month]="data.month"></app-seed-list>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+</div>
