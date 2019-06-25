@@ -175,10 +175,6 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
     this.month.next(month);
   }
 
-  redirect(): void {
-    this.router.navigate(['..'], {relativeTo: this.route.root});
-  }
-
   onPrint(): void {
     this.router.navigate([], {
       relativeTo: this.route,
