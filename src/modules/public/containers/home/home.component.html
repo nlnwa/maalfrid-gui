@@ -5,6 +5,9 @@
   </header>
   <main fxLayoutAlign="center">
     <app-entity-selector class="entity-selector" [entities]="entities"
-    (selectEntity)="onSelectEntity($event)"></app-entity-selector>
+                         (selectEntity)="onSelectEntity($event)"></app-entity-selector>
   </main>
+  <footer fxFlex="grow" fxLayout="column" fxLayoutAlign="end end" style="margin-right: 10px">
+      <button mat-button (click)="onOpenAboutDialog()"><mat-icon>info</mat-icon> Om Målfrid</button>
+  </footer>
 </div>

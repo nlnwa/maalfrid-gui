@@ -1,0 +1,33 @@
+<h1 mat-dialog-title>Om Målfrid</h1>
+<div mat-dialog-content>
+  <mat-divider></mat-divider>
+  <pre>
+
+    Målfrid benytter data fra Nasjonalbibliotekets månedlige høstinger av
+    statlige nettsteder. Fra det høstede materialet trekkes teksten ut, og blir videre
+    analysert for å finne målformsfordelingen av nynorsk og bokmål for nettstedet.
+
+    En rekke faktorer er med på å gi utslag for beregningen av målformsfordelingen da det høstede
+     materialet ikke samsvarer med virkeligheten. Noen eksempler på feilmarginer er:
+
+    - Feil under høsting:
+      Sider som ikke er tilgjengelig ved tidspunktet for høstingen, eller feil i programvare
+      kan forårsake at en nettside eller hele nettstedet mangler.
+
+    - Deler av nettstedet kan ikke høstes:
+      Dersom deler av innholdet ligger bak passordbeskyttelse vil dette ikke bli inkludert.
+      Skjema? Dynamisk innhold?
+
+    - Filtrering av høstet materiale:
+      For å sikre at tekstgrunnlaget som analysen blir utført på er korrekt, benyttes en rekke filter for
+      å eliminere tekst som ikke skal være inkludert. Det vil fortsatt være tekst som ikke fanges opp av
+      filtrene, eller at tekst feilaktig blir eliminert.
+
+    Platform og verktøy brukt ved høsting og målformsanalyse er under utvikling og vil kunne endres over tid.
+
+  </pre>
+  <mat-divider></mat-divider>
+</div>
+<div mat-dialog-actions fxLayoutAlign="end">
+  <button mat-button (click)="onClose()">LUKK</button>
+</div>

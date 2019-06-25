@@ -23,6 +23,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialogModule} from '@angular/material';
 
 import {FlexLayoutModule} from '@angular/flex-layout';
 
@@ -51,7 +52,8 @@ const modules = [
   MatCheckboxModule,
   MatSnackBarModule,
   MatAutocompleteModule,
-  MatCardModule
+  MatCardModule,
+  MatDialogModule
 ];
 
 @NgModule({
