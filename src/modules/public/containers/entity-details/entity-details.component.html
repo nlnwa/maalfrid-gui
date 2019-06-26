@@ -43,12 +43,18 @@
       </div>
     </ng-container>
 
-
     <ng-container *ngIf="print">
       <div class="print-page">
-        <button color="primary" mat-mini-fab (click)="onDisplay()" class="hide-print">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
+        <mat-toolbar class="hide-print">
+          <button color="primary" mat-mini-fab (click)="onDisplay()">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+          <span fxFlex></span>
+          <div>
+            <mat-icon class="print-align-icon">warning</mat-icon>
+            <span> Bruk Google Chrome for en korrekt utskrift</span>
+          </div>
+        </mat-toolbar>
         <ng-container *ngIf="data.entityName as name">
           <div *ngIf="data.month as month">
             <h1 class="print-entityName">{{name}} {{month | date : 'MMMM yyyy'}}</h1>

@@ -35,6 +35,10 @@
   max-width: 100%;
 }
 
+.print-align-icon {
+  vertical-align: middle !important
+}
+
 @media print {
   .seed-list {
     page-break-before: always;
