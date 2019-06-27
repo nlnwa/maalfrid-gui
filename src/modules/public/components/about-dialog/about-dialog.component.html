@@ -1,31 +1,49 @@
 <h1 mat-dialog-title>Om Målfrid</h1>
-<div mat-dialog-content>
+<div mat-dialog-content fxLayout="column" fxLayoutGap="10px">
   <mat-divider></mat-divider>
-  <pre>
+  <span>
+    Målfrid benytter data fra Nasjonalbibliotekets høstinger av statlige nettsteder.
+    Fra det høstede materialet trekkes teksten ut og analyseres for å finne fordelingen av nynorsk og bokmål for hvert
+    enkelt nettsted. En rekke faktorer er med på å gi utslag på resultatet, for eksempel:
+  </span>
 
-    Målfrid benytter data fra Nasjonalbibliotekets månedlige høstinger av
-    statlige nettsteder. Fra det høstede materialet trekkes teksten ut, og blir videre
-    analysert for å finne målformsfordelingen av nynorsk og bokmål for nettstedet.
+  <div>
+    <ul>
+      <li> feil under høsting</li>
+      <ul>
+        <li style="margin-bottom: 10px">
+          Sider som ikke er tilgjengelig ved tidspunktet for høstingen, eller feil i programvare kan forårsake at
+          en nettside eller hele nettstedet mangler.
+        </li>
+      </ul>
+      <li>at deler av nettstedet ikke kan høstes</li>
+      <ul>
+        <li style="margin-bottom: 10px">
+          Sider som krever innlogging vil ikke bli høstet. Dynamisk innhold (som krever interaksjon) kan også by
+          på utfordringer.
+        </li>
+      </ul>
+      <li>filtrering av høstet materiale</li>
+      <ul>
+        <li style="margin-bottom: 10px">
+          For å sikre at beregningene som gjøres er mest mulig korrekte, benyttes en rekke filtre for å eliminere
+          tekst som ikke er å anse som relevant. Det være seg html-kode, javascript, m.m.; deler av nettsteder som
+          forumer,
+          innloggingsportaler o.l..; elementer som er innlemmet fra andre nettsteder (f.eks. fra youtube, facebook,
+          twitter osv.). Innstilling av filtrene er en manuell operasjon som er utført etter beste evne og skjønn.
+        </li>
+      </ul>
+    </ul>
+  </div>
 
-    En rekke faktorer er med på å gi utslag for beregningen av målformsfordelingen da det høstede
-     materialet ikke samsvarer med virkeligheten. Noen eksempler på feilmarginer er:
-
-    - Feil under høsting:
-      Sider som ikke er tilgjengelig ved tidspunktet for høstingen, eller feil i programvare
-      kan forårsake at en nettside eller hele nettstedet mangler.
-
-    - Deler av nettstedet kan ikke høstes:
-      Dersom deler av innholdet ligger bak passordbeskyttelse vil dette ikke bli inkludert.
-      Skjema? Dynamisk innhold?
-
-    - Filtrering av høstet materiale:
-      For å sikre at tekstgrunnlaget som analysen blir utført på er korrekt, benyttes en rekke filter for
-      å eliminere tekst som ikke skal være inkludert. Det vil fortsatt være tekst som ikke fanges opp av
-      filtrene, eller at tekst feilaktig blir eliminert.
-
-    Platform og verktøy brukt ved høsting og målformsanalyse er under utvikling og vil kunne endres over tid.
-
-  </pre>
+  <span>
+  Det vil derfor være at resultatet som det fremstår i noen tilfeller ikke samsvarer med
+  virkeligheten.
+  </span>
+  <span>
+  Plattform og verktøy brukt ved høsting og analyse er under utvikling og vil kunne
+  endres over tid.
+</span>
   <mat-divider></mat-divider>
 </div>
 <div mat-dialog-actions fxLayoutAlign="end">
