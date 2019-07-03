@@ -5,7 +5,7 @@ import {MaterialModule} from '../../../shared/material.module';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 import {WorkerService} from '../../../explore/services';
 
-fdescribe('ChartComponent', () => {
+describe('ChartComponent', () => {
   let component: ChartComponent;
   let fixture: ComponentFixture<ChartComponent>;
 

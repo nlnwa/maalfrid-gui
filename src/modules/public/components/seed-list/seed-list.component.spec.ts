@@ -3,7 +3,6 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {SeedListComponent} from './seed-list.component';
 import {MaterialModule} from '../../../shared/material.module';
 import {SeedStatistic} from '../../../shared/models';
-import {SimpleChange} from '@angular/core';
 
 describe('SeedListComponent', () => {
   let component: SeedListComponent;
@@ -32,10 +31,6 @@ describe('SeedListComponent', () => {
     }
 
     component.seeds = testSeeds;
-
-    component.ngOnChanges({
-      seeds: new SimpleChange(null, component.seeds, true)
-    });
 
     fixture.detectChanges();
   });
