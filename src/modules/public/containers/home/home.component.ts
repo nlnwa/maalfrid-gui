@@ -15,8 +15,6 @@ export class HomeComponent {
 
   entities: Entity[];
 
-  showInfo = true;
-
   constructor(private route: ActivatedRoute,
               private router: Router,
               private dialog: MatDialog) {
@@ -31,6 +29,6 @@ export class HomeComponent {
   onOpenAboutDialog() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.autoFocus = true;
-    const dialogRef = this.dialog.open(AboutDialogComponent, dialogConfig);
+    this.dialog.open(AboutDialogComponent, dialogConfig);
   }
 }
