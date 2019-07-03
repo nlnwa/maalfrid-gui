@@ -4,3 +4,4 @@ export {TextCompositionComponent} from './text-composition/text-composition.comp
 export {EntityListComponent} from './entity-list/entity-list.component';
 export {SeedListComponent} from './seed-list/seed-list.component';
 export {ChartComponent} from './chart/chart.component';
+export {AboutDialogComponent} from './about-dialog/about-dialog.component';

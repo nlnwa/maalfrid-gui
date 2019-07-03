@@ -16,7 +16,9 @@ describe('TextComponent', () => {
       imports: [MaterialModule, FormsModule, NoopAnimationsModule],
       providers: [
         {
-          provide: MaalfridService, useValue: {}
+          provide: MaalfridService, useValue: {
+            getExecutions: () => []
+          }
         }
       ],
     })

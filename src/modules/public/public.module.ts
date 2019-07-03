@@ -1,6 +1,7 @@
 import {NgModule} from '@angular/core';
 import {SharedModule} from '../shared/shared.module';
 import {
+  AboutDialogComponent,
   ChartComponent,
   EntityListComponent,
   EntitySelectorComponent,
@@ -12,6 +13,7 @@ import {EntityDetailsComponent, HomeComponent} from './containers';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 import {RouterModule} from '@angular/router';
 
+
 @NgModule({
   declarations: [
     HomeComponent,
@@ -21,7 +23,8 @@ import {RouterModule} from '@angular/router';
     TextCompositionComponent,
     SeedListComponent,
     ChartComponent,
-    EntityDetailsComponent
+    EntityDetailsComponent,
+    AboutDialogComponent
   ],
   imports: [
     RouterModule,
@@ -31,7 +34,8 @@ import {RouterModule} from '@angular/router';
   exports: [
     HomeComponent,
     EntityDetailsComponent
-  ]
+  ],
+  entryComponents: [AboutDialogComponent]
 })
 export class PublicModule {
 }

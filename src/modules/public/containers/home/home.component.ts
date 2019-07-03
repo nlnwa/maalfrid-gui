@@ -1,7 +1,9 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {ReplaySubject} from 'rxjs';
 import {Entity} from '../../../shared/models';
 import {ActivatedRoute, Router} from '@angular/router';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import {AboutDialogComponent} from '../../components';
+
 
 @Component({
   selector: 'app-home',
@@ -14,12 +16,19 @@ export class HomeComponent {
   entities: Entity[];
 
   constructor(private route: ActivatedRoute,
-              private router: Router) {
+              private router: Router,
+              private dialog: MatDialog) {
     this.entities = this.route.snapshot.data.entities;
   }
 
   onSelectEntity(entity: Entity) {
     this.router.navigate(['virksomhet'], {queryParams: {id: entity.id}, relativeTo: this.route})
       .catch((error) => console.error(error));
+  }
+
+  onOpenAboutDialog() {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.autoFocus = true;
+    this.dialog.open(AboutDialogComponent, dialogConfig);
   }
 }

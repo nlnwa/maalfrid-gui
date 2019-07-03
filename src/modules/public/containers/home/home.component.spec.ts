@@ -8,6 +8,7 @@ import {ActivatedRoute} from '@angular/router';
 import {of} from 'rxjs';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {Entity} from '../../../shared/models';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
@@ -20,15 +21,17 @@ describe('HomeComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            data: of({
-              entities: [
-                {meta: {name: 'Test', label: []}} as Entity
-              ]
-            })
+            snapshot: {
+              data: of({
+                entities: [
+                  {meta: {name: 'Test', label: []}} as Entity
+                ]
+              })
+            }
           }
         }
       ],
-      imports: [ReactiveFormsModule, MaterialModule, NoopAnimationsModule]
+      imports: [ReactiveFormsModule, MaterialModule, NoopAnimationsModule, RouterTestingModule]
     })
       .compileComponents();
   }));

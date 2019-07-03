@@ -23,6 +23,7 @@ describe('StatisticsComponent', () => {
             getSeeds: () => of([]),
             getFilterSetById: () => of([]),
             getFilterSetsBySeedId: () => of([]),
+            getExecutions: () => of([])
           }
         },
         {provide: SnackBarService, useValue: {}},

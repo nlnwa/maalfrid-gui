@@ -1,6 +1,10 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { EntityDetailsComponent } from './entity-details.component';
+import {EntityDetailsComponent} from './entity-details.component';
+import {PublicModule} from '../../public.module';
+import {RouterTestingModule} from '@angular/router/testing';
+import {MaalfridService} from '../../../core/services';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
 describe('EntityDetailsComponent', () => {
   let component: EntityDetailsComponent;
@@ -8,9 +12,15 @@ describe('EntityDetailsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ EntityDetailsComponent ]
+      imports: [PublicModule, RouterTestingModule, NoopAnimationsModule],
+      providers: [
+        {
+          provide: MaalfridService,
+          useValue: {}
+        }
+      ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

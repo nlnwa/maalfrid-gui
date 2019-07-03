@@ -28,7 +28,7 @@ describe('ReportComponent', () => {
           provide: MaalfridService, useValue: {
             getEntities: () => of([]),
             getSeeds: () => of([]),
-            getStatistics: () => of([]),
+            getStatisticByYear: () => of([]),
             getExecutions: () => of([]),
           }
         },
