@@ -1,19 +1,13 @@
-<!--<mat-card class="container">-->
-<!--  <mat-card-content fxFlex="grow">-->
 <div class="container">
-  <div fxFlex="grow">
-      <ngx-charts-bar-vertical-normalized
-        *ngIf="chartData$ | async as results"
-        [xAxis]="true"
-        [yAxis]="true"
-        [animations]="false"
-        [legend]="true"
-        legendTitle="Tegnforklaring"
-        [customColors]="customColors"
-        [results]="results"
-        (select)="onSelect($event)">
-      </ngx-charts-bar-vertical-normalized>
-  </div>
+  <ngx-charts-bar-vertical-normalized
+    *ngIf="chartData$ | async as results"
+    [xAxis]="true"
+    [yAxis]="true"
+    [animations]="false"
+    [legend]="true"
+    legendTitle="Tegnforklaring"
+    [customColors]="customColors"
+    [results]="results"
+    (select)="onSelect($event)">
+  </ngx-charts-bar-vertical-normalized>
 </div>
-<!--  </mat-card-content>-->
-<!--</mat-card>-->

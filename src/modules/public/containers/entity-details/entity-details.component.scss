@@ -15,33 +15,16 @@
 .print-page {
   max-width: 210mm;
   max-height: 297mm;
-  margin: 10px;
+  padding: 37.5mm 25mm 37.5mm 25mm;
 
-}
-
-.print-entityName {
-  text-align: center;
 }
 
 .print-chart-container {
-  max-width: 100%;height: 500px;
-}
-
-.print-stats {
-  max-width: 100%;
-}
-
-.print-seed-list {
-  max-width: 100%;
-}
-
-.print-align-icon {
-  vertical-align: middle !important
+  height: 100mm;
 }
 
 @media print {
-  .seed-list {
-    page-break-before: always;
+  .page-break {
+    page-break-after: always;
   }
 }
-

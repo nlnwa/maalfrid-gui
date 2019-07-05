@@ -1,7 +1,7 @@
 <div class="container" fxLayout="column">
-    <h2 *ngIf="month">
-      Nettsider inkludert i målformanalysen for {{month | date : 'MMMM yyyy' }}
-    </h2>
+  <h3>
+    Nettsider inkludert i målformanalysen for {{month | date : 'MMMM yyyy' }}
+  </h3>
   <div fxFlex="grow" class="content">
     <div class="table-scroll">
       <table mat-table [dataSource]="dataSource">
