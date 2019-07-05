@@ -15,6 +15,9 @@ export class SeedListComponent {
     this.dataSource.data = seeds || [];
   }
 
+  @Input()
+  month: string;
+
   displayedColumns = ['uri', 'nb', 'nn'];
   dataSource = new MatTableDataSource<SeedStatistic>([]);
 }
