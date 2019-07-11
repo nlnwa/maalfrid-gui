@@ -207,7 +207,7 @@ export class ReportComponent implements OnInit {
     shareReplay(),
   );
 
-  title$ = combineLatest(this.year$, this.selector$, this.filter$).pipe(
+  title$ = combineLatest([this.year$, this.selector$, this.filter$]).pipe(
     map(([year, selector, filter]) => {
       return `| rapport for ${year} | ${this.norwegianSelector[selector]} tekster | ${this.filterTitle[filter]}`;
     }),
@@ -231,7 +231,7 @@ export class ReportComponent implements OnInit {
 
   dataSource: MatTableDataSource<any>;
 
-  periods$ = combineLatest(this.period$, this.statistics$).pipe(
+  periods$ = combineLatest([this.period$, this.statistics$]).pipe(
     map(([period, byDepByEntBySeed]) => {
       this.dataSource.data = [];
 

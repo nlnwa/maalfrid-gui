@@ -64,7 +64,7 @@ export class UriListComponent implements AfterViewInit {
 
   group: any;
 
-  mergedData$ = combineLatest(this.data$, this.sortDirection).pipe(
+  mergedData$ = combineLatest([this.data$, this.sortDirection]).pipe(
     map(([data, sortDirection]) => {
       if (!data) {
         this.group = {};

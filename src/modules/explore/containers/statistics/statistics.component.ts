@@ -58,7 +58,7 @@ export class StatisticsComponent implements OnInit {
   private filterSets = new Subject<FilterSet[]>();
   filterSets$ = this.filterSets.asObservable();
 
-  filters$ = combineLatest(this.globalFilters$, this.seedFilters$, this.immediateFilters$).pipe(
+  filters$ = combineLatest([this.globalFilters$, this.seedFilters$, this.immediateFilters$]).pipe(
     map(([g, s, i]) => [...g, ...s, ...i]),
   );
 
