@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {AggregateText, CrawlJob, createQueryParams, Entity, FilterSet, ListReply, MaalfridReply, Reply, Seed} from '../../../shared/';
+import {AggregateText, CrawlJob, createQueryParams, Entity, FilterSet, MaalfridReply, Reply, Seed} from '../../../shared/';
 
 import {Observable, of} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
@@ -41,7 +41,7 @@ export class MaalfridService {
     if (this.cache.entities) {
       return of(this.cache.entities);
     }
-    return this.http.get<ListReply<Entity>>(this.apiUrl + '/entities')
+    return this.http.get<{value}>(this.apiUrl + '/entities')
       .pipe(
         map(reply => reply.value || []),
         tap((value => this.cache.entities = value)),
@@ -54,7 +54,7 @@ export class MaalfridService {
     }
     const params = createQueryParams({entity_id: entityId});
 
-    return this.http.get<ListReply<Seed>>(this.apiUrl + '/seeds', {params})
+    return this.http.get<{value}>(this.apiUrl + '/seeds', {params})
       .pipe(map(reply => reply.value || []));
   }
 
@@ -62,7 +62,7 @@ export class MaalfridService {
     if (this.cache.seeds) {
       return of(this.cache.seeds);
     }
-    return this.http.get<ListReply<Seed>>(this.apiUrl + '/seeds')
+    return this.http.get<{value}>(this.apiUrl + '/seeds')
       .pipe(
         map(reply => reply.value || []),
         tap(value => this.cache.seeds = value),

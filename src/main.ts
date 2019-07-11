@@ -1,18 +1,13 @@
-import {enableProdMode, LOCALE_ID} from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import 'hammerjs';
+import {enableProdMode} from '@angular/core';
+import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 
-import { AppModule } from './modules/app/app.module';
-import { environment } from './environments/environment';
+import {AppModule} from './modules/app/app.module';
+import {environment} from './environments/environment';
+import 'hammerjs';
 
 if (environment.production) {
   enableProdMode();
 }
 
-/** @see https://github.com/angular/angular-cli/issues/6683 */
-const providers = [
-  {provide: LOCALE_ID, useValue: 'nb-NO'}
-];
-
-platformBrowserDynamic(providers).bootstrapModule(AppModule, {providers})
+platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.log(err));

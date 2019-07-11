@@ -13,24 +13,21 @@ export class AuthGuard implements CanActivate, CanLoad {
     utforsk: [Role.CURATOR, Role.ADMIN]
   };
 
-  // stores requested path to be able to redirect after login
-  requestedPath: string;
-
   constructor(private authService: AuthService,
               private router: Router) {}
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
     const allowedRoles = route.data.allowedRoles as Role[];
 
     if (this.authService.roles.some(role => allowedRoles.includes(role))) {
-      return of(true);
+      return true;
     }
 
     if (state.url) {
       this.authService.login(state.url);
     }
 
-    return of(false);
+    return false;
   }
 
   canLoad(route: Route, segments: UrlSegment[]): Observable<boolean> | Promise<boolean> | boolean {
@@ -38,16 +35,12 @@ export class AuthGuard implements CanActivate, CanLoad {
 
     for (const role of this.authService.roles) {
       if (allowedRoles.includes(role)) {
-        return of(true);
+        return true;
       }
     }
 
     this.authService.login(segments.join('/'));
-    // store requested path
-    // this.requestedPath = segments.join('/');
 
-    // this.authService.login();
-
-    of(false);
+    return false;
   }
 }
