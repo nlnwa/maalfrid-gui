@@ -30,6 +30,13 @@ export class AuthService {
     return this.oauthService.getIdToken();
   }
 
+  /**
+   * @returns authorization header for API calls
+   */
+  get metadata(): { authorization: string } {
+    return {authorization: 'Bearer ' + this.idToken};
+  }
+
   get requestedPath(): string {
     return this.oauthService.state;
   }
