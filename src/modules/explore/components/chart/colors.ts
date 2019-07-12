@@ -1,5 +1,6 @@
 import * as chroma from 'chroma-js';
 import supportedLanguages from './supported.js';
+import {Scale} from 'chroma-js';
 
 
 const w3cx11 = {
@@ -187,7 +188,7 @@ const brewerScales = Object.entries(chroma.brewer).reduce((acc, [scale, colors])
   return acc;
 }, {});
 
-const colorScales = {
+const colorScales: {[key: string]: Scale} = {
   ...brewerScales,
   maalfrid: chroma.scale([
     w3cx11.cornflowerblue,
@@ -207,12 +208,7 @@ function createColorMap(scale) {
   }, {});
 }
 
-const colorMaps = Object.keys(colorScales).reduce((maps, scale) => {
+export const colorMaps: {[key: string]: Scale} = Object.keys(colorScales).reduce((maps, scale) => {
   maps[scale] = createColorMap(colorScales[scale]);
   return maps;
 }, {});
-
-
-export default colorMaps;
-
-

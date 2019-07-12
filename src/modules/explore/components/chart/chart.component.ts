@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import { MatButtonToggleChange } from '@angular/material/button-toggle';
-import colorMaps from './colors';
+import {MatButtonToggleChange} from '@angular/material/button-toggle';
+import {colorMaps} from './colors';
 import {AggregateText} from '../../../shared/models/';
 import {WorkerService} from '../../services/';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
@@ -46,7 +46,7 @@ export class ChartComponent {
     [Granularity.YEAR]: 'år',
   };
 
-  defaultMap = colorMaps['maalfrid'];
+  defaultMap = colorMaps.maalfrid;
 
   colorMap;
   customColors;
@@ -63,6 +63,7 @@ export class ChartComponent {
   granularity = new BehaviorSubject<Granularity>(Granularity.WEEK);
   granularity$ = this.granularity.asObservable();
 
+  // tslint:disable-next-line:variable-name
   _data = new Subject<AggregateText[]>();
   data$ = this._data.asObservable().pipe(
     switchMap((_) => this.workerService.transform(_)),
@@ -74,15 +75,17 @@ export class ChartComponent {
   );
 
   perExecutionData$ = this.mergedData$.pipe(
-    map((data) => data.map(({name, series}) => {
-        return ({
-          name: format(new Date(name), timeFormat(this.granularity.value), {locale}),
-          series: Object.entries(series)
-            .map(([code, value]) => ({name: code, value: (<string[]>value).length}))
-            .sort((a, b) => a.name < b.name ? -1 : a.name === b.name ? 0 : 1)
-        });
-      }
-    ))
+    map((data) =>
+      data
+        .sort((a, b) => a.name < b.name ? -1 : a.name === b.name ? 0 : 1)
+        .map(({name, series}) => {
+            return ({
+              name: format(new Date(name), timeFormat(this.granularity.value), {locale}),
+              series: Object.entries(series)
+                .map(([code, value]) => ({name: code, value: (value as string[]).length}))
+            });
+          }
+        ))
   );
 
   areaData$ = this.perExecutionData$.pipe(
@@ -114,9 +117,9 @@ export class ChartComponent {
     map((data) => Object.entries(data).map(([name, texts]) =>
       ({
         name,
-        short: (<AggregateText[]>texts).filter(text => text.wordCount < 3500).length,
-        long: (<AggregateText[]>texts).filter(text => text.wordCount >= 3500).length,
-        total: (<AggregateText[]>texts).length,
+        short: (texts as AggregateText[]).filter(text => text.wordCount < 3500).length,
+        long: (texts as AggregateText[]).filter(text => text.wordCount >= 3500).length,
+        total: (texts as AggregateText[]).length,
       }))
     ),
     tap(_ => this.totalNrOfTexts.next(_.reduce((acc, curr) => acc + curr.total, 0))),
@@ -137,6 +140,16 @@ export class ChartComponent {
   );
 
   constructor(private workerService: WorkerService) {
+    // see https://www.bennadel.com/blog/3290-using-module-augmentation-to-safely-inject-runtime-methods-using-typescript-and-node-js.htm
+    // for a proper way to monkeypatch Array object
+    Object.defineProperty(Array.prototype, 'flat', {
+      value(depth = 1) {
+        return this.reduce((flat, toFlatten: Array<any> & { flat: (depth: number) => any[] }) => {
+          return flat.concat((Array.isArray(toFlatten) && (depth > 1)) ? toFlatten.flat(depth - 1) : toFlatten);
+        }, []);
+      }
+    });
+
     this.colorMap = this.defaultMap;
     this.customColors = Object.keys(this.colorMap).map((name) => ({name, value: this.colorMap[name]}));
 
