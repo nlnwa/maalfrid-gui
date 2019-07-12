@@ -41,7 +41,7 @@ export class TextComponent implements OnChanges {
     if (text) {
       this.maalfridService.identifyLanguage(text)
         .pipe(
-          map((reply) => reply['value'] || []),
+          map((reply) => reply.value || []),
           map((values) => values.map((value) => ({code: value.code, count: value.count.toPrecision(4)})))
         )
         .subscribe((nominations) => {

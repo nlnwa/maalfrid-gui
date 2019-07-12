@@ -70,18 +70,6 @@ export interface Execution {
 
 export interface AggregateText extends ExtractedText, CrawlLog, Execution {}
 
-export interface Statistic {
-  count: number;
-  language: string;
-  long: number;
-  short: number;
-}
-
-export interface ExecutionStatistic {
-  id: string;
-  stats: Statistic[];
-}
-
 export interface FilterSet {
   id?: string;
   seedId?: string;

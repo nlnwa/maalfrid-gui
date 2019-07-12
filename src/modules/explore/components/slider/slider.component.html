@@ -3,7 +3,6 @@
   <app-nouislider
     fxFlex="grow"
     class="slider"
-    #slider
     [keyboard]="keyboard"
     [(ngModel)]="model"
     [step]="step"
@@ -11,7 +10,7 @@
     [connect]="connect"
     [range]="range"
     [tooltips]="tooltips"
-    (change)="onChange(slider.value, checkbox.checked)"
+    (change)="onChange($event, checkbox.checked)"
     [attr.disabled]="disabled ? '' : null"></app-nouislider>
   <mat-checkbox
     fxFlex
@@ -20,5 +19,5 @@
     color="warn"
     matTooltip="Exclusive"
     [(ngModel)]="exclusive"
-    (change)="onChange(slider.value, checkbox.checked)"></mat-checkbox>
+    (change)="onChange($event, checkbox.checked)"></mat-checkbox>
 </div>

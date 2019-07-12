@@ -4,18 +4,18 @@ export class Meta {
   name: string;
   description: string;
   created?: string ;
-  created_by?: string;
-  last_modified?: string;
-  last_modified_by?: string;
+  createdBy?: string;
+  lastModified?: string;
+  lastModifiedBy?: string;
   label: Label[];
 
   constructor(name = '') {
     this.name = name;
     this.description = '';
-    this.created_by = '';
+    this.createdBy = '';
     this.created = '';
-    this.last_modified_by = '';
-    this.last_modified = '';
+    this.lastModifiedBy = '';
+    this.lastModified = '';
     this.label = [];
   }
 }
@@ -36,51 +36,51 @@ export class Entity {
 }
 
 export class Scope {
-  surt_prefix: string;
+  surtPrefix: string;
 
   constructor() {
-    this.surt_prefix = '';
+    this.surtPrefix = '';
   }
 }
 
 export class Seed {
   id: string;
   meta: Meta;
-  entity_id: string;
+  entityId: string;
   scope: Scope;
-  job_id: string[];
+  jobId: string[];
   disabled: boolean;
 
   constructor(entityId: string) {
     this.id = '';
-    this.entity_id = entityId;
+    this.entityId = entityId;
     this.scope = new Scope();
     this.meta = new Meta();
-    this.job_id = [];
+    this.jobId = [];
     this.disabled = false;
   }
 }
 
 export class CrawlLimitsConfig {
   depth: number;
-  max_duration_s: string; // int64
-  max_bytes: string; // int64
+  maxDurationS: string; // int64
+  maxBytes: string; // int64
 }
 
 export class CrawlJob {
   id: string;
   meta: Meta;
-  schedule_id?: string;
+  scheduleId?: string;
   limits: CrawlLimitsConfig;
-  crawl_config_id?: string;
+  crawlConfigId?: string;
   disabled?: boolean;
 
   constructor() {
     this.id = '';
     this.meta = new Meta();
     this.limits = new CrawlLimitsConfig();
-    this.schedule_id = '';
-    this.crawl_config_id = '';
+    this.scheduleId = '';
+    this.crawlConfigId = '';
   }
 }
 

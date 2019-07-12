@@ -17,7 +17,7 @@ export interface Statistic {
   executionId: string;
   jobExecutionId: string;
   seedId?: string;
-  statistic: any;
+  statistic: {[key: string]: {total: number, short: number}};
   department?: string;
 }
 
@@ -45,12 +45,12 @@ function merge(data: Statistic[]) {
   const language = data.reduce((acc, curr) => {
     Object.entries(curr.statistic).forEach(([code, stat]) => {
       acc[code] = {
-        total: acc[code].total + stat['total'],
-        short: acc[code].short + stat['short']
+        total: acc[code].total + stat.total,
+        short: acc[code].short + stat.short
       };
     });
     return acc;
-  }, {'NNO': {total: 0, short: 0}, 'NOB': {total: 0, short: 0}});
+  }, {NNO: {total: 0, short: 0}, NOB: {total: 0, short: 0}});
 
   const longNNO = language.NNO.total - language.NNO.short;
   const longNOB = language.NOB.total - language.NOB.short;
@@ -372,9 +372,9 @@ export class ReportComponent implements OnInit {
     const alpha = 0.6;
     const color = hue < 10 ? 'white' : 'black';
     return minor <= this.threshold && minor === current && current !== 0
-      ? {'background-color': `hsl(${hue}, ${saturation}%, ${lightness}%, ${alpha})`, 'color': `${color}`}
+      ? {'background-color': `hsl(${hue}, ${saturation}%, ${lightness}%, ${alpha})`, color: `${color}`}
       : current === 0 && current !== other
-        ? {'background-color': 'hsl(0, 100%, 50%, 0.6)', 'color': `${color}`}
+        ? {'background-color': 'hsl(0, 100%, 50%, 0.6)', color: `${color}`}
         : {};
   }
 

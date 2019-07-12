@@ -27,7 +27,7 @@ describe('SeedListComponent', () => {
         nbPercentage: 72,
         nnPercentage: 28
       };
-     testSeeds.push(seed);
+      testSeeds.push(seed);
     }
 
     component.seeds = testSeeds;

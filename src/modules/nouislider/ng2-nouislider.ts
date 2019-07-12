@@ -73,11 +73,14 @@ export class NouisliderComponent implements ControlValueAccessor, OnInit, OnChan
   @Input() public onKeydown: any;
   @Input() public formControl: FormControl;
   @Input() public tooltips: Array<any>;
+  // tslint:disable-next-line:no-output-native
   @Output() public change: EventEmitter<any> = new EventEmitter(true);
   @Output() public update: EventEmitter<any> = new EventEmitter(true);
   @Output() public slide: EventEmitter<any> = new EventEmitter(true);
   @Output() public set: EventEmitter<any> = new EventEmitter(true);
+  // tslint:disable-next-line:no-output-native
   @Output() public start: EventEmitter<any> = new EventEmitter(true);
+  // tslint:disable-next-line:no-output-native
   @Output() public end: EventEmitter<any> = new EventEmitter(true);
   private value: any;
   private onChange: any = Function.prototype;
@@ -228,7 +231,7 @@ export class NouisliderComponent implements ControlValueAccessor, OnInit, OnChan
 
   private defaultKeyHandler = (e: KeyboardEvent) => {
     const stepSize: any[] = this.slider.steps();
-    const index = parseInt((<HTMLElement>e.target).getAttribute('data-handle'), 10);
+    const index = parseInt((e.target as HTMLElement).getAttribute('data-handle'), 10);
     let sign = 1;
     let multiplier = 1;
     let step = 0;

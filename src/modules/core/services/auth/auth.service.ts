@@ -2,6 +2,12 @@ import {Injectable} from '@angular/core';
 import {OAuthService} from 'angular-oauth2-oidc';
 import {Role} from '../../../shared/models';
 
+interface Claims {
+  name: string;
+  email: string;
+  groups: string;
+}
+
 @Injectable()
 export class AuthService {
 
@@ -10,20 +16,20 @@ export class AuthService {
   constructor(private oauthService: OAuthService) {
   }
 
-  get claims() {
-    return this.oauthService.getIdentityClaims();
+  get claims(): Claims {
+    return this.oauthService.getIdentityClaims() as Claims;
   }
 
   get name(): string {
-    return this.claims ? this.claims['name'] : '';
+    return this.claims ? this.claims.name : '';
   }
 
   get email(): string {
-    return this.claims ? this.claims['email'] : '';
+    return this.claims ? this.claims.email : '';
   }
 
   get groups(): string {
-    return this.claims ? this.claims['groups'] : '';
+    return this.claims ? this.claims.groups : '';
   }
 
   get idToken(): string {

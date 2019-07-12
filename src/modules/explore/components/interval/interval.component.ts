@@ -49,6 +49,7 @@ export class Interval {
 })
 export class IntervalComponent implements AfterViewInit {
 
+  // tslint:disable-next-line:no-output-native
   @Output()
   change = new EventEmitter<Interval>();
 

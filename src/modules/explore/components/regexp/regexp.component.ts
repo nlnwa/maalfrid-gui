@@ -17,6 +17,7 @@ export class RegexpComponent {
     requestedUri: 'URI'
   };
 
+  // tslint:disable-next-line:no-output-native
   @Output()
   change: EventEmitter<Filter> = new EventEmitter();
 

@@ -128,6 +128,7 @@ export class FilterSetComponent implements OnChanges, AfterViewInit {
   @Output()
   save = new EventEmitter<FilterSet>();
 
+  // tslint:disable-next-line:no-output-native
   @Output()
   reset = new EventEmitter<void>();
 

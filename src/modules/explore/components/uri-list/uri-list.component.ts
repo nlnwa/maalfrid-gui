@@ -59,6 +59,7 @@ export class UriListComponent implements AfterViewInit {
   rowClick = new EventEmitter<AggregateText[]>();
 
 
+  // tslint:disable-next-line:variable-name
   _data = new BehaviorSubject<AggregateText[]>([]);
   data$ = this._data.asObservable();
 

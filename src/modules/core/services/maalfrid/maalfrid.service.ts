@@ -75,8 +75,8 @@ export class MaalfridService {
       .pipe(map((reply) => reply.value || ''));
   }
 
-  identifyLanguage(text: string): Observable<Object> {
-    return this.http.post(this.apiUrl + '/action/detect-language', {text});
+  identifyLanguage(text: string): Observable<{value: any}> {
+    return this.http.post<{value: any}>(this.apiUrl + '/action/detect-language', {text});
   }
 
   getFilterSetById(id: string): Observable<FilterSet> {
@@ -128,10 +128,10 @@ export class MaalfridService {
   }
 
   getStatisticsInterval(startTime: Date, endTime: Date, entityId?: string): Observable<any> {
-    const start_time = startTime.toISOString();
-    const end_time = endTime.toISOString();
+    const startTimeStr = startTime.toISOString();
+    const endTimeStr = endTime.toISOString();
     const params = createQueryParams(
-      Object.assign({start_time, end_time}, entityId ? {entity_id: entityId} : {}));
+      Object.assign({start_time: startTimeStr, end_time: endTimeStr}, entityId ? {entity_id: entityId} : {}));
     return this.http.get<Reply<any[]>>(this.apiUrl + '/statistics', {params})
       .pipe(
         map((reply) => reply.value),

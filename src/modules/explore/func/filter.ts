@@ -30,9 +30,6 @@ function not(predicate: Predicate): Predicate {
 /**
  * Compares two pairs (ranges) of numbers
  *
- * @param a {number}
- * @param b {number}
- * @return {boolean} true if equal, false if not
  */
 export function rangeIsEqual(a: number[], b: number[]) {
   return a[0] === b[0] && a[1] === b[1];

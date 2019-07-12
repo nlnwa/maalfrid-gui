@@ -2,10 +2,11 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@
 import {Observable, Subject} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Granularity, isSame} from '../../../shared/func';
-import colorMaps from '../../../explore/components/chart/colors';
+import {colorMaps} from '../../../explore/components/chart/colors';
 import {format, getMonth, setMonth} from 'date-fns';
 import * as locale from 'date-fns/locale/nb';
 import {parseWithOptions} from 'date-fns/fp';
+import {Statistic} from '../../../report/containers';
 
 const timeFormatByGranularity = {
   [Granularity.MONTH]: 'MMM yyyy',
@@ -27,7 +28,8 @@ const dateStringParse = {
 })
 export class ChartComponent {
 
-  private _data = new Subject<any>();
+  // tslint:disable-next-line:variable-name
+  private _data = new Subject<Statistic[]>();
 
   @Input()
   set data(data: any) {
@@ -43,14 +45,14 @@ export class ChartComponent {
 
   constructor() {
     Object.defineProperty(Array.prototype, 'flat', {
-      value: function (depth = 1) {
-        return this.reduce(function (flat, toFlatten) {
-          return flat.concat((Array.isArray(toFlatten) && (depth > 1)) ? toFlatten['flat'](depth - 1) : toFlatten);
+      value(depth = 1) {
+        return this.reduce((flat, toFlatten: Array<any> & { flat: (depth: number) => any[] }) => {
+          return flat.concat((Array.isArray(toFlatten) && (depth > 1)) ? toFlatten.flat(depth - 1) : toFlatten);
         }, []);
       }
     });
 
-    const colorMap = colorMaps['maalfrid'];
+    const colorMap = colorMaps.maalfrid;
     this.customColors = Object.keys(colorMap).map((name) => ({name, value: colorMap[name]}));
 
     const granularity = Granularity.MONTH;
@@ -59,7 +61,7 @@ export class ChartComponent {
       map(data => data.map(({endTime, statistic}) => ({
         endTime,
         statistic: Object.entries(statistic)
-          .map(([code, values]) => ({[code]: values['total']}))
+          .map(([code, values]) => ({[code]: values.total}))
           .reduce((acc, curr) => Object.assign(acc, curr))
       }))),
       map(data => this.mergeByGranularity(data, granularity)),

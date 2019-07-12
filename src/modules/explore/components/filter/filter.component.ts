@@ -149,7 +149,6 @@ export class FilterComponent implements OnChanges {
   /**
    * Check if filter value is similar to domain
    *
-   * @param filter {Filter}
    */
   private filterEqualsDomain(filter: Filter): boolean {
     // filter name not in domain (e.g. matchRegexp)

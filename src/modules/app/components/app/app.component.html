@@ -1,6 +1,6 @@
 <router-outlet *ngIf="initialized; else failed"></router-outlet>
 <ng-template #failed>
-  <mat-card>
+  <mat-card style="margin: 10px;">
     <mat-card-header>
       <mat-icon mat-card-avatar>error_outline</mat-icon>
       <mat-card-title><span>Initialisering feilet</span></mat-card-title>

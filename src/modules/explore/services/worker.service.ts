@@ -20,7 +20,7 @@ export class WorkerService implements OnDestroy {
       return of([]);
     }
     const worker = this.getWorker();
-    return new Observable(function (observer: Observer<any>) {
+    return new Observable((observer: Observer<any>) => {
       worker.onmessage = function onmessage(e: MessageEvent) {
         observer.next(e.data);
         observer.complete();
