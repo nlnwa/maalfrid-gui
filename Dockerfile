@@ -1,8 +1,7 @@
-FROM node:10-alpine
-
-ARG BASE_HREF=/maalfrid
 ARG DEPLOY_URL=/maalfrid
 ARG VERSION
+
+FROM node:10-alpine
 
 RUN apk add --update --no-cache git
 
@@ -19,9 +18,7 @@ RUN VERSION=${VERSION:-$(git describe --tags --always)} \
 FROM nginx:alpine
 LABEL maintainer="nettarkivet@nb.no"
 
-ARG DEPLOY_URL=/maalfrid
-
-COPY --from=0 /usr/src/app/dist/ /usr/share/nginx/html${DEPLOY_URL}
+COPY --from=0 /usr/src/app/dist/maalfrid-gui /usr/share/nginx/html${DEPLOY_URL}
 
 COPY nginx/default.conf /etc/nginx/conf.d/
 
