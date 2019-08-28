@@ -16,6 +16,21 @@
       <span fxFlex></span>
       <span *ngIf="data.entityName as name">{{name}}</span>
       <span fxFlex></span>
+      <div>
+        <button mat-icon-button (click)="onPreviousYear()">
+          <mat-icon>keyboard_arrow_left</mat-icon>
+        </button>
+        <mat-form-field style="width: 80px">
+          <mat-select (selectionChange)="onChangeYear($event.value)" [(value)]="selectedYear">
+            <mat-option *ngFor="let year of yearRange" [value]= "year">
+              {{year}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-icon-button (click)="onNextYear()">
+          <mat-icon>keyboard_arrow_right</mat-icon>
+        </button>
+      </div>
       <button mat-icon-button (click)="onPrint()">
         <mat-icon>print</mat-icon>
       </button>
