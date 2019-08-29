@@ -1,12 +1,12 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy} from '@angular/core';
 import {WorkerService} from '../../../explore/services';
-import {BehaviorSubject, combineLatest, forkJoin, merge, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, merge, Observable, Subject} from 'rxjs';
 import {Entity, LanguageComposition, Seed, SeedStatistic, TextCount} from '../../../shared/models';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MaalfridService} from '../../../core/services';
 import {catchError, filter, map, share, switchMap, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
 import {groupBy} from '../../../shared/func';
-import {compareAsc, getYear} from 'date-fns';
+import {addYears, compareAsc, differenceInCalendarYears, getYear, subYears} from 'date-fns';
 import {isSameMonth} from 'date-fns/fp';
 
 
@@ -29,7 +29,7 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
 
   month$: Observable<Date>;
 
-  year$: Observable<number>;
+  year$: BehaviorSubject<number>;
 
   entityName$: Observable<string>;
 
@@ -43,6 +43,7 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
 
   print = false;
 
+  yearRange;
 
   constructor(private maalfridService: MaalfridService,
               private router: Router,
@@ -52,7 +53,7 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
     this.entityId = new Subject<string>();
     this.month = new Subject<Date>();
 
-    this.year$ = of(getYear(new Date()));
+    this.year$ = new BehaviorSubject(getYear(new Date()));
     this.entities = this.route.snapshot.data.entities;
 
     const seed$ = new BehaviorSubject<Seed[]>([]);
@@ -171,11 +172,23 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
       }
       this.print = !!print;
     });
+    this.yearRange = this.getYearRange();
   }
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+  }
+
+  getYearRange(): number[] {
+    const years = [];
+    const startYear = 2018;
+    const currentYear = getYear(new Date());
+    const yearsTotal = differenceInCalendarYears(new Date(currentYear, 1, 1), new Date(startYear, 1, 1));
+    for (let i = 0; i <= yearsTotal; i++) {
+      years.push(startYear + i);
+    }
+    return years;
   }
 
   onSelectEntity(entity: Entity) {
@@ -196,5 +209,17 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
       queryParamsHandling: 'merge',
       skipLocationChange: false
     }).catch(error => console.error(error));
+  }
+
+  onNextYear() {
+    this.year$.next(getYear(new Date(addYears(new Date(this.year$.value, 1, 1), 1))));
+  }
+
+  onPreviousYear() {
+    this.year$.next(getYear(new Date(subYears(new Date(this.year$.value, 1, 1), 1))));
+  }
+
+  onChangeYear(year: number) {
+    this.year$.next(year);
   }
 }
