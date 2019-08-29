@@ -3,7 +3,7 @@ import {Observable, Subject} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Granularity, isSame} from '../../../shared/func';
 import {colorMaps} from '../../../explore/components/chart/colors';
-import {format, getMonth, setMonth} from 'date-fns';
+import {compareAsc, format, getMonth, setMonth} from 'date-fns';
 import * as locale from 'date-fns/locale/nb';
 import {parseWithOptions} from 'date-fns/fp';
 import {Statistic} from '../../../report/containers';
@@ -67,14 +67,18 @@ export class ChartComponent {
       map(data => this.mergeByGranularity(data, granularity)),
       // insert empty series where no data
       map(data => {
+        if (data.length === 0) {
+          return [];
+        }
         const months = data.map(datum => getMonth(datum.endTime));
         for (let i = 0; i < 12; i++) {
           const found = months.find(month => month === i);
+          const placeholderDate = data[0] ? data[0].endTime : new Date();
           if (!found) {
-            data.push({endTime: setMonth(new Date(), i), statistic: {}});
+            data.push({endTime: setMonth(placeholderDate, i), statistic: {}});
           }
         }
-        return data;
+        return data.sort((a, b) => compareAsc(a.endTime, b.endTime));
       }),
       // map to chart input format
       map(data => data.map(({endTime, statistic}) => ({
