@@ -21,7 +21,7 @@
           <mat-icon>keyboard_arrow_left</mat-icon>
         </button>
         <mat-form-field style="width: 80px">
-          <mat-select (selectionChange)="onChangeYear($event.value)" [(value)]="selectedYear">
+          <mat-select (selectionChange)="onChangeYear($event.value)" [value]="year$ | async">
             <mat-option *ngFor="let year of yearRange" [value]= "year">
               {{year}}
             </mat-option>

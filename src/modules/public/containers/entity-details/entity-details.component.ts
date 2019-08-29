@@ -45,9 +45,6 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
 
   yearRange;
 
-  selectedYear;
-
-
   constructor(private maalfridService: MaalfridService,
               private router: Router,
               private route: ActivatedRoute) {
@@ -176,7 +173,6 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
       this.print = !!print;
     });
     this.yearRange = this.getYearRange();
-    this.selectedYear = this.currentYear();
   }
 
   ngOnDestroy(): void {
@@ -193,14 +189,6 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
       years.push(startYear + i);
     }
     return years;
-  }
-
-  currentYear() {
-    let currentYear = 0;
-    this.year$.subscribe(year => {
-      currentYear = year;
-    });
-    return currentYear;
   }
 
   onSelectEntity(entity: Entity) {
@@ -224,13 +212,11 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
   }
 
   onNextYear() {
-    this.year$.next(getYear(new Date(addYears(new Date(this.currentYear(), 1, 1), 1))));
-    this.selectedYear = this.currentYear();
+    this.year$.next(getYear(new Date(addYears(new Date(this.year$.value, 1, 1), 1))));
   }
 
   onPreviousYear() {
-    this.year$.next(getYear(new Date(subYears(new Date(this.currentYear(), 1, 1), 1))));
-    this.selectedYear = this.currentYear();
+    this.year$.next(getYear(new Date(subYears(new Date(this.year$.value, 1, 1), 1))));
   }
 
   onChangeYear(year: number) {
