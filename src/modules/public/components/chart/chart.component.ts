@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
-import {map, tap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {Granularity, isSame} from '../../../shared/func';
 import {colorMaps} from '../../../explore/components/chart/colors';
 import {compareAsc, format, getMonth, setMonth} from 'date-fns';
@@ -67,11 +67,15 @@ export class ChartComponent {
       map(data => this.mergeByGranularity(data, granularity)),
       // insert empty series where no data
       map(data => {
+        if (data.length === 0) {
+          return [];
+        }
         const months = data.map(datum => getMonth(datum.endTime));
         for (let i = 0; i < 12; i++) {
           const found = months.find(month => month === i);
+          const placeholderDate = data[0] ? data[0].endTime : new Date();
           if (!found) {
-            data.push({endTime: setMonth(data[0].endTime, i), statistic: {}});
+            data.push({endTime: setMonth(placeholderDate, i), statistic: {}});
           }
         }
         return data.sort((a, b) => compareAsc(a.endTime, b.endTime));
@@ -82,7 +86,7 @@ export class ChartComponent {
         series: Object.entries(statistic)
           .map(([name, value]) => ({name, value}))
           .sort((a, b) => a.name < b.name ? -1 : a.name === b.name ? 0 : 1)
-      }))),
+      })))
     );
   }
 
@@ -90,7 +94,6 @@ export class ChartComponent {
     const month = dateStringParse[Granularity.MONTH](event.series);
     this.month.emit(month);
   }
-
 
   /**
    * Merge data entries based on granularity (hour, day, week, etc..)
