@@ -182,7 +182,7 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
 
   getYearRange(): number[] {
     const years = [];
-    const startYear = 2017;
+    const startYear = 2018;
     const currentYear = getYear(new Date());
     const yearsTotal = differenceInCalendarYears(new Date(currentYear, 1, 1), new Date(startYear, 1, 1));
     for (let i = 0; i <= yearsTotal; i++) {
