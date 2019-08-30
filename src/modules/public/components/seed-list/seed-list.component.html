@@ -4,7 +4,7 @@
   </h3>
   <div fxFlex="grow" class="content">
     <div class="table-scroll">
-      <table mat-table [dataSource]="dataSource">
+      <table mat-table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="uri">
           <th mat-header-cell *matHeaderCellDef>Nettside</th>
           <td mat-cell *matCellDef="let row">
@@ -12,14 +12,14 @@
           </td>
         </ng-container>
         <ng-container matColumnDef="nb">
-          <th mat-header-cell *matHeaderCellDef>Bokmål</th>
+          <th mat-header-cell *matHeaderCellDef  mat-sort-header>Bokmål</th>
           <td mat-cell *matCellDef="let row">
             {{row.nbPercentage | percent : '1.0-2'}}
           </td>
         </ng-container>
 
         <ng-container matColumnDef="nn">
-          <th mat-header-cell *matHeaderCellDef>Nynorsk</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Nynorsk</th>
           <td mat-cell *matCellDef="let row">
             {{row.nnPercentage | percent : '1.0-2'}}
           </td>
