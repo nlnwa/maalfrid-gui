@@ -13,21 +13,26 @@
       <a color="primary" mat-icon-button routerLink="/">
         <mat-icon>arrow_back</mat-icon>
       </a>
+      <app-entity-selector [entities]="entities"
+                           (selectEntity)="onSelectEntity($event)"
+                           class="entity-search">
+      </app-entity-selector>
+
       <span fxFlex></span>
       <span *ngIf="data.entityName as name">{{name}}</span>
       <span fxFlex></span>
       <div>
-        <button mat-icon-button (click)="onPreviousYear()">
+        <button mat-icon-button (click)="onPreviousYear()" *ngIf="year$.value > startYear">
           <mat-icon>keyboard_arrow_left</mat-icon>
         </button>
         <mat-form-field style="width: 80px">
           <mat-select (selectionChange)="onChangeYear($event.value)" [value]="year$ | async">
-            <mat-option *ngFor="let year of yearRange" [value]= "year">
+            <mat-option *ngFor="let year of yearRange" [value]="year">
               {{year}}
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <button mat-icon-button (click)="onNextYear()">
+        <button mat-icon-button (click)="onNextYear()" *ngIf="year$.value < currentYear">
           <mat-icon>keyboard_arrow_right</mat-icon>
         </button>
       </div>
@@ -37,18 +42,13 @@
     </mat-toolbar>
 
     <div class="content" fxLayout="row" fxFlex="grow" fxLayoutGap="24px" fxLayoutAlign="space-between stretch">
-      <app-entity-list fxFlex="20"
-                       (rowClick)="onSelectEntity($event)"
-                       [entities]="entities"
-                       [id]="data.entityId">
-      </app-entity-list>
 
       <div class="center-column" fxLayout="column" fxFlex="grow" fxLayoutGap="24px">
         <app-chart fxFlex="50" [data]="data.data" (month)="onSelectMonth($event)"></app-chart>
         <app-seed-list fxFlex="50" [seeds]="data.seedStats" [month]="data.month"></app-seed-list>
       </div>
 
-      <div fxLayout="column" fxFlex="20" fxLayoutGap="24px">
+      <div fxLayout="column" fxFlex="25" fxLayoutGap="24px">
         <h2 *ngIf="data.month">{{data.month | date : 'MMMM yyyy' }}</h2>
         <app-language-composition [language]="data.language"></app-language-composition>
         <app-text-composition [textCount]="data.textCount"></app-text-composition>
