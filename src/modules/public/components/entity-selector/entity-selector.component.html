@@ -1,6 +1,7 @@
 <form [formGroup]="form">
   <mat-form-field class="form">
-    <input #term type="text" placeholder="Velg statsorgan" aria-label="Valg statsorgan"
+    <input #term type="text" i18n-placeholder="@@entitySelectorPlaceholder"
+           placeholder="Velg statsorgan" aria-label="Velg statsorgan"
            matInput
            formControlName="entity"
            [matAutocomplete]="auto">
