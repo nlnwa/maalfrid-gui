@@ -2,7 +2,13 @@
   <header class="mat-elevation-z1">
     <h1>Målfrid</h1>
     <h2 i18n="@@homeTitleDescription">Målformsidentifisering for statstjenesten</h2>
-    <app-language-switcher fxLayoutAlign="end end" style="margin-right: 10px"></app-language-switcher>
+    <div fxLayoutAlign="end end" style="margin-right: 10px;">
+      <div style="align-content: center">
+      <mat-label>Målform: </mat-label>
+      <a mat-button href='/maalfrid/' [class.selected-language]="nnPageActive">Nynorsk</a>
+      <a mat-button href='/maalfrid/nb/' [class.selected-language]="nbPageActive">Bokmål</a>
+      </div>
+    </div>
   </header>
   <main fxLayoutAlign="center">
     <app-entity-selector class="entity-selector"
