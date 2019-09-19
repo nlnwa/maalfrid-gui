@@ -1,10 +1,10 @@
 <span class="hide-print">
   <a color="primary" mat-raised-button (click)="onLogout()" *ngIf="name">
   <mat-icon>person</mat-icon>
-  <ng-container i18n="@@toolbarLogon">Logg av <span class="user">{{ name }}&nbsp;</span></ng-container>
+  <ng-container>Logg av <span class="user">{{ name }}&nbsp;</span></ng-container>
 </a>
 <a color="primary" mat-raised-button (click)="onLogin()" *ngIf="!name">
   <mat-icon>person</mat-icon>
-  <ng-container i18n="@@toolbarLogon">Logg på</ng-container>
+  <ng-container>Logg på</ng-container>
 </a>
 </span>

@@ -4,12 +4,20 @@
   "license": "Apache-2.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --configuration development --ssl",
-    "build": "ng build",
-    "build:docker": "docker build -t norsknettarkiv/maalfrid-gui:$(git describe --tags --always) .",
+    "start": "ng serve -c development",
+    "start:dev-nb": "ng serve -c development-nb",
+    "start:prod": "ng serve -c production",
+    "start:prod-nb": "ng serve -c production-nb",
+    "build": "node --max_old_space_size=4048 ./node_modules/.bin/ng build",
+    "build:dev": "yarn build -c development",
+    "build:dev-nb": "yarn build -c development-nb",
+    "build:prod": "yarn build -c production",
+    "build:prod-nb": "yarn build -c production-nb",
+    "build:docker": "docker build -t norsknettarkiv/maalfrid-gui .",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "xi18n": "ng xi18n --output-path src/assets/locale --i18n-locale nn && xliffmerge  --profile xliffmerge.json nb nn"
   },
   "private": true,
   "dependencies": {
@@ -57,6 +65,7 @@
     "karma-coverage-istanbul-reporter": "~2.0.4",
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
+    "ngx-i18nsupport": "^0.17.0",
     "protractor": "~5.4.2",
     "ts-node": "~7.0.1",
     "tslint": "~5.12.1",

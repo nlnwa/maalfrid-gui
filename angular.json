@@ -17,24 +17,63 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/maalfrid-gui",
+            "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
-            "assets": [
-              "src/assets"
-            ],
+            "assets": ["src/assets"],
             "styles": [
               "src/styles/styles.scss",
               "src/styles/theme.scss"
+            ],
+            "budgets": [
+              {
+                "type": "initial",
+                "maximumWarning": "2mb",
+                "maximumError": "5mb"
+              }
             ],
             "scripts": []
           },
           "configurations": {
             "production": {
+              "outputPath": "dist/prod",
               "baseHref": "/maalfrid/",
-              "deployUrl": "/maalfrid/",
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "i18nFile": "src/assets/locale/messages.nn.xlf",
+              "i18nFormat": "xlf",
+              "i18nLocale": "nn",
+              "i18nMissingTranslation": "error",
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
+            },
+            "production-nb" : {
+              "outputPath": "dist/prod/nb",
+              "baseHref": "/maalfrid/nb/",
+              "i18nFile": "src/assets/locale/messages.nb.xlf",
+              "i18nFormat": "xlf",
+              "i18nLocale": "nb",
+              "i18nMissingTranslation": "error",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -54,7 +93,35 @@
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "with": "src/environments/environment.prod-nb.ts"
+                }
+              ]
+            },
+            "development": {
+              "outputPath": "dist/dev",
+              "i18nFile": "src/assets/locale/messages.nn.xlf",
+              "i18nFormat": "xlf",
+              "i18nLocale": "nn",
+              "i18nMissingTranslation": "error",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.dev.ts"
+                }
+              ]
+            },
+            "development-nb" : {
+              "outputPath": "dist/dev/nb",
+              "baseHref": "/nb/",
+              "aot": true,
+              "i18nFile": "src/assets/locale/messages.nb.xlf",
+              "i18nFormat": "xlf",
+              "i18nLocale": "nb",
+              "i18nMissingTranslation": "error",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.dev-nb.ts"
                 }
               ]
             }
@@ -70,9 +137,14 @@
             "production": {
               "browserTarget": "maalfrid-gui:build:production"
             },
+            "production-nb": {
+              "browserTarget": "maalfrid-gui:build:production-nb"
+            },
             "development": {
-              "baseHref": "/maalfrid/",
-              "servePath": "/maalfrid/"
+              "browserTarget": "maalfrid-gui:build:development"
+            },
+            "development-nb" : {
+              "browserTarget": "maalfrid-gui:build:development-nb"
             }
           }
         },

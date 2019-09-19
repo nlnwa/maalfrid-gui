@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="nb" datatype="plaintext" original="ng2.template" target-language="nb">
+    <body>
+      <trans-unit id="entitySelectorPlaceholder" datatype="html">
+        <source>Velg statsorgan</source><target state="final">Velg statsorgan</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/components/entity-selector/entity-selector.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="textCompositionLongTextHeader" datatype="html">
+        <source>Antall lange tekster (Over 3500 ord)</source><target state="final">Antall lange tekster (Over 3500 ord)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/components/text-composition/text-composition.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="textCompositionShortTextHeader" datatype="html">
+        <source>Antall korte tekster (under 3500 ord)</source><target state="final">Antall korte tekster (under 3500 ord)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/components/text-composition/text-composition.component.html</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="seedListHeader" datatype="html">
+        <source>
+    Nettsider inkludert i målformanalysen for <x id="INTERPOLATION" equiv-text="{{month | date : 'MMMM yyyy' }}"/>
+  </source><target state="final">
+    Nettsider inkludert i målformanalysen for <x id="INTERPOLATION" equiv-text="{{month | date : 'MMMM yyyy' }}"/>
+  </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/components/seed-list/seed-list.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chartLegendTitle" datatype="html">
+        <source>Tegnforklaring</source><target state="final">Tegnforklaring</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/components/chart/chart.component.html</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="aboutMaalfridText" datatype="html">
+        <source>
+    Målfrid benytter data fra Nasjonalbibliotekets høstinger av statlige nettsteder.
+    Fra det høstede materialet trekkes teksten ut og analyseres for å finne fordelingen av nynorsk og bokmål for hvert
+    enkelt nettsted.
+    En rekke faktorer er med på å gi utslag på resultatet, for eksempel:
+    feil under høsting
+    Sider som ikke er tilgjengelig ved tidspunktet for høstingen, eller feil i programvare kan forårsake at
+    en nettside eller hele nettstedet mangler.
+    at deler av nettstedet ikke kan høstes
+    Sider som krever innlogging vil ikke bli høstet. Dynamisk innhold (som krever interaksjon) kan også by
+    på utfordringer.
+    filtrering av høstet materiale
+    For å sikre at beregningene som gjøres er mest mulig korrekte, benyttes en rekke filtre for å eliminere
+    tekst som ikke er å anse som relevant. Det være seg html-kode, javascript, m.m.; deler av nettsteder som
+    forumer,
+    innloggingsportaler o.l..; elementer som er innlemmet fra andre nettsteder (f.eks. fra youtube, facebook,
+    twitter osv.). Innstilling av filtrene er en manuell operasjon som er utført etter beste evne og skjønn.
+    Det vil derfor være at resultatet som det fremstår i noen tilfeller ikke samsvarer med
+    virkeligheten.
+    Plattform og verktøy brukt ved høsting og analyse er under utvikling og vil kunne
+    endres over tid.
+</source><target state="final">
+    Målfrid benytter data fra Nasjonalbibliotekets høstinger av statlige nettsteder.
+    Fra det høstede materialet trekkes teksten ut og analyseres for å finne fordelingen av nynorsk og bokmål for hvert
+    enkelt nettsted.
+    En rekke faktorer er med på å gi utslag på resultatet, for eksempel:
+    feil under høsting
+    Sider som ikke er tilgjengelig ved tidspunktet for høstingen, eller feil i programvare kan forårsake at
+    en nettside eller hele nettstedet mangler.
+    at deler av nettstedet ikke kan høstes
+    Sider som krever innlogging vil ikke bli høstet. Dynamisk innhold (som krever interaksjon) kan også by
+    på utfordringer.
+    filtrering av høstet materiale
+    For å sikre at beregningene som gjøres er mest mulig korrekte, benyttes en rekke filtre for å eliminere
+    tekst som ikke er å anse som relevant. Det være seg html-kode, javascript, m.m.; deler av nettsteder som
+    forumer,
+    innloggingsportaler o.l..; elementer som er innlemmet fra andre nettsteder (f.eks. fra youtube, facebook,
+    twitter osv.). Innstilling av filtrene er en manuell operasjon som er utført etter beste evne og skjønn.
+    Det vil derfor være at resultatet som det fremstår i noen tilfeller ikke samsvarer med
+    virkeligheten.
+    Plattform og verktøy brukt ved høsting og analyse er under utvikling og vil kunne
+    endres over tid.
+</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/components/about-dialog/about-dialog.component.html</context>
+          <context context-type="linenumber">51</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="homeTitleDescription" datatype="html">
+        <source>Målformsidentifisering for statstjenesten</source><target state="final">Målformsidentifisering for statstjenesten</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/containers/home/home.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
