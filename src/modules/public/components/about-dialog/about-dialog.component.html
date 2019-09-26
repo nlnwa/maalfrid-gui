@@ -1,48 +1,47 @@
-<h1 mat-dialog-title>Om Målfrid</h1>
-<div mat-dialog-content>
-  <p>
-    Målfrid benytter data fra Nasjonalbibliotekets høstinger av statlige nettsteder.
-    Fra det høstede materialet trekkes teksten ut og analyseres for å finne fordelingen av nynorsk og bokmål for hvert
-    enkelt nettsted.
+<h1 mat-dialog-title i18n="@@AboutDialogHeader">Om Målfrid</h1>
+  <p i18n="introduction|An introduction about the app @@AboutDialogIntro">
+    Nasjonalbiblioteket høster inn alle statlige nettsider.
+    Målfrid benytter data fra disse høstingene til å måle fordelingen mellom bokmål og nynorsk på hvert nettsted.
   </p>
 
-  <p>En rekke faktorer er med på å gi utslag på resultatet, for eksempel:</p>
+  <p i18n="list header|A header for the list of parameters that may affect the result ">
+    En rekke faktorer virker inn på resultatet.</p>
+<div i18n="list of errors | a list of errors that may affect the result">
   <ul>
-    <li>feil under høsting
+    <li>
+      Det kan oppstå feil under høstingen:
       <ul>
         <li>
-          Sider som ikke er tilgjengelig ved tidspunktet for høstingen, eller feil i programvare kan forårsake at
-          en nettside eller hele nettstedet mangler.
+          Når sider ikke er tilgjengelige på tidspunktet for høstingen,
+          kan det føre til at en nettside eller et helt nettsted mangler fra datagrunnlaget.
+          Feil i programvare kan gi lignende avvik.
         </li>
       </ul>
     </li>
-    <li>at deler av nettstedet ikke kan høstes
+    <li>
+      Deler av et nettsted kan ikke høstes:
       <ul>
         <li>
-          Sider som krever innlogging vil ikke bli høstet. Dynamisk innhold (som krever interaksjon) kan også by
-          på utfordringer.
+          Sider som krever innlogging, vil ikke bli høstet.
+          Dynamisk nettinnhold (innhold som krever interaksjon) kan også by på utfordringer.
         </li>
       </ul>
     </li>
-    <li>filtrering av høstet materiale
+    <li>
+      Det kan oppstå feil under filtrering av høstet materiale:
       <ul>
         <li>
-          For å sikre at beregningene som gjøres er mest mulig korrekte, benyttes en rekke filtre for å eliminere
-          tekst som ikke er å anse som relevant. Det være seg html-kode, javascript, m.m.; deler av nettsteder som
-          forumer,
-          innloggingsportaler o.l..; elementer som er innlemmet fra andre nettsteder (f.eks. fra youtube, facebook,
-          twitter osv.). Innstilling av filtrene er en manuell operasjon som er utført etter beste evne og skjønn.
+          For å sikre gode resultater bruker vi filtre for å eliminere irrelevant tekst
+          (html-kode, javaskript, innloggingsportaler, elementer fra YouTube, Facebook m.m.).
+          De ulike filtrene er manuelt innstilt. Vurderingene som ligger til grunn for filtreringen,
+          kan variere og slik gi avvikende resultater.
         </li>
       </ul>
     </li>
+    <li>Plattform og verktøy er under utvikling.</li>
   </ul>
-
-  <p>Det vil derfor være at resultatet som det fremstår i noen tilfeller ikke samsvarer med
-    virkeligheten.</p>
-
-  <p>Plattform og verktøy brukt ved høsting og analyse er under utvikling og vil kunne
-    endres over tid.</p>
 </div>
 <footer mat-dialog-actions fxLayoutAlign="end">
   <button mat-button (click)="onClose()">LUKK</button>
 </footer>
+

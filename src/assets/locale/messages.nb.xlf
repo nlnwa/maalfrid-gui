@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="nb" datatype="plaintext" original="ng2.template" target-language="nb">
+    <body>
+      <trans-unit id="entitySelectorPlaceholder" datatype="html">
+        <source>Velg statsorgan</source><target state="final">Velg statsorgan</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/components/entity-selector/entity-selector.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="textCompositionLongTextHeader" datatype="html">
+        <source>Lengre tekster (Over 3500 ord)</source><target state="final">Lengre tekster (Over 3500 ord)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/components/text-composition/text-composition.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="textCompositionShortTextHeader" datatype="html">
+        <source>Korte tekster (under 3500 ord)</source><target state="final">Korte tekster (under 3500 ord)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/components/text-composition/text-composition.component.html</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="seedListHeader" datatype="html">
+        <source>
+    Nettsider som er inkludert i målformanalysen for <x id="INTERPOLATION" equiv-text="{{month | date : 'MMMM yyyy' }}"/>
+  </source><target state="final">
+    Nettsider som er inkludert i målformanalysen for <x id="INTERPOLATION" equiv-text="{{month | date : 'MMMM yyyy' }}"/>
+  </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/components/seed-list/seed-list.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chartLegendTitle" datatype="html">
+        <source>Tegnforklaring</source><target state="final">Tegnforklaring</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/components/chart/chart.component.html</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="AboutDialogHeader" datatype="html">
+        <source>Om Målfrid</source><target state="final">Om Målfrid</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/components/about-dialog/about-dialog.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="AboutDialogIntro" datatype="html">
+        <source>
+    Nasjonalbiblioteket høster inn alle statlige nettsider.
+    Målfrid benytter data fra disse høstingene til å måle fordelingen mellom bokmål og nynorsk på hvert nettsted.
+  </source><target state="final">
+    Nasjonalbiblioteket høster inn alle statlige nettsider.
+    Målfrid benytter data fra disse høstingene til å måle fordelingen mellom bokmål og nynorsk på hvert nettsted.
+  </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/components/about-dialog/about-dialog.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+        <note priority="1" from="description">An introduction about the app </note>
+        <note priority="1" from="meaning">introduction</note>
+      </trans-unit>
+      <trans-unit id="a44a6dfcd51dece03252f62b369231c7a50ee508" datatype="html">
+        <source>
+    En rekke faktorer virker inn på resultatet.</source><target state="final">
+    En rekke faktorer virker inn på resultatet.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/components/about-dialog/about-dialog.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <note priority="1" from="description">A header for the list of parameters that may affect the result </note>
+        <note priority="1" from="meaning">list header</note>
+      </trans-unit>
+      <trans-unit id="9d9833a930aa2a8c86ec59786bd63fd4de0de34e" datatype="html">
+        <source>
+  <x id="START_UNORDERED_LIST" ctype="x-ul" equiv-text="&lt;ul>"/>
+    <x id="START_LIST_ITEM" ctype="x-li" equiv-text="&lt;li>"/>
+      Det kan oppstå feil under høstingen:
+      <x id="START_UNORDERED_LIST" ctype="x-ul" equiv-text="&lt;ul>"/>
+        <x id="START_LIST_ITEM" ctype="x-li" equiv-text="&lt;li>"/>
+          Når sider ikke er tilgjengelige på tidspunktet for høstingen,
+          kan det føre til at en nettside eller et helt nettsted mangler fra datagrunnlaget.
+          Feil i programvare kan gi lignende avvik.
+        <x id="CLOSE_LIST_ITEM" ctype="x-li" equiv-text="&lt;/li>"/>
+      <x id="CLOSE_UNORDERED_LIST" ctype="x-ul" equiv-text="&lt;/ul>"/>
+    <x id="CLOSE_LIST_ITEM" ctype="x-li" equiv-text="&lt;/li>"/>
+    <x id="START_LIST_ITEM" ctype="x-li" equiv-text="&lt;li>"/>
+      Deler av et nettsted kan ikke høstes:
+      <x id="START_UNORDERED_LIST" ctype="x-ul" equiv-text="&lt;ul>"/>
+        <x id="START_LIST_ITEM" ctype="x-li" equiv-text="&lt;li>"/>
+          Sider som krever innlogging, vil ikke bli høstet.
+          Dynamisk nettinnhold (innhold som krever interaksjon) kan også by på utfordringer.
+        <x id="CLOSE_LIST_ITEM" ctype="x-li" equiv-text="&lt;/li>"/>
+      <x id="CLOSE_UNORDERED_LIST" ctype="x-ul" equiv-text="&lt;/ul>"/>
+    <x id="CLOSE_LIST_ITEM" ctype="x-li" equiv-text="&lt;/li>"/>
+    <x id="START_LIST_ITEM" ctype="x-li" equiv-text="&lt;li>"/>
+      Det kan oppstå feil under filtrering av høstet materiale:
+      <x id="START_UNORDERED_LIST" ctype="x-ul" equiv-text="&lt;ul>"/>
+        <x id="START_LIST_ITEM" ctype="x-li" equiv-text="&lt;li>"/>
+          For å sikre gode resultater bruker vi filtre for å eliminere irrelevant tekst
+          (html-kode, javaskript, innloggingsportaler, elementer fra YouTube, Facebook m.m.).
+          De ulike filtrene er manuelt innstilt. Vurderingene som ligger til grunn for filtreringen,
+          kan variere og slik gi avvikende resultater.
+        <x id="CLOSE_LIST_ITEM" ctype="x-li" equiv-text="&lt;/li>"/>
+      <x id="CLOSE_UNORDERED_LIST" ctype="x-ul" equiv-text="&lt;/ul>"/>
+    <x id="CLOSE_LIST_ITEM" ctype="x-li" equiv-text="&lt;/li>"/>
+    <x id="START_LIST_ITEM" ctype="x-li" equiv-text="&lt;li>"/>Plattform og verktøy er under utvikling.<x id="CLOSE_LIST_ITEM" ctype="x-li" equiv-text="&lt;/li>"/>
+  <x id="CLOSE_UNORDERED_LIST" ctype="x-ul" equiv-text="&lt;/ul>"/>
+</source><target state="final">
+  <x id="START_UNORDERED_LIST" ctype="x-ul" equiv-text="&lt;ul>"/>
+    <x id="START_LIST_ITEM" ctype="x-li" equiv-text="&lt;li>"/>
+      Det kan oppstå feil under høstingen:
+      <x id="START_UNORDERED_LIST" ctype="x-ul" equiv-text="&lt;ul>"/>
+        <x id="START_LIST_ITEM" ctype="x-li" equiv-text="&lt;li>"/>
+          Når sider ikke er tilgjengelige på tidspunktet for høstingen,
+          kan det føre til at en nettside eller et helt nettsted mangler fra datagrunnlaget.
+          Feil i programvare kan gi lignende avvik.
+        <x id="CLOSE_LIST_ITEM" ctype="x-li" equiv-text="&lt;/li>"/>
+      <x id="CLOSE_UNORDERED_LIST" ctype="x-ul" equiv-text="&lt;/ul>"/>
+    <x id="CLOSE_LIST_ITEM" ctype="x-li" equiv-text="&lt;/li>"/>
+    <x id="START_LIST_ITEM" ctype="x-li" equiv-text="&lt;li>"/>
+      Deler av et nettsted kan ikke høstes:
+      <x id="START_UNORDERED_LIST" ctype="x-ul" equiv-text="&lt;ul>"/>
+        <x id="START_LIST_ITEM" ctype="x-li" equiv-text="&lt;li>"/>
+          Sider som krever innlogging, vil ikke bli høstet.
+          Dynamisk nettinnhold (innhold som krever interaksjon) kan også by på utfordringer.
+        <x id="CLOSE_LIST_ITEM" ctype="x-li" equiv-text="&lt;/li>"/>
+      <x id="CLOSE_UNORDERED_LIST" ctype="x-ul" equiv-text="&lt;/ul>"/>
+    <x id="CLOSE_LIST_ITEM" ctype="x-li" equiv-text="&lt;/li>"/>
+    <x id="START_LIST_ITEM" ctype="x-li" equiv-text="&lt;li>"/>
+      Det kan oppstå feil under filtrering av høstet materiale:
+      <x id="START_UNORDERED_LIST" ctype="x-ul" equiv-text="&lt;ul>"/>
+        <x id="START_LIST_ITEM" ctype="x-li" equiv-text="&lt;li>"/>
+          For å sikre gode resultater bruker vi filtre for å eliminere irrelevant tekst
+          (html-kode, javaskript, innloggingsportaler, elementer fra YouTube, Facebook m.m.).
+          De ulike filtrene er manuelt innstilt. Vurderingene som ligger til grunn for filtreringen,
+          kan variere og slik gi avvikende resultater.
+        <x id="CLOSE_LIST_ITEM" ctype="x-li" equiv-text="&lt;/li>"/>
+      <x id="CLOSE_UNORDERED_LIST" ctype="x-ul" equiv-text="&lt;/ul>"/>
+    <x id="CLOSE_LIST_ITEM" ctype="x-li" equiv-text="&lt;/li>"/>
+    <x id="START_LIST_ITEM" ctype="x-li" equiv-text="&lt;li>"/>Plattform og verktøy er under utvikling.<x id="CLOSE_LIST_ITEM" ctype="x-li" equiv-text="&lt;/li>"/>
+  <x id="CLOSE_UNORDERED_LIST" ctype="x-ul" equiv-text="&lt;/ul>"/>
+</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/components/about-dialog/about-dialog.component.html</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+        <note priority="1" from="description"> a list of errors that may affect the result</note>
+        <note priority="1" from="meaning">list of errors </note>
+      </trans-unit>
+      <trans-unit id="homeTitleDescription" datatype="html">
+        <source>Målformsidentifisering for statstjenesten</source><target state="final">Målformsidentifisering for statstjenesten</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/containers/home/home.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

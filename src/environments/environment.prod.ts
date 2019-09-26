@@ -1,9 +1,10 @@
 export const environment = {
   production: true,
   version: '',
-  configUrl: '/maalfrid/assets/config/environment.json',
+  configUrl: 'assets/config/environment.json',
   apiUrl: '/maalfrid/api',
   grpcWebUrl: '/grpc-web',
+  locale: 'nn',
   authConfig: {
     // Url of the Identity Provider
     issuer: '',

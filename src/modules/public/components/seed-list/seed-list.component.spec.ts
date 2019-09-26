@@ -3,6 +3,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {SeedListComponent} from './seed-list.component';
 import {MaterialModule} from '../../../shared/material.module';
 import {SeedStatistic} from '../../../shared/models';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
 describe('SeedListComponent', () => {
   let component: SeedListComponent;
@@ -11,7 +12,7 @@ describe('SeedListComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [SeedListComponent],
-      imports: [MaterialModule]
+      imports: [MaterialModule, NoopAnimationsModule]
     })
       .compileComponents();
   }));

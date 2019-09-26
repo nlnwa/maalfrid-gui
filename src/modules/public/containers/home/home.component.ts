@@ -3,6 +3,7 @@ import {Entity} from '../../../shared/models';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {AboutDialogComponent} from '../../components';
+import {PlatformLocation} from '@angular/common';
 
 
 @Component({
@@ -14,11 +15,15 @@ import {AboutDialogComponent} from '../../components';
 export class HomeComponent {
 
   entities: Entity[];
+  nnPageActive = false;
+  nbPageActive = false;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private platformLocation: PlatformLocation) {
     this.entities = this.route.snapshot.data.entities;
+    this.activePageLanguage();
   }
 
   onSelectEntity(entity: Entity) {
@@ -30,5 +35,15 @@ export class HomeComponent {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.autoFocus = true;
     this.dialog.open(AboutDialogComponent, dialogConfig);
+  }
+
+  activePageLanguage() {
+    if (this.platformLocation.href.indexOf('/nb/') > -1) {
+      this.nnPageActive = false;
+      this.nbPageActive = true;
+    } else {
+      this.nnPageActive = true;
+      this.nbPageActive = false;
+    }
   }
 }
