@@ -45,6 +45,9 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
 
   yearRange;
 
+  startYear = 2018;
+  currentYear: number = getYear(new Date());
+
   constructor(private maalfridService: MaalfridService,
               private router: Router,
               private route: ActivatedRoute) {
@@ -182,11 +185,9 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
 
   getYearRange(): number[] {
     const years = [];
-    const startYear = 2018;
-    const currentYear = getYear(new Date());
-    const yearsTotal = differenceInCalendarYears(new Date(currentYear, 1, 1), new Date(startYear, 1, 1));
+    const yearsTotal = differenceInCalendarYears(new Date(this.currentYear, 1, 1), new Date(this.startYear, 1, 1));
     for (let i = 0; i <= yearsTotal; i++) {
-      years.push(startYear + i);
+      years.push(this.startYear + i);
     }
     return years;
   }

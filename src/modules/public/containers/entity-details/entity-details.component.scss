@@ -3,7 +3,7 @@
 }
 
 .content {
-  padding: 24px 24px 0 0;
+  padding: 24px;
   overflow-y: hidden;
 }
 
@@ -21,6 +21,12 @@
 
 .print-chart-container {
   height: 100mm;
+}
+
+.entity-search {
+  margin-top: 5px;
+  margin-left: 25px;
+  width: 450px;
 }
 
 @media print {
