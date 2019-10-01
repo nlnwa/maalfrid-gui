@@ -10,8 +10,6 @@ export interface DepartmentGroup {
   entities: Entity[];
 }
 
-export const DEPARTMENT_LABEL_KEY = 'departement';
-
 const DEPARTMENT_NONE = 'Ikke tilknyttet departement';
 
 @Component({
@@ -64,10 +62,7 @@ export class EntitySelectorComponent implements OnChanges {
     if (changes.entities && this.entities) {
       // group entities by department
       const entityByDepartment = this.entities.reduce((acc, entity) => {
-        const found = entity.meta.label.find(label => label.key === DEPARTMENT_LABEL_KEY);
-        const department = found
-          ? found.value.charAt(0).toUpperCase() + found.value.slice(1)
-          : DEPARTMENT_NONE;
+        const department = entity.meta.department || DEPARTMENT_NONE;
         (acc[department] = acc[department] || []).push(entity);
         return acc;
       }, {});

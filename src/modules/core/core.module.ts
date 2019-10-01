@@ -20,6 +20,7 @@ import {
 import {JwksValidationHandler, OAuthModule, OAuthService, ValidationHandler} from 'angular-oauth2-oidc';
 import {AppConfigService} from './services/app.config.service';
 import {EntityResolverService} from './services/entity-resolver.service';
+import {environment} from '../../environments/environment';
 
 registerLocaleData(localeNb, 'nb', localeNbExtra);
 
@@ -56,7 +57,7 @@ export function appInitializerFactory(appInitializerService: AppInitializerServi
     },
     {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},
     {provide: ErrorHandler, useClass: ApplicationErrorHandler},
-    {provide: LOCALE_ID, useValue: 'nb'},
+    {provide: LOCALE_ID, useValue: environment.locale},
   ]
 })
 export class CoreModule {
