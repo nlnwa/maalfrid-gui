@@ -7,6 +7,7 @@ export class Meta {
   createdBy?: string;
   lastModified?: string;
   lastModifiedBy?: string;
+  department?: string;
   label: Label[];
 
   constructor(name = '') {

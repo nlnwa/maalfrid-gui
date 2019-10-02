@@ -1,12 +1,18 @@
-import {Injectable} from '@angular/core';
+import {Inject, Injectable, LOCALE_ID} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {AggregateText, CrawlJob, createQueryParams, Entity, FilterSet, MaalfridReply, Reply, Seed} from '../../../shared/';
+import {AggregateText, CrawlJob, createQueryParams, Entity, FilterSet, Label, MaalfridReply, Reply, Seed} from '../../../shared/';
 
 import {Observable, of} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 import {Interval} from '../../../explore/components/interval/interval.component';
 import {endOfYear, setYear, startOfDay, startOfYear} from 'date-fns';
 import {AppConfigService} from '../app.config.service';
+import {depTrans} from '../../../../assets/departments';
+
+const ENTITY_NAME_NN_LABEL_KEY = 'name-locale-nn';
+const DEPARTMENT_LABEL_KEY = 'departement-org.nr';
+
+
 
 @Injectable()
 export class MaalfridService {
@@ -19,7 +25,8 @@ export class MaalfridService {
   };
 
   constructor(private http: HttpClient,
-              private appConfigService: AppConfigService) {
+              private appConfigService: AppConfigService,
+              @Inject(LOCALE_ID) public locale: string) {
     this.apiUrl = appConfigService.apiUrl;
   }
 
@@ -41,10 +48,25 @@ export class MaalfridService {
     if (this.cache.entities) {
       return of(this.cache.entities);
     }
-    return this.http.get<{value}>(this.apiUrl + '/entities')
+    return this.http.get<{ value: any[] }>(this.apiUrl + '/entities')
       .pipe(
         map(reply => reply.value || []),
-        tap((value => this.cache.entities = value)),
+        map((entities) => entities.length === 0
+          ? entities
+          : entities.map((entity: Entity) => {
+            const departmentLabel: Label = entity.meta.label.find((label: Label) => label.key === DEPARTMENT_LABEL_KEY);
+            const departmentOrgNr = departmentLabel ? departmentLabel.value : '0';
+            const translations = depTrans[departmentOrgNr] || depTrans[0];
+            entity.meta.department = translations[this.locale];
+            if (this.locale === 'nn') {
+              const entityNameNNLabel: Label = entity.meta.label.find((label: Label) => label.key === ENTITY_NAME_NN_LABEL_KEY);
+              if (entityNameNNLabel !== undefined) {
+                entity.meta.name = entityNameNNLabel.value;
+              }
+            }
+            return entity;
+          })
+        )
       );
   }
 
@@ -54,7 +76,7 @@ export class MaalfridService {
     }
     const params = createQueryParams({entity_id: entityId});
 
-    return this.http.get<{value}>(this.apiUrl + '/seeds', {params})
+    return this.http.get<{ value }>(this.apiUrl + '/seeds', {params})
       .pipe(map(reply => reply.value || []));
   }
 
@@ -62,7 +84,7 @@ export class MaalfridService {
     if (this.cache.seeds) {
       return of(this.cache.seeds);
     }
-    return this.http.get<{value}>(this.apiUrl + '/seeds')
+    return this.http.get<{ value }>(this.apiUrl + '/seeds')
       .pipe(
         map(reply => reply.value || []),
         tap(value => this.cache.seeds = value),
@@ -75,8 +97,8 @@ export class MaalfridService {
       .pipe(map((reply) => reply.value || ''));
   }
 
-  identifyLanguage(text: string): Observable<{value: any}> {
-    return this.http.post<{value: any}>(this.apiUrl + '/action/detect-language', {text});
+  identifyLanguage(text: string): Observable<{ value: any }> {
+    return this.http.post<{ value: any }>(this.apiUrl + '/action/detect-language', {text});
   }
 
   getFilterSetById(id: string): Observable<FilterSet> {
