@@ -13,7 +13,6 @@ const ENTITY_NAME_NN_LABEL_KEY = 'name-locale-nn';
 const DEPARTMENT_LABEL_KEY = 'departement-org.nr';
 
 
-
 @Injectable()
 export class MaalfridService {
 
@@ -53,7 +52,7 @@ export class MaalfridService {
         map(reply => reply.value || []),
         map((entities) => entities.length === 0
           ? entities
-          : entities.map((entity: Entity) => {
+          : entities.filter(entity => !!entity.meta.label).map((entity: Entity) => {
             const departmentLabel: Label = entity.meta.label.find((label: Label) => label.key === DEPARTMENT_LABEL_KEY);
             const departmentOrgNr = departmentLabel ? departmentLabel.value : '0';
             const translations = depTrans[departmentOrgNr] || depTrans[0];
