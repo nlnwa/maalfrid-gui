@@ -13,22 +13,16 @@
       <trans-unit id="textCompositionLongTextHeader" datatype="html">
         <source>Lengre tekster (Over 3500 ord)</source>
         <target state="translated">Lengre tekstar (Over 3500 ord)</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/modules/public/components/text-composition/text-composition.component.html</context>
-          <context context-type="linenumber">2</context>
-        </context-group>
-      </trans-unit>
+        
+      <context-group purpose="location"><context context-type="sourcefile">src/modules/public/components/text-composition/text-composition.component.html</context><context context-type="linenumber">5</context></context-group></trans-unit>
       <trans-unit id="textCompositionShortTextHeader" datatype="html">
         <source>Korte tekster (under 3500 ord)</source>
         <target state="translated">Korte tekstar (under 3500 ord)</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/modules/public/components/text-composition/text-composition.component.html</context>
-          <context context-type="linenumber">5</context>
-        </context-group>
-      </trans-unit>
+        
+      <context-group purpose="location"><context context-type="sourcefile">src/modules/public/components/text-composition/text-composition.component.html</context><context context-type="linenumber">8</context></context-group></trans-unit>
       <trans-unit id="seedListHeader" datatype="html">
         <source>
-    Nettsider som er inkludert i målformanalysen for <x id="INTERPOLATION" equiv-text="{{month | date : 'MMMM yyyy' }}"/>
+    Nettsider som er inkludert i målformanalysen
   </source><target state="translated">
     Nettsider som er inkluderte i målformanalysen for <x id="INTERPOLATION" equiv-text="{{month | date : 'MMMM yyyy' }}"/>
   </target>
@@ -164,6 +158,36 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/modules/public/containers/home/home.component.html</context>
           <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit><trans-unit id="entityDetailsLanguageCompositionHeader" datatype="html">
+        <source>
+            Fordelingen for <x id="INTERPOLATION" equiv-text="{{data.year}}"/>
+          </source><target state="translated">
+            Fordelingen for <x id="INTERPOLATION" equiv-text="{{data.year}}"/>
+          </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/containers/entity-details/entity-details.component.html</context>
+          <context context-type="linenumber">62</context>
+        </context-group>
+      </trans-unit><trans-unit id="entityDetailsMonthSelectionHint" datatype="html">
+        <source>
+            <x id="START_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;i>"/> Velg en måned for å vise statistikk for valgte nettsted<x id="CLOSE_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;/i>"/>
+          </source><target state="translated">
+            <x id="START_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;i>"/> Vel en månad for å vise statistikk for valde nettstad<x id="CLOSE_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;/i>"/>
+          </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/containers/entity-details/entity-details.component.html</context>
+          <context context-type="linenumber">68</context>
+        </context-group>
+      </trans-unit><trans-unit id="entityDetailsTextCompositionHeader" datatype="html">
+        <source>
+            Statistikk for <x id="INTERPOLATION" equiv-text="{{data.month | date: 'MMMM'}}"/>
+          </source><target state="translated">
+            Statistikk for <x id="INTERPOLATION" equiv-text="{{data.month | date: 'MMMM'}}"/>
+          </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/modules/public/containers/entity-details/entity-details.component.html</context>
+          <context context-type="linenumber">73</context>
         </context-group>
       </trans-unit>
     </body>
