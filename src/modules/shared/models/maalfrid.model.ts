@@ -91,14 +91,18 @@ export interface LanguageComposition {
 }
 
 export interface TextCount {
-  nbLongCount: number;
-  nnLongCount: number;
+  nbPercentage: number;
+  nnPercentage: number;
   nbShortCount: number;
+  nbLongCount: number;
   nnShortCount: number;
+  nnLongCount: number;
 }
 
 export interface SeedStatistic {
+  id: string;
   uri: string;
+  primary: boolean;
   nbPercentage: number;
   nnPercentage: number;
 }

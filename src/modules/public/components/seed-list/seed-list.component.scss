@@ -1,3 +1,5 @@
+@import "../../../../../src/styles/theme";
+
 table {
   width: 100%;
 }
@@ -17,4 +19,13 @@ a {
 .table-scroll {
   height: 100%;
   overflow-y: auto;
+}
+
+.highlight {
+  background-color: $background;
+}
+
+.mat-row:hover {
+  background-color: $highlight;
+  cursor: pointer;
 }

@@ -6,7 +6,7 @@ import {WorkerService} from '../../services/';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {map, share, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 import {format} from 'date-fns';
-import * as locale from 'date-fns/locale/nb';
+import {nb} from 'date-fns/locale';
 import {Granularity, isSame} from '../../../shared/';
 
 function formatPercent(numerator: number, denominator: number): string {
@@ -80,7 +80,7 @@ export class ChartComponent {
         .sort((a, b) => a.name < b.name ? -1 : a.name === b.name ? 0 : 1)
         .map(({name, series}) => {
             return ({
-              name: format(new Date(name), timeFormat(this.granularity.value), {locale}),
+              name: format(new Date(name), timeFormat(this.granularity.value), {locale: nb}),
               series: Object.entries(series)
                 .map(([code, value]) => ({name: code, value: (value as string[]).length}))
             });

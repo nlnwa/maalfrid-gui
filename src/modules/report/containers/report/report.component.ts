@@ -8,7 +8,7 @@ import {_isNumberValue} from '@angular/cdk/coercion';
 import {Title} from '@angular/platform-browser';
 import {groupBy} from '../../../shared/func/';
 import {addMonths, format, getMonth, getQuarter} from 'date-fns';
-import * as locale from 'date-fns/locale/nb';
+import {nb} from 'date-fns/locale';
 import {MaalfridService} from '../../../core/services';
 
 export interface Statistic {
@@ -326,7 +326,7 @@ export class ReportComponent implements OnInit {
     const interval = parseInt(nr, 10);
     switch (this.period.value) {
       case Period.Month:
-        return format(addMonths(new Date(0), interval), 'MMM', {locale});
+        return format(addMonths(new Date(0), interval), 'MMM', {locale: nb});
       case Period.Quarter:
         return this.quarters[interval];
       case Period.Halfyear:

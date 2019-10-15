@@ -14,4 +14,5 @@ $maalfrid-theme: mat-light-theme($maalfrid-primary-palette, $maalfrid-accent-pal
 
 @include angular-material-theme($maalfrid-theme);
 
-$background: mat-color(map-get($maalfrid-theme, background), 'background')
+$background: mat-color(map-get($maalfrid-theme, background), 'background');
+$highlight: mat-color(map-get($maalfrid-theme, background), 'hover');

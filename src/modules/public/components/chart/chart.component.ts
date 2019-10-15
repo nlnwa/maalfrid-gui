@@ -4,7 +4,8 @@ import {map} from 'rxjs/operators';
 import {Granularity, isSame} from '../../../shared/func';
 import {colorMaps} from '../../../explore/components/chart/colors';
 import {compareAsc, format, getMonth, setMonth} from 'date-fns';
-import * as locale from 'date-fns/locale/nb';
+// import * as locale from 'date-fns/locale';
+import {nb} from 'date-fns/locale';
 import {parseWithOptions} from 'date-fns/fp';
 import {Statistic} from '../../../report/containers';
 
@@ -17,7 +18,7 @@ const timeFormatByGranularity = {
 };
 
 const dateStringParse = {
-  [Granularity.MONTH]: parseWithOptions({locale})(new Date(0))('MMM yyyy')
+  [Granularity.MONTH]: parseWithOptions({locale: nb})(new Date(0))('MMM yyyy')
 };
 
 @Component({
@@ -42,6 +43,7 @@ export class ChartComponent {
   customColors;
 
   chartData$: Observable<any>;
+
 
   constructor() {
     Object.defineProperty(Array.prototype, 'flat', {
@@ -82,7 +84,7 @@ export class ChartComponent {
       }),
       // map to chart input format
       map(data => data.map(({endTime, statistic}) => ({
-        name: format(endTime, timeFormatByGranularity[granularity], {locale}),
+        name: format(endTime, timeFormatByGranularity[granularity], {locale: nb}),
         series: Object.entries(statistic)
           .map(([name, value]) => ({name, value}))
           .sort((a, b) => a.name < b.name ? -1 : a.name === b.name ? 0 : 1)
