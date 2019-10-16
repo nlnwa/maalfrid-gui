@@ -44,9 +44,11 @@
       </trans-unit>
       <trans-unit id="AboutDialogIntro" datatype="html">
         <source>
+    Tjenesten er et samarbeid mellom Språkrådet og Nasjonalbiblioteket.<x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br/>"/>
     Nasjonalbiblioteket høster inn alle statlige nettsider.
     Målfrid benytter data fra disse høstingene til å måle fordelingen mellom bokmål og nynorsk på hvert nettsted.
   </source><target state="final">
+    Tjenesten er et samarbeid mellom Språkrådet og Nasjonalbiblioteket.<x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br/>"/>
     Nasjonalbiblioteket høster inn alle statlige nettsider.
     Målfrid benytter data fra disse høstingene til å måle fordelingen mellom bokmål og nynorsk på hvert nettsted.
   </target>
@@ -61,13 +63,10 @@
         <source>
     En rekke faktorer virker inn på resultatet.</source><target state="final">
     En rekke faktorer virker inn på resultatet.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/modules/public/components/about-dialog/about-dialog.component.html</context>
-          <context context-type="linenumber">7</context>
-        </context-group>
+        
         <note priority="1" from="description">A header for the list of parameters that may affect the result </note>
         <note priority="1" from="meaning">list header</note>
-      </trans-unit>
+      <context-group purpose="location"><context context-type="sourcefile">src/modules/public/components/about-dialog/about-dialog.component.html</context><context context-type="linenumber">8</context></context-group></trans-unit>
       <trans-unit id="9d9833a930aa2a8c86ec59786bd63fd4de0de34e" datatype="html">
         <source>
   <x id="START_UNORDERED_LIST" ctype="x-ul" equiv-text="&lt;ul>"/>
@@ -138,20 +137,14 @@
     <x id="START_LIST_ITEM" ctype="x-li" equiv-text="&lt;li>"/>Plattform og verktøy er under utvikling.<x id="CLOSE_LIST_ITEM" ctype="x-li" equiv-text="&lt;/li>"/>
   <x id="CLOSE_UNORDERED_LIST" ctype="x-ul" equiv-text="&lt;/ul>"/>
 </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/modules/public/components/about-dialog/about-dialog.component.html</context>
-          <context context-type="linenumber">9</context>
-        </context-group>
+        
         <note priority="1" from="description"> a list of errors that may affect the result</note>
         <note priority="1" from="meaning">list of errors </note>
-      </trans-unit>
+      <context-group purpose="location"><context context-type="sourcefile">src/modules/public/components/about-dialog/about-dialog.component.html</context><context context-type="linenumber">10</context></context-group></trans-unit>
       <trans-unit id="homeTitleDescription" datatype="html">
         <source>Målformsidentifisering for statstjenesten</source><target state="final">Målformsidentifisering for statstjenesten</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/modules/public/containers/home/home.component.html</context>
-          <context context-type="linenumber">4</context>
-        </context-group>
-      </trans-unit><trans-unit id="entityDetailsLanguageCompositionHeader" datatype="html">
+        
+      <context-group purpose="location"><context context-type="sourcefile">src/modules/public/containers/home/home.component.html</context><context context-type="linenumber">7</context></context-group></trans-unit><trans-unit id="entityDetailsLanguageCompositionHeader" datatype="html">
         <source>
             Fordelingen for <x id="INTERPOLATION" equiv-text="{{data.year}}"/>
           </source><target state="final">

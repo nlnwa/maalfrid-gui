@@ -48,6 +48,7 @@
       </trans-unit>
       <trans-unit id="AboutDialogIntro" datatype="html">
         <source>
+    Tjenesten er et samarbeid mellom Språkrådet og Nasjonalbiblioteket.<x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br/>"/>
     Nasjonalbiblioteket høster inn alle statlige nettsider.
     Målfrid benytter data fra disse høstingene til å måle fordelingen mellom bokmål og nynorsk på hvert nettsted.
   </source>
@@ -63,7 +64,7 @@
     En rekke faktorer virker inn på resultatet.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/modules/public/components/about-dialog/about-dialog.component.html</context>
-          <context context-type="linenumber">7</context>
+          <context context-type="linenumber">8</context>
         </context-group>
         <note priority="1" from="description">A header for the list of parameters that may affect the result </note>
         <note priority="1" from="meaning">list header</note>
@@ -106,7 +107,7 @@
 </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/modules/public/components/about-dialog/about-dialog.component.html</context>
-          <context context-type="linenumber">9</context>
+          <context context-type="linenumber">10</context>
         </context-group>
         <note priority="1" from="description"> a list of errors that may affect the result</note>
         <note priority="1" from="meaning">list of errors </note>
@@ -115,7 +116,7 @@
         <source>Målformsidentifisering for statstjenesten</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/modules/public/containers/home/home.component.html</context>
-          <context context-type="linenumber">4</context>
+          <context context-type="linenumber">7</context>
         </context-group>
       </trans-unit>
       <trans-unit id="entityDetailsLanguageCompositionHeader" datatype="html">
