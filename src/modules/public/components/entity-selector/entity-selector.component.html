@@ -10,7 +10,8 @@
     </button>
     <mat-autocomplete #auto="matAutocomplete"
                       (optionSelected)="onSelectEntity($event)"
-                      [displayWith]="displayFn">
+                      [displayWith]="displayFn"
+                      [panelWidth]="panelWidth ? panelWidth : null">
       <mat-optgroup *ngFor="let department of department$ | async" [label]="department.name">
         <mat-option *ngFor="let option of department.entities" [value]="option">{{ option.meta.name }}</mat-option>
       </mat-optgroup>

@@ -20,6 +20,8 @@ describe('TextCompositionComponent', () => {
     component = fixture.componentInstance;
 
     component.textCount = {
+      nbPercentage: 0.2,
+      nnPercentage: 0.7,
       nbLongCount: 27,
       nnLongCount: 11,
       nbShortCount: 78,

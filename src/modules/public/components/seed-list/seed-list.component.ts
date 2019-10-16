@@ -1,8 +1,9 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
 import {SeedStatistic} from '../../../shared/models';
 import {MatSort} from '@angular/material';
 import {_isNumberValue} from '@angular/cdk/coercion';
+import {SelectionModel} from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-seed-list',
@@ -27,14 +28,26 @@ export class SeedListComponent implements AfterViewInit {
   }
 
   @Input()
-  month: string;
+  set primary(id: string) {
+    if (id !== '') {
+      this.selection.select(id);
+    }
+  }
+
+  @Output()
+  rowClick = new EventEmitter<string>();
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
-  displayedColumns = ['uri', 'nb', 'nn'];
-  dataSource = new MatTableDataSource<SeedStatistic>([]);
 
+  displayedColumns = ['uri', 'nb', 'nn', 'primary'];
 
-  ngAfterViewInit() {
+  dataSource: MatTableDataSource<SeedStatistic>;
+
+  selection = new SelectionModel<string>(false, []);
+
+  constructor() {
+    this.dataSource = new MatTableDataSource<SeedStatistic>([]);
+
     this.dataSource.sortingDataAccessor = (data: any, sortHeaderId: string): string | number => {
 
       const value = data[sortHeaderId];
@@ -100,10 +113,19 @@ export class SeedListComponent implements AfterViewInit {
 
       });
     };
+  }
 
+  ngAfterViewInit() {
     this.dataSource.sort = this.sort;
   }
 
+  onRowClick(seedId: string) {
+    if (this.selection.hasValue()) {
+      this.selection.clear();
+    }
+    this.selection.select(seedId);
+    this.rowClick.emit(seedId);
+  }
 }
 
 

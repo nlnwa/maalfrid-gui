@@ -1,11 +1,14 @@
 <ng-container *ngIf="{
       entityId: entityId$ | async,
-      data: data$ | async,
-      seedStats: seedStats$ | async,
-      language: language$ | async,
-      textCount: textCount$ | async,
+      primarySeedId: primarySeedId$ | async,
+      seedData: dataForSeedsForYear$ | async,
+      seedStats: seedStatsYear$ | async,
+      year: year$ | async,
       month: month$ | async,
-      entityName: entityName$ | async
+      entityName: entityName$ | async,
+      selectedUri: selectedUri$ | async,
+      language: language$ | async,
+      monthStats: seedStatsMonth$ | async
     } as data">
 
   <div class="container" fxLayout="column" *ngIf="!print; else mediaPrint">
@@ -14,12 +17,16 @@
         <mat-icon>arrow_back</mat-icon>
       </a>
       <app-entity-selector [entities]="entities"
+                           [panelWidth]="700"
                            (selectEntity)="onSelectEntity($event)"
-                           class="entity-search">
+                           class="entity-selector">
       </app-entity-selector>
 
       <span fxFlex></span>
+      <div style="align-items: center">
       <span *ngIf="data.entityName as name">{{name}}</span>
+      <span *ngIf="data.selectedUri as uri">: <i>{{uri}}</i></span>
+      </div>
       <span fxFlex></span>
       <div>
         <button mat-icon-button (click)="onPreviousYear()" *ngIf="year$.value > startYear">
@@ -40,18 +47,34 @@
         <mat-icon>print</mat-icon>
       </button>
     </mat-toolbar>
-
     <div class="content" fxLayout="row" fxFlex="grow" fxLayoutGap="24px" fxLayoutAlign="space-between stretch">
-
       <div class="center-column" fxLayout="column" fxFlex="grow" fxLayoutGap="24px">
-        <app-chart fxFlex="50" [data]="data.data" (month)="onSelectMonth($event)"></app-chart>
-        <app-seed-list fxFlex="50" [seeds]="data.seedStats" [month]="data.month"></app-seed-list>
+        <app-chart [fxHide]="data.seedData ? data.seedData.length === 0 : false" fxFlex="50"
+                   [data]="data.seedData" (month)="onSelectMonth($event)">
+        </app-chart>
+        <app-seed-list fxFlex="50" [seeds]="data.seedStats" [primary]="data.primarySeedId"
+                       (rowClick)="onSelectSeed($event)">
+        </app-seed-list>
       </div>
 
-      <div fxLayout="column" fxFlex="25" fxLayoutGap="24px">
-        <h2 *ngIf="data.month">{{data.month | date : 'MMMM yyyy' }}</h2>
-        <app-language-composition [language]="data.language"></app-language-composition>
-        <app-text-composition [textCount]="data.textCount"></app-text-composition>
+      <div fxLayout="column" fxFlex="25">
+        <ng-container *ngIf="data.language">
+          <h3 class="statistics-list-header" i18n="@@entityDetailsLanguageCompositionHeader">
+            Fordelingen for {{data.year}}
+          </h3>
+          <app-language-composition [language]="data.language"></app-language-composition>
+        </ng-container>
+        <ng-container *ngIf="data.language && !data.monthStats">
+          <h4 class="helper-text" i18n="@@entityDetailsMonthSelectionHint">
+            <i> Velg en måned for å vise statistikk for valgte nettsted</i>
+          </h4>
+        </ng-container>
+        <ng-container *ngIf="data.monthStats">
+          <h3 class="statistics-list-header" i18n="@@entityDetailsTextCompositionHeader">
+            Statistikk for {{data.month | date: 'MMMM'}}
+          </h3>
+          <app-text-composition [textCount]="data.monthStats"></app-text-composition>
+        </ng-container>
       </div>
     </div>
   </div>
@@ -61,12 +84,12 @@
       <h1>{{data.entityName}}</h1>
       <p>{{data.month | date : 'MMMM yyyy'}}</p>
       <div class="print-chart-container">
-        <app-chart [data]="data.data"></app-chart>
+        <app-chart [data]="data.seedData"></app-chart>
       </div>
       <app-language-composition [language]="data.language"></app-language-composition>
-      <app-text-composition [textCount]="data.textCount"></app-text-composition>
+      <app-text-composition [textCount]="data.monthStats"></app-text-composition>
       <p class="page-break"></p>
-      <app-seed-list [seeds]="data.seedStats" [month]="data.month"></app-seed-list>
+      <app-seed-list [seeds]="data.seedStats"></app-seed-list>
     </div>
   </ng-template>
 </ng-container>

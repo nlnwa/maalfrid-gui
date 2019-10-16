@@ -23,6 +23,9 @@ export class EntitySelectorComponent implements OnChanges {
   @Input()
   entities: Entity[];
 
+  @Input()
+  panelWidth: number;
+
   @Output()
   selectEntity: EventEmitter<Entity> = new EventEmitter();
 
