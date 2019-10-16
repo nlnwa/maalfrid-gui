@@ -52,6 +52,7 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
   yearRange;
 
   startYear = 2018;
+
   currentYear: number = getYear(new Date());
 
   selectedUri$: Observable<string>;
@@ -59,6 +60,8 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
   constructor(private maalfridService: MaalfridService,
               private router: Router,
               private route: ActivatedRoute) {
+
+    this.yearRange = this.getYearRange();
 
     this.entities = this.route.snapshot.data.entities;
 
@@ -242,8 +245,6 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
 
       this.print = !!print;
     });
-
-    this.yearRange = this.getYearRange();
   }
 
   ngOnDestroy(): void {
@@ -251,14 +252,6 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  getYearRange(): number[] {
-    const years = [];
-    const yearsTotal = differenceInCalendarYears(new Date(this.currentYear, 1, 1), new Date(this.startYear, 1, 1));
-    for (let i = 0; i <= yearsTotal; i++) {
-      years.push(this.startYear + i);
-    }
-    return years;
-  }
 
   onSelectEntity(entity: Entity) {
     this.router.navigate([], {queryParams: {id: entity.id}, relativeTo: this.route, preserveQueryParams: false})
@@ -297,5 +290,14 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
 
   onChangeYear(year: number) {
     this.year$.next(year);
+  }
+
+  private getYearRange(): number[] {
+    const years = [];
+    const yearsTotal = differenceInCalendarYears(new Date(this.currentYear, 1, 1), new Date(this.startYear, 1, 1));
+    for (let i = 0; i <= yearsTotal; i++) {
+      years.push(this.startYear + i);
+    }
+    return years;
   }
 }
