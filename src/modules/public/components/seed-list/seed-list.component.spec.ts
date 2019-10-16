@@ -26,7 +26,9 @@ describe('SeedListComponent', () => {
       const seed: SeedStatistic = {
         uri: 'http://www.test.no',
         nbPercentage: 72,
-        nnPercentage: 28
+        nnPercentage: 28,
+        id: 'abcd-efgh',
+        primary: true
       };
       testSeeds.push(seed);
     }
