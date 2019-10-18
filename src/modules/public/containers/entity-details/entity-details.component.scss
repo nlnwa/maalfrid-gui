@@ -16,17 +16,6 @@
   padding-bottom: 24px;
 }
 
-.print-page {
-  max-width: 210mm;
-  max-height: 297mm;
-  padding: 37.5mm 25mm 37.5mm 25mm;
-
-}
-
-.print-chart-container {
-  height: 100mm;
-}
-
 .entity-selector {
   margin-top: 5px;
   margin-left: 25px;
@@ -40,8 +29,17 @@
   text-decoration: underline;
 }
 
+.print-header {
+  display: none;
+}
+
 @media print {
-  .page-break {
-    page-break-after: always;
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-header {
+    display: block;
   }
 }

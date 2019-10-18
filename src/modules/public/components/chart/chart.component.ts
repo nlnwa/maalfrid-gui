@@ -3,7 +3,6 @@ import {Observable, Subject} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Granularity, isSame} from '../../../shared/func';
 import {compareAsc, format, getMonth, setMonth} from 'date-fns';
-// import * as locale from 'date-fns/locale';
 import {nb} from 'date-fns/locale';
 import {parseWithOptions} from 'date-fns/fp';
 import {Statistic} from '../../../report/containers';
