@@ -28,18 +28,3 @@
 .statistics-list-header {
   text-decoration: underline;
 }
-
-.print-header {
-  display: none;
-}
-
-@media print {
-
-  .no-print {
-    display: none !important;
-  }
-
-  .print-header {
-    display: block;
-  }
-}

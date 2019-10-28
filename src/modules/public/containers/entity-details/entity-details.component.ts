@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, HostListener, OnDestroy} from '@angular/core';
 import {WorkerService} from '../../../explore/services';
 import {BehaviorSubject, combineLatest, forkJoin, Observable, Subject} from 'rxjs';
 import {Entity, LanguageComposition, SeedStatistic, TextCount} from '../../../shared/models';
@@ -13,7 +13,7 @@ import {isSameMonth} from 'date-fns/fp';
 @Component({
   selector: 'app-entity-details',
   templateUrl: './entity-details.component.html',
-  styleUrls: ['./entity-details.component.scss'],
+  styleUrls: ['./entity-details.component.scss', './entity-details-print.scss'],
   providers: [WorkerService],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -54,6 +54,8 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
   selectedUri$: Observable<string>;
 
   lastSelectedMonth: Date;
+
+  print = false;
 
   constructor(private maalfridService: MaalfridService,
               private router: Router,
@@ -280,7 +282,28 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
   }
 
   onPrint(): void {
-    window.print();
+    this.print = true;
+    setTimeout(_ => {
+      window.dispatchEvent(new Event('resize'));
+      setTimeout(() => {
+        window.print();
+      }, 500);
+    });
+  }
+
+  @HostListener('window:afterprint')
+  onafterprint() {
+    this.print = false;
+    setTimeout(_ => {
+      window.dispatchEvent(new Event('resize'));
+    });
+  }
+
+  @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
+    if (event.ctrlKey && event.key === 'p') {
+      event.preventDefault();
+      this.onPrint();
+    }
   }
 
   onNextYear() {
