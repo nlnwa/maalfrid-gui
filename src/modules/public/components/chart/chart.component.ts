@@ -2,7 +2,6 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@
 import {Observable, Subject} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Granularity, isSame} from '../../../shared/func';
-import {colorMaps} from '../../../explore/components/chart/colors';
 import {compareAsc, format, getMonth, setMonth} from 'date-fns';
 // import * as locale from 'date-fns/locale';
 import {nb} from 'date-fns/locale';
@@ -40,10 +39,11 @@ export class ChartComponent {
   @Output()
   month: EventEmitter<Date> = new EventEmitter<Date>();
 
-  customColors;
-
   chartData$: Observable<any>;
 
+  colorScheme = {
+    domain: ['#E69F00', '#0072B2']
+  };
 
   constructor() {
     Object.defineProperty(Array.prototype, 'flat', {
@@ -53,9 +53,6 @@ export class ChartComponent {
         }, []);
       }
     });
-
-    const colorMap = colorMaps.maalfrid;
-    this.customColors = Object.keys(colorMap).map((name) => ({name, value: colorMap[name]}));
 
     const granularity = Granularity.MONTH;
 

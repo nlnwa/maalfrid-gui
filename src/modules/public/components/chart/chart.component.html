@@ -5,10 +5,11 @@
     [yAxis]="true"
     [animations]="false"
     [legend]="true"
+    [scheme]="colorScheme"
+    [results]="results"
+    (select)="onSelect($event)"
     legendTitle="Tegnforklaring"
     i18n-legendTitle="@@chartLegendTitle"
-    [customColors]="customColors"
-    [results]="results"
-    (select)="onSelect($event)">
+  >
   </ngx-charts-bar-vertical-normalized>
 </div>
