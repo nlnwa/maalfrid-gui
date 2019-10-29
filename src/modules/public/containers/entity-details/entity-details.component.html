@@ -1,6 +1,6 @@
 <ng-container *ngIf="{
       entityId: entityId$ | async,
-      primarySeedId: primarySeedId$ | async,
+      seedId: seedId | async,
       seedData: dataForSeedsForYear$ | async,
       seedStats: seedStatsYear$ | async,
       year: year$ | async,
@@ -11,8 +11,8 @@
       monthStats: seedStatsMonth$ | async
     } as data">
 
-  <div class="container" fxLayout="column" *ngIf="!print; else mediaPrint">
-    <mat-toolbar>
+    <div [ngClass]="print ? 'print-container' : 'container'" fxLayout="column">
+    <mat-toolbar *ngIf="!print">
       <a color="primary" mat-icon-button routerLink="/">
         <mat-icon>arrow_back</mat-icon>
       </a>
@@ -24,8 +24,8 @@
 
       <span fxFlex></span>
       <div style="align-items: center">
-      <span *ngIf="data.entityName as name">{{name}}</span>
-      <span *ngIf="data.selectedUri as uri">: <i>{{uri}}</i></span>
+        <span *ngIf="data.entityName as name">{{name}}</span>
+        <span *ngIf="data.selectedUri as uri">: <i>{{uri}}</i></span>
       </div>
       <span fxFlex></span>
       <div>
@@ -43,28 +43,34 @@
           <mat-icon>keyboard_arrow_right</mat-icon>
         </button>
       </div>
-      <button mat-icon-button (click)="onPrint()">
+      <button mat-icon-button *ngIf="data.selectedUri" (click)="onPrint()">
         <mat-icon>print</mat-icon>
       </button>
     </mat-toolbar>
-    <div class="content" fxLayout="row" fxFlex="grow" fxLayoutGap="24px" fxLayoutAlign="space-between stretch">
-      <div class="center-column" fxLayout="column" fxFlex="grow" fxLayoutGap="24px">
-        <app-chart [fxHide]="data.seedData ? data.seedData.length === 0 : false" fxFlex="50"
+    <div [ngClass]="print ? 'print-content':'content'"
+         fxLayout="row" fxFlex="grow" fxLayoutGap="24px" fxLayoutAlign="space-between stretch">
+      <div [ngClass]="print ? 'print-center' : 'center-column'" fxLayout="column" fxFlex="grow" fxLayoutGap="24px">
+        <h2 *ngIf=print>
+          <span *ngIf="data.entityName as name">{{name}}</span>
+          <span *ngIf="data.selectedUri as uri">: <i>{{uri}}</i></span>
+        </h2>
+        <app-chart [ngClass]="print ? 'print-chart' :  null"
+                   [fxHide]="data.seedData ? data.seedData.length === 0 : false" fxFlex="50"
                    [data]="data.seedData" (month)="onSelectMonth($event)">
         </app-chart>
-        <app-seed-list fxFlex="50" [seeds]="data.seedStats" [primary]="data.primarySeedId"
-                       (rowClick)="onSelectSeed($event)">
+        <app-seed-list *ngIf=!print fxFlex="50" [seeds]="data.seedStats" [primary]="data.seedId"
+                       (rowClick)="onSelectSeed($event)" class="no-print">
         </app-seed-list>
       </div>
 
-      <div fxLayout="column" fxFlex="25">
+      <div [ngClass]="print ? 'print-right' : null" fxLayout="column" fxFlex="25" >
         <ng-container *ngIf="data.language">
           <h3 class="statistics-list-header" i18n="@@entityDetailsLanguageCompositionHeader">
             Fordelingen for {{data.year}}
           </h3>
           <app-language-composition [language]="data.language"></app-language-composition>
         </ng-container>
-        <ng-container *ngIf="data.language && !data.monthStats">
+        <ng-container *ngIf="data.language && !data.monthStats && !print">
           <h4 class="helper-text" i18n="@@entityDetailsMonthSelectionHint">
             <i> Velg en måned for å vise statistikk for valgte nettsted</i>
           </h4>
@@ -78,18 +84,4 @@
       </div>
     </div>
   </div>
-
-  <ng-template #mediaPrint>
-    <div *ngIf="print" class="print-page">
-      <h1>{{data.entityName}}</h1>
-      <p>{{data.month | date : 'MMMM yyyy'}}</p>
-      <div class="print-chart-container">
-        <app-chart [data]="data.seedData"></app-chart>
-      </div>
-      <app-language-composition [language]="data.language"></app-language-composition>
-      <app-text-composition [textCount]="data.monthStats"></app-text-composition>
-      <p class="page-break"></p>
-      <app-seed-list [seeds]="data.seedStats"></app-seed-list>
-    </div>
-  </ng-template>
 </ng-container>

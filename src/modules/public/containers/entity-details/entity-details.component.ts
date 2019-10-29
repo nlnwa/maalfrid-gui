@@ -1,10 +1,10 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, HostListener, OnDestroy} from '@angular/core';
 import {WorkerService} from '../../../explore/services';
 import {BehaviorSubject, combineLatest, forkJoin, Observable, Subject} from 'rxjs';
 import {Entity, LanguageComposition, SeedStatistic, TextCount} from '../../../shared/models';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MaalfridService} from '../../../core/services';
-import {catchError, map, share, switchMap, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
+import {catchError, distinctUntilChanged, map, share, switchMap, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
 import {groupBy} from '../../../shared/func';
 import {addYears, compareAsc, differenceInCalendarYears, getYear, subYears} from 'date-fns';
 import {isSameMonth} from 'date-fns/fp';
@@ -13,7 +13,7 @@ import {isSameMonth} from 'date-fns/fp';
 @Component({
   selector: 'app-entity-details',
   templateUrl: './entity-details.component.html',
-  styleUrls: ['./entity-details.component.scss'],
+  styleUrls: ['./entity-details.component.scss', './entity-details-print.scss'],
   providers: [WorkerService],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -45,10 +45,6 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
 
   seedStatsMonth$: Observable<TextCount>;
 
-  primarySeedId$: Observable<string>;
-
-  print = false;
-
   yearRange;
 
   startYear = 2018;
@@ -56,6 +52,10 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
   currentYear: number = getYear(new Date());
 
   selectedUri$: Observable<string>;
+
+  lastSelectedMonth: Date;
+
+  print = false;
 
   constructor(private maalfridService: MaalfridService,
               private router: Router,
@@ -75,7 +75,9 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
 
     this.month$ = this.month.asObservable();
 
-    this.entityId$ = this.entityId.pipe(share());
+    this.entityId$ = this.entityId.pipe(
+      distinctUntilChanged(),
+      share());
 
     const seed$ = this.entityId$.pipe(
       switchMap(entityId => this.maalfridService.getSeedsOfEntity(entityId).pipe(catchError(() => []))),
@@ -87,13 +89,15 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
       map(entity => entity ? entity.meta.name : '')
     );
 
-    // const primarySeedId$ = this.entityId$.pipe(
-    this.primarySeedId$ = this.entityId$.pipe(
+    const primarySeedId$ = this.entityId$.pipe(
       map(entityId => this.entities.find(entity => entity.id === entityId)),
       map(entity => entity.meta.label.find(label => label.key === this.PRIMARY_SEED_LABEL_KEY)),
       map(label => label ? label.value : ''),
-      tap(seedId => this.onSelectSeed(seedId)),
-      share()
+      tap(seedId => {
+        if (!route.snapshot.queryParamMap.get('seed_id')) {
+          this.onSelectSeed(seedId);
+        }
+      })
     );
 
     const data$ = combineLatest([this.year$, this.entityId$]).pipe(
@@ -114,7 +118,7 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
 
     const statsForSeedsForYear$ = combineLatest([seed$, data$]).pipe(
       map(([seeds, data]) => [seeds, groupBy(data, 'seedId')]),
-      withLatestFrom(this.primarySeedId$),
+      withLatestFrom(primarySeedId$),
       map(([[seeds, data], primarySeedId]) => seeds.map(seed => {
           const id = seed.id;
           const primary = primarySeedId === id;
@@ -237,13 +241,10 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
     ).subscribe(queryParamMap => {
       const id = queryParamMap.get('id');
       const seedId = queryParamMap.get('seed_id');
-      const print = queryParamMap.get('print');
       if (id) {
         this.entityId.next(id);
       }
       this.seedId.next(seedId);
-
-      this.print = !!print;
     });
   }
 
@@ -266,18 +267,43 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
   }
 
   onSelectMonth(month: Date) {
-    this.month.next(month);
+    if (!this.lastSelectedMonth) {
+      this.lastSelectedMonth = month;
+      this.month.next(month);
+    } else {
+      if (month.getTime() !== this.lastSelectedMonth.getTime()) {
+        this.month.next(month);
+        this.lastSelectedMonth = month;
+      } else {
+        this.lastSelectedMonth = null;
+        this.month.next(null);
+      }
+    }
   }
 
   onPrint(): void {
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: {
-        print: true
-      },
-      queryParamsHandling: 'merge',
-      skipLocationChange: false
-    }).catch(error => console.error(error));
+    this.print = true;
+    setTimeout(_ => {
+      window.dispatchEvent(new Event('resize'));
+      setTimeout(() => {
+        window.print();
+      }, 500);
+    });
+  }
+
+  @HostListener('window:afterprint')
+  onafterprint() {
+    this.print = false;
+    setTimeout(_ => {
+      window.dispatchEvent(new Event('resize'));
+    });
+  }
+
+  @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
+    if (event.ctrlKey && event.key === 'p') {
+      event.preventDefault();
+      this.onPrint();
+    }
   }
 
   onNextYear() {
