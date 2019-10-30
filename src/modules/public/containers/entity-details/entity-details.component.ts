@@ -31,6 +31,8 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
 
   entityId$: Observable<string>;
 
+  seedId$: Observable<string>;
+
   month$: Observable<Date>;
 
   year$: BehaviorSubject<number>;
@@ -71,7 +73,7 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
     this.seedId = new Subject<string>();
     this.year$ = new BehaviorSubject(getYear(new Date()));
 
-    const seedId$ = this.seedId.asObservable().pipe(share(), tap(() => this.month.next(null)));
+    this.seedId$ = this.seedId.asObservable().pipe(share(), tap(() => this.month.next(null)));
 
     this.month$ = this.month.asObservable();
 
@@ -112,7 +114,7 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
       share()
     );
 
-    this.dataForSeedsForYear$ = combineLatest([data$, seedId$]).pipe(
+    this.dataForSeedsForYear$ = combineLatest([data$, this.seedId$]).pipe(
       map(([data, seedId]) => data.filter(datum => datum.seedId === seedId))
     );
 
@@ -162,7 +164,7 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
     );
 
 
-    this.selectedUri$ = combineLatest([this.seedStatsYear$, seedId$]).pipe(
+    this.selectedUri$ = combineLatest([this.seedStatsYear$, this.seedId$]).pipe(
       map(([seedStats, seedId]) => {
         const seed = seedStats.find(datum => datum.id === seedId);
         if (seed) {
@@ -173,7 +175,7 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
       }),
     );
 
-    this.language$ = combineLatest([this.seedStatsYear$, seedId$]).pipe(
+    this.language$ = combineLatest([this.seedStatsYear$, this.seedId$]).pipe(
       map(([stats, seedId]) => {
         const found = stats.find(stat => stat.id === seedId);
         if (found) {
@@ -300,7 +302,7 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
   }
 
   @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
-    if (event.ctrlKey && event.key === 'p') {
+    if (event.ctrlKey && event.key === 'p') {
       event.preventDefault();
       this.onPrint();
     }
