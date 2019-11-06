@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {Observable, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, Subject} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Granularity, isSame} from '../../../shared/func';
-import {compareAsc, format, getMonth, setMonth} from 'date-fns';
+import {format} from 'date-fns';
 import {nb} from 'date-fns/locale';
 import {parseWithOptions} from 'date-fns/fp';
 import {Statistic} from '../../../report/containers';
@@ -16,7 +16,8 @@ const timeFormatByGranularity = {
 };
 
 const dateStringParse = {
-  [Granularity.MONTH]: parseWithOptions({locale: nb})(new Date(0))('MMM yyyy')
+  [Granularity.MONTH]: parseWithOptions({locale: nb})(new Date(0))('MMM yyyy'),
+  [Granularity.DAY]: parseWithOptions({locale: nb})(new Date(0))('dd.MM.yy')
 };
 
 @Component({
@@ -35,14 +36,30 @@ export class ChartComponent {
     this._data.next(data || []);
   }
 
+  @Input()
+  set granularity(granularity: Granularity) {
+    this._granularity.next(granularity);
+  }
+
   @Output()
-  month: EventEmitter<Date> = new EventEmitter<Date>();
+  date: EventEmitter<Date> = new EventEmitter<Date>();
 
   chartData$: Observable<any>;
 
-  colorScheme = {
-    domain: ['#E69F00', '#0072B2']
-  };
+  customColors = [
+    {
+      name: 'NOB',
+      value: '#0072B2'
+    },
+    {
+      name: 'NNO',
+      value: '#E69F00'
+    }
+  ];
+
+  // tslint:disable-next-line:variable-name
+  _granularity = new BehaviorSubject<Granularity>(Granularity.MONTH);
+  granularity$ = this._granularity.asObservable();
 
   constructor() {
     Object.defineProperty(Array.prototype, 'flat', {
@@ -53,34 +70,24 @@ export class ChartComponent {
       }
     });
 
-    const granularity = Granularity.MONTH;
-
-    this.chartData$ = this._data.pipe(
+    const ddr$ = this._data.pipe(
       map(data => data.map(({endTime, statistic}) => ({
         endTime,
         statistic: Object.entries(statistic)
           .map(([code, values]) => ({[code]: values.total}))
           .reduce((acc, curr) => Object.assign(acc, curr))
-      }))),
-      map(data => this.mergeByGranularity(data, granularity)),
+      })))
+    );
+
+    this.chartData$ = combineLatest([ddr$, this.granularity$]).pipe(
+      map(([data, granularity]: [any[], Granularity]) => ({
+        data: this.mergeByGranularity(data, granularity),
+        granularity
+      })),
       // insert empty series where no data
-      map(data => {
-        if (data.length === 0) {
-          return [];
-        }
-        const months = data.map(datum => getMonth(datum.endTime));
-        for (let i = 0; i < 12; i++) {
-          const found = months.find(month => month === i);
-          const placeholderDate = data[0] ? data[0].endTime : new Date();
-          if (!found) {
-            data.push({endTime: setMonth(placeholderDate, i), statistic: {}});
-          }
-        }
-        return data.sort((a, b) => compareAsc(a.endTime, b.endTime));
-      }),
       // map to chart input format
-      map(data => data.map(({endTime, statistic}) => ({
-        name: format(endTime, timeFormatByGranularity[granularity], {locale: nb}),
+      map(_ => _.data.map(({endTime, statistic}) => ({
+        name: format(endTime, timeFormatByGranularity[_.granularity], {locale: nb}),
         series: Object.entries(statistic)
           .map(([name, value]) => ({name, value}))
           .sort((a, b) => a.name < b.name ? -1 : a.name === b.name ? 0 : 1)
@@ -88,16 +95,41 @@ export class ChartComponent {
     );
   }
 
+
+
+
+  // private insertEmpty(data: any[], granularity: string) {
+  //   if (data.length === 0) {
+  //     return [];
+  //   }
+  //   const months = data.map(datum => getMonth(datum.endTime));
+  //   for (let i = 0; i < 12; i++) {
+  //     const found = months.find(date => date === i);
+  //     const placeholderDate = data[0] ? data[0].endTime : new Date();
+  //     if (!found) {
+  //       data.push({endTime: setMonth(placeholderDate, i), statistic: {}});
+  //     }
+  //   }
+  //   return data.sort((a, b) => compareAsc(a.endTime, b.endTime));
+  // }
+
   onSelect(event: any) {
-    const month = dateStringParse[Granularity.MONTH](event.series);
-    this.month.emit(month);
+    let date;
+    if (this._granularity.value === 'day') {
+      date = dateStringParse[Granularity.DAY](event.series);
+    }
+    if (this._granularity.value === 'month') {
+      date = dateStringParse[Granularity.MONTH](event.series);
+    }
+    this.date.emit(date);
   }
+
 
   /**
    * Merge data entries based on granularity (hour, day, week, etc..)
    *
    * @param data Data array sorted on endTime
-   * @param granularity Size of time interval to merge, e.g. day, month, etc..
+   * @param granularity Size of time interval to merge, e.g. day, date, etc..
    */
   private mergeByGranularity(data: any[], granularity: Granularity): any[] {
     if (data.length === 0) {

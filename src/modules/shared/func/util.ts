@@ -1,4 +1,4 @@
-import {isSameDay, isSameMonth, isSameQuarter, isSameWeek, isSameYear} from 'date-fns';
+import {isSameDay, isSameMonth, isSameQuarter, isSameWeek, isSameYear} from 'date-fns/fp';
 
 export enum Granularity {
   DAY = 'day',

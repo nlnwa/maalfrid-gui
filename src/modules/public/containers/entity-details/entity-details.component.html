@@ -4,11 +4,12 @@
       seedData: dataForSeedsForYear$ | async,
       seedStats: seedStatsYear$ | async,
       year: year$ | async,
-      month: month$ | async,
+      month: date$ | async,
       entityName: entityName$ | async,
       selectedUri: selectedUri$ | async,
       language: language$ | async,
-      monthStats: seedStatsMonth$ | async
+      monthStats: seedStatsMonth$ | async,
+      granularity: granularity | async
     } as data">
 
     <div [ngClass]="print ? 'print-container' : 'container'" fxLayout="column">
@@ -54,9 +55,35 @@
           <span *ngIf="data.entityName as name">{{name}}</span>
           <span *ngIf="data.selectedUri as uri">: <i>{{uri}}</i></span>
         </h2>
+        <div *ngIf="!print">
+        <mat-toolbar class="app-toolbar">Per&nbsp;
+          <mat-button-toggle-group [value]="granularity | async" (change)="onChangeGranularity($event.value)">
+            <mat-button-toggle [value]="Granularity.DAY">{{unitLanguageMap[Granularity.DAY]}}</mat-button-toggle>
+            <mat-button-toggle [value]="Granularity.MONTH">{{unitLanguageMap[Granularity.MONTH]}}</mat-button-toggle>
+          </mat-button-toggle-group>
+          <span fxFlex></span>
+          <mat-form-field fxFlex class="field">
+            <input matInput
+                   [matDatepicker]="startTimePicker"
+                   placeholder="Fra"
+                   (dateChange)="onStartDateChange($event)">
+            <mat-datepicker-toggle matSuffix [for]="startTimePicker"></mat-datepicker-toggle>
+          </mat-form-field>
+          <mat-datepicker #startTimePicker [startView]="startView"></mat-datepicker>
+
+          <mat-form-field fxFlex style="margin-left: 10px">
+            <input matInput
+                   [matDatepicker]="endTimePicker"
+                   placeholder="Til"
+                   (dateChange)="onEndDateChange($event)">
+            <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
+          </mat-form-field>
+          <mat-datepicker #endTimePicker [startView]="startView"></mat-datepicker>
+        </mat-toolbar>
+        </div>
         <app-chart [ngClass]="print ? 'print-chart' :  null"
                    [fxHide]="data.seedData ? data.seedData.length === 0 : false" fxFlex="50"
-                   [data]="data.seedData" (month)="onSelectMonth($event)">
+                   [data]="data.seedData" (date)="onSelectDate($event)" [granularity]="data.granularity">
         </app-chart>
         <app-seed-list *ngIf=!print fxFlex="50" [seeds]="data.seedStats" [primary]="data.seedId"
                        (rowClick)="onSelectSeed($event)" class="no-print">

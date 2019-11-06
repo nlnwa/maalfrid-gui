@@ -4,10 +4,12 @@ import {BehaviorSubject, combineLatest, forkJoin, Observable, Subject} from 'rxj
 import {Entity, LanguageComposition, SeedStatistic, TextCount} from '../../../shared/models';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MaalfridService} from '../../../core/services';
-import {catchError, distinctUntilChanged, map, share, switchMap, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
-import {groupBy} from '../../../shared/func';
-import {addYears, compareAsc, differenceInCalendarYears, getYear, subYears} from 'date-fns';
+import {catchError, distinctUntilChanged, filter, map, share, switchMap, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
+import {Granularity, groupBy, isSame} from '../../../shared/func';
+import {addYears, compareAsc, differenceInCalendarYears, getYear, isAfter, isBefore, subYears} from 'date-fns';
 import {isSameMonth} from 'date-fns/fp';
+import {Interval} from '../../../explore/components/interval/interval.component';
+import {MatDatepickerInputEvent} from '@angular/material';
 
 
 @Component({
@@ -25,7 +27,11 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
   private readonly ngUnsubscribe: Subject<void>;
   private readonly entityId: Subject<string>;
   private readonly seedId: Subject<string>;
-  private readonly month: Subject<Date>;
+  private readonly date: Subject<Date>;
+
+  granularity: BehaviorSubject<Granularity>;
+
+  interval: BehaviorSubject<Interval>;
 
   entities: Entity[];
 
@@ -33,7 +39,7 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
 
   seedId$: Observable<string>;
 
-  month$: Observable<Date>;
+  date$: Observable<Date>;
 
   year$: BehaviorSubject<number>;
 
@@ -55,9 +61,25 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
 
   selectedUri$: Observable<string>;
 
-  lastSelectedMonth: Date;
+  lastSelectedDate: Date;
 
   print = false;
+
+  readonly Granularity = Granularity;
+
+  unitLanguageMap = {
+    [Granularity.DAY]: 'dag',
+    [Granularity.WEEK]: 'uke',
+    [Granularity.MONTH]: 'måned',
+    [Granularity.YEAR]: 'år',
+  };
+
+  startView = 'year';
+
+  intervalModel: Interval = {
+    start: null,
+    end: null,
+  };
 
   constructor(private maalfridService: MaalfridService,
               private router: Router,
@@ -69,13 +91,17 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
 
     this.ngUnsubscribe = new Subject();
     this.entityId = new Subject<string>();
-    this.month = new Subject<Date>();
+    this.date = new Subject<Date>();
     this.seedId = new Subject<string>();
     this.year$ = new BehaviorSubject(getYear(new Date()));
 
-    this.seedId$ = this.seedId.asObservable().pipe(share(), tap(() => this.month.next(null)));
+    this.granularity = new BehaviorSubject(Granularity.DAY);
 
-    this.month$ = this.month.asObservable();
+    this.interval = new BehaviorSubject(this.intervalModel);
+
+    this.seedId$ = this.seedId.asObservable().pipe(share(), tap(() => this.date.next(null)));
+
+    this.date$ = this.date.asObservable();
 
     this.entityId$ = this.entityId.pipe(
       distinctUntilChanged(),
@@ -114,8 +140,9 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
       share()
     );
 
-    this.dataForSeedsForYear$ = combineLatest([data$, this.seedId$]).pipe(
-      map(([data, seedId]) => data.filter(datum => datum.seedId === seedId))
+    this.dataForSeedsForYear$ = combineLatest([data$, this.seedId$, this.interval]).pipe(
+      map(([data, seedId]) => data.filter(datum => datum.seedId === seedId)),
+      map(datum => this.filterByDate(datum, this.interval.value))
     );
 
     const statsForSeedsForYear$ = combineLatest([seed$, data$]).pipe(
@@ -186,9 +213,9 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
       })
     );
 
-    const dataForSeedForMonth$ = combineLatest([this.month$, this.dataForSeedsForYear$]).pipe(
+    const dataForSeedForMonth$ = combineLatest([this.date$, this.dataForSeedsForYear$]).pipe(
       map(([month, data]: [Date, any[]]) => {
-        const monthPredicate = isSameMonth(month);
+        const monthPredicate = isSame[this.granularity.value](month);
         return data.filter(row => monthPredicate(row.endTime));
       })
     );
@@ -268,19 +295,49 @@ export class EntityDetailsComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  onSelectMonth(month: Date) {
-    if (!this.lastSelectedMonth) {
-      this.lastSelectedMonth = month;
-      this.month.next(month);
+  onSelectDate(date: Date) {
+    if (!this.lastSelectedDate) {
+      this.lastSelectedDate = date;
+      this.date.next(date);
     } else {
-      if (month.getTime() !== this.lastSelectedMonth.getTime()) {
-        this.month.next(month);
-        this.lastSelectedMonth = month;
+      if (date.getTime() !== this.lastSelectedDate.getTime()) {
+        this.date.next(date);
+        this.lastSelectedDate = date;
       } else {
-        this.lastSelectedMonth = null;
-        this.month.next(null);
+        this.lastSelectedDate = null;
+        this.date.next(null);
       }
     }
+  }
+
+  filterByDate(data: any, interval: any) {
+    let res = [];
+
+    if (interval.start == null && interval.end == null) {
+      return data;
+    }
+
+    if (interval.start !== null) {
+      res = data.filter( dat =>  isAfter(dat.endTime, interval.start));
+    }
+    if (interval.end !== null) {
+      res = data.filter(dat => isBefore(dat.endTime, interval.end));
+    }
+    return res;
+  }
+
+  onChangeGranularity(granularity) {
+    this.granularity.next(granularity);
+  }
+
+  onStartDateChange(event: MatDatepickerInputEvent<Date>) {
+    this.intervalModel.start = event.value;
+    this.interval.next(this.intervalModel);
+  }
+
+  onEndDateChange(event: MatDatepickerInputEvent<Date>) {
+    this.intervalModel.end = event.value;
+    this.interval.next(this.intervalModel);
   }
 
   onPrint(): void {
