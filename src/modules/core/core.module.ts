@@ -6,30 +6,25 @@ import {registerLocaleData} from '@angular/common';
 import localeNbExtra from '@angular/common/locales/extra/nb';
 import localeNb from '@angular/common/locales/nb';
 
+import {JwksValidationHandler, OAuthModule, OAuthService, ValidationHandler} from 'angular-oauth2-oidc';
 import {SharedModule} from '../shared/shared.module';
+
 import {
   AppInitializerService,
   ApplicationErrorHandler,
   AuthGuard,
-  AuthService,
+  AuthService, ControllerService,
   ErrorService,
   MaalfridService,
   SnackBarService,
   TokenInterceptor
 } from './services/';
-import {JwksValidationHandler, OAuthModule, OAuthService, ValidationHandler} from 'angular-oauth2-oidc';
+
 import {AppConfigService} from './services/app.config.service';
 import {EntityResolverService} from './services/entity-resolver.service';
 import {environment} from '../../environments/environment';
 
 registerLocaleData(localeNb, 'nb', localeNbExtra);
-
-export function appInitializerFactory(appInitializerService: AppInitializerService,
-                                      appConfigService: AppConfigService,
-                                      oAuthService: OAuthService,
-                                      authService: AuthService) {
-  return () => appInitializerService.init(appConfigService, oAuthService, authService);
-}
 
 @NgModule({
   imports: [
@@ -37,12 +32,12 @@ export function appInitializerFactory(appInitializerService: AppInitializerServi
     OAuthModule.forRoot(),
   ],
   providers: [
-    ApplicationErrorHandler,
     AppInitializerService,
-    AppConfigService,
     AuthService,
     AuthGuard,
     AuthService,
+    OAuthService,
+    ControllerService,
     MaalfridService,
     SnackBarService,
     ErrorService,
@@ -51,8 +46,8 @@ export function appInitializerFactory(appInitializerService: AppInitializerServi
     {provide: ValidationHandler, useClass: JwksValidationHandler},
     {
       provide: APP_INITIALIZER,
-      useFactory: appInitializerFactory,
-      deps: [AppInitializerService, AppConfigService, OAuthService, AuthService],
+      useFactory: (appInitializerService: AppInitializerService) => () => appInitializerService.init(),
+      deps: [AppInitializerService, AppConfigService, OAuthService, ControllerService, AuthService],
       multi: true
     },
     {provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},

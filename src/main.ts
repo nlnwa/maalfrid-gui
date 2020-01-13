@@ -11,12 +11,6 @@ if (environment.production) {
   enableProdMode();
 }
 
-// old
-// platformBrowserDynamic().bootstrapModule(AppModule)
-//   .catch(err => console.log(err));
-
-// copied from veidemann-dashboard
-
 // load dynamic configuration pre bootstrap
 fetch(environment.configUrl)
   .then(async response => {
