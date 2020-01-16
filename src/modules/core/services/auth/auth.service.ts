@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {OAuthService} from 'angular-oauth2-oidc';
 import {Role} from '../../../shared/models';
+import {Metadata} from 'grpc-web';
 
 interface Claims {
   name: string;
@@ -36,19 +37,38 @@ export class AuthService {
     return this.oauthService.getIdToken();
   }
 
+  get isLoggedIn(): boolean {
+    return this.roles.some(role => role !== Role.ANY);
+  }
+
+  get requestPath(): string{
+    return this.oauthService.state;
+  }
+
   /**
    * @returns authorization header for API calls
    */
-  get metadata(): { authorization: string } {
-    return {authorization: 'Bearer ' + this.idToken};
+
+  get metadata(): Metadata {
+    const idToken = this.oauthService.getIdToken();
+    if (idToken){
+      return {authorization: 'Bearer ' + idToken};
+    } else {
+      return null;
+    }
+  }
+
+  isAuthorized(roles: Role[]): boolean {
+    for (const role of this.roles) {
+      if (roles.includes(role)){
+        return true;
+      }
+    }
+    return false;
   }
 
   get requestedPath(): string {
     return this.oauthService.state;
-  }
-
-  get isLoggedIn(): boolean {
-    return !!this.name;
   }
 
   get isAdmin(): boolean {

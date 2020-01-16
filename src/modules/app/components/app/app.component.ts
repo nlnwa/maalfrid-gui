@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {AuthService} from '../../../core/services/auth';
 import {Router} from '@angular/router';
 import {AppInitializerService} from '../../../core/services';
-import {AppConfigService} from '../../../core/services/app.config.service';
+import {environment} from '../../../../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -11,10 +11,16 @@ import {AppConfigService} from '../../../core/services/app.config.service';
 })
 export class AppComponent implements OnInit {
 
-  constructor(private authService: AuthService,
-              private appInitializerService: AppInitializerService,
-              private appConfigService: AppConfigService,
+  constructor(private appInitializer: AppInitializerService,
+              private authService: AuthService,
               private router: Router) {
+  }
+
+  ngOnInit(): void {
+    if (this.isLoggedIn && this.authService.requestedPath) {
+      // navigate to any requested path after login
+      this.router.navigate([this.authService.requestPath]);
+    }
   }
 
   get name(): string {
@@ -22,22 +28,18 @@ export class AppComponent implements OnInit {
   }
 
   get version(): string {
-    return this.appConfigService.version;
+    return environment.version;
   }
 
   get initialized(): boolean {
-    return this.appInitializerService.initialized;
+    return this.appInitializer.initialized;
   }
 
   get error(): string {
-    return this.appInitializerService.error.message;
+    return this.appInitializer.error.message;
   }
 
-  ngOnInit(): void {
-    if (this.authService.isLoggedIn && this.authService.requestedPath) {
-      this.router.navigate([this.authService.requestedPath])
-        .catch(() => {
-        });
-    }
+  get isLoggedIn(): boolean {
+    return this.authService.isLoggedIn;
   }
 }

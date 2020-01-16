@@ -2,6 +2,121 @@ import * as jspb from "google-protobuf"
 
 import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb';
 
+export class ConfigObject extends jspb.Message {
+  getId(): string;
+  setId(value: string): void;
+
+  getApiversion(): string;
+  setApiversion(value: string): void;
+
+  getKind(): Kind;
+  setKind(value: Kind): void;
+
+  getMeta(): Meta | undefined;
+  setMeta(value?: Meta): void;
+  hasMeta(): boolean;
+  clearMeta(): void;
+
+  getCrawlEntity(): CrawlEntity | undefined;
+  setCrawlEntity(value?: CrawlEntity): void;
+  hasCrawlEntity(): boolean;
+  clearCrawlEntity(): void;
+
+  getSeed(): Seed | undefined;
+  setSeed(value?: Seed): void;
+  hasSeed(): boolean;
+  clearSeed(): void;
+
+  getCrawlJob(): CrawlJob | undefined;
+  setCrawlJob(value?: CrawlJob): void;
+  hasCrawlJob(): boolean;
+  clearCrawlJob(): void;
+
+  getCrawlConfig(): CrawlConfig | undefined;
+  setCrawlConfig(value?: CrawlConfig): void;
+  hasCrawlConfig(): boolean;
+  clearCrawlConfig(): void;
+
+  getCrawlScheduleConfig(): CrawlScheduleConfig | undefined;
+  setCrawlScheduleConfig(value?: CrawlScheduleConfig): void;
+  hasCrawlScheduleConfig(): boolean;
+  clearCrawlScheduleConfig(): void;
+
+  getBrowserConfig(): BrowserConfig | undefined;
+  setBrowserConfig(value?: BrowserConfig): void;
+  hasBrowserConfig(): boolean;
+  clearBrowserConfig(): void;
+
+  getPolitenessConfig(): PolitenessConfig | undefined;
+  setPolitenessConfig(value?: PolitenessConfig): void;
+  hasPolitenessConfig(): boolean;
+  clearPolitenessConfig(): void;
+
+  getBrowserScript(): BrowserScript | undefined;
+  setBrowserScript(value?: BrowserScript): void;
+  hasBrowserScript(): boolean;
+  clearBrowserScript(): void;
+
+  getCrawlHostGroupConfig(): CrawlHostGroupConfig | undefined;
+  setCrawlHostGroupConfig(value?: CrawlHostGroupConfig): void;
+  hasCrawlHostGroupConfig(): boolean;
+  clearCrawlHostGroupConfig(): void;
+
+  getRoleMapping(): RoleMapping | undefined;
+  setRoleMapping(value?: RoleMapping): void;
+  hasRoleMapping(): boolean;
+  clearRoleMapping(): void;
+
+  getCollection(): Collection | undefined;
+  setCollection(value?: Collection): void;
+  hasCollection(): boolean;
+  clearCollection(): void;
+
+  getSpecCase(): ConfigObject.SpecCase;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ConfigObject.AsObject;
+  static toObject(includeInstance: boolean, msg: ConfigObject): ConfigObject.AsObject;
+  static serializeBinaryToWriter(message: ConfigObject, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ConfigObject;
+  static deserializeBinaryFromReader(message: ConfigObject, reader: jspb.BinaryReader): ConfigObject;
+}
+
+export namespace ConfigObject {
+  export type AsObject = {
+    id: string,
+    apiversion: string,
+    kind: Kind,
+    meta?: Meta.AsObject,
+    crawlEntity?: CrawlEntity.AsObject,
+    seed?: Seed.AsObject,
+    crawlJob?: CrawlJob.AsObject,
+    crawlConfig?: CrawlConfig.AsObject,
+    crawlScheduleConfig?: CrawlScheduleConfig.AsObject,
+    browserConfig?: BrowserConfig.AsObject,
+    politenessConfig?: PolitenessConfig.AsObject,
+    browserScript?: BrowserScript.AsObject,
+    crawlHostGroupConfig?: CrawlHostGroupConfig.AsObject,
+    roleMapping?: RoleMapping.AsObject,
+    collection?: Collection.AsObject,
+  }
+
+  export enum SpecCase { 
+    SPEC_NOT_SET = 0,
+    CRAWL_ENTITY = 5,
+    SEED = 6,
+    CRAWL_JOB = 7,
+    CRAWL_CONFIG = 8,
+    CRAWL_SCHEDULE_CONFIG = 9,
+    BROWSER_CONFIG = 10,
+    POLITENESS_CONFIG = 11,
+    BROWSER_SCRIPT = 12,
+    CRAWL_HOST_GROUP_CONFIG = 13,
+    ROLE_MAPPING = 14,
+    COLLECTION = 15,
+  }
+}
+
 export class Meta extends jspb.Message {
   getName(): string;
   setName(value: string): void;
@@ -72,15 +187,29 @@ export namespace Label {
   }
 }
 
-export class CrawlEntity extends jspb.Message {
+export class ConfigRef extends jspb.Message {
+  getKind(): Kind;
+  setKind(value: Kind): void;
+
   getId(): string;
   setId(value: string): void;
 
-  getMeta(): Meta | undefined;
-  setMeta(value?: Meta): void;
-  hasMeta(): boolean;
-  clearMeta(): void;
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ConfigRef.AsObject;
+  static toObject(includeInstance: boolean, msg: ConfigRef): ConfigRef.AsObject;
+  static serializeBinaryToWriter(message: ConfigRef, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ConfigRef;
+  static deserializeBinaryFromReader(message: ConfigRef, reader: jspb.BinaryReader): ConfigRef;
+}
 
+export namespace ConfigRef {
+  export type AsObject = {
+    kind: Kind,
+    id: string,
+  }
+}
+
+export class CrawlEntity extends jspb.Message {
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CrawlEntity.AsObject;
   static toObject(includeInstance: boolean, msg: CrawlEntity): CrawlEntity.AsObject;
@@ -91,32 +220,24 @@ export class CrawlEntity extends jspb.Message {
 
 export namespace CrawlEntity {
   export type AsObject = {
-    id: string,
-    meta?: Meta.AsObject,
   }
 }
 
 export class Seed extends jspb.Message {
-  getId(): string;
-  setId(value: string): void;
-
-  getMeta(): Meta | undefined;
-  setMeta(value?: Meta): void;
-  hasMeta(): boolean;
-  clearMeta(): void;
-
-  getEntityId(): string;
-  setEntityId(value: string): void;
+  getEntityRef(): ConfigRef | undefined;
+  setEntityRef(value?: ConfigRef): void;
+  hasEntityRef(): boolean;
+  clearEntityRef(): void;
 
   getScope(): CrawlScope | undefined;
   setScope(value?: CrawlScope): void;
   hasScope(): boolean;
   clearScope(): void;
 
-  getJobIdList(): Array<string>;
-  setJobIdList(value: Array<string>): void;
-  clearJobIdList(): void;
-  addJobId(value: string, index?: number): void;
+  getJobRefList(): Array<ConfigRef>;
+  setJobRefList(value: Array<ConfigRef>): void;
+  clearJobRefList(): void;
+  addJobRef(value?: ConfigRef, index?: number): ConfigRef;
 
   getDisabled(): boolean;
   setDisabled(value: boolean): void;
@@ -131,34 +252,28 @@ export class Seed extends jspb.Message {
 
 export namespace Seed {
   export type AsObject = {
-    id: string,
-    meta?: Meta.AsObject,
-    entityId: string,
+    entityRef?: ConfigRef.AsObject,
     scope?: CrawlScope.AsObject,
-    jobIdList: Array<string>,
+    jobRefList: Array<ConfigRef.AsObject>,
     disabled: boolean,
   }
 }
 
 export class CrawlJob extends jspb.Message {
-  getId(): string;
-  setId(value: string): void;
-
-  getMeta(): Meta | undefined;
-  setMeta(value?: Meta): void;
-  hasMeta(): boolean;
-  clearMeta(): void;
-
-  getScheduleId(): string;
-  setScheduleId(value: string): void;
+  getScheduleRef(): ConfigRef | undefined;
+  setScheduleRef(value?: ConfigRef): void;
+  hasScheduleRef(): boolean;
+  clearScheduleRef(): void;
 
   getLimits(): CrawlLimitsConfig | undefined;
   setLimits(value?: CrawlLimitsConfig): void;
   hasLimits(): boolean;
   clearLimits(): void;
 
-  getCrawlConfigId(): string;
-  setCrawlConfigId(value: string): void;
+  getCrawlConfigRef(): ConfigRef | undefined;
+  setCrawlConfigRef(value?: ConfigRef): void;
+  hasCrawlConfigRef(): boolean;
+  clearCrawlConfigRef(): void;
 
   getDisabled(): boolean;
   setDisabled(value: boolean): void;
@@ -173,29 +288,28 @@ export class CrawlJob extends jspb.Message {
 
 export namespace CrawlJob {
   export type AsObject = {
-    id: string,
-    meta?: Meta.AsObject,
-    scheduleId: string,
+    scheduleRef?: ConfigRef.AsObject,
     limits?: CrawlLimitsConfig.AsObject,
-    crawlConfigId: string,
+    crawlConfigRef?: ConfigRef.AsObject,
     disabled: boolean,
   }
 }
 
 export class CrawlConfig extends jspb.Message {
-  getId(): string;
-  setId(value: string): void;
+  getCollectionRef(): ConfigRef | undefined;
+  setCollectionRef(value?: ConfigRef): void;
+  hasCollectionRef(): boolean;
+  clearCollectionRef(): void;
 
-  getMeta(): Meta | undefined;
-  setMeta(value?: Meta): void;
-  hasMeta(): boolean;
-  clearMeta(): void;
+  getBrowserConfigRef(): ConfigRef | undefined;
+  setBrowserConfigRef(value?: ConfigRef): void;
+  hasBrowserConfigRef(): boolean;
+  clearBrowserConfigRef(): void;
 
-  getBrowserConfigId(): string;
-  setBrowserConfigId(value: string): void;
-
-  getPolitenessId(): string;
-  setPolitenessId(value: string): void;
+  getPolitenessRef(): ConfigRef | undefined;
+  setPolitenessRef(value?: ConfigRef): void;
+  hasPolitenessRef(): boolean;
+  clearPolitenessRef(): void;
 
   getExtra(): ExtraConfig | undefined;
   setExtra(value?: ExtraConfig): void;
@@ -208,9 +322,6 @@ export class CrawlConfig extends jspb.Message {
   getPriorityWeight(): number;
   setPriorityWeight(value: number): void;
 
-  getDepthFirst(): boolean;
-  setDepthFirst(value: boolean): void;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CrawlConfig.AsObject;
   static toObject(includeInstance: boolean, msg: CrawlConfig): CrawlConfig.AsObject;
@@ -221,26 +332,38 @@ export class CrawlConfig extends jspb.Message {
 
 export namespace CrawlConfig {
   export type AsObject = {
-    id: string,
-    meta?: Meta.AsObject,
-    browserConfigId: string,
-    politenessId: string,
+    collectionRef?: ConfigRef.AsObject,
+    browserConfigRef?: ConfigRef.AsObject,
+    politenessRef?: ConfigRef.AsObject,
     extra?: ExtraConfig.AsObject,
     minimumDnsTtlS: number,
     priorityWeight: number,
-    depthFirst: boolean,
+  }
+}
+
+export class ExtraConfig extends jspb.Message {
+  getExtractText(): boolean;
+  setExtractText(value: boolean): void;
+
+  getCreateScreenshot(): boolean;
+  setCreateScreenshot(value: boolean): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ExtraConfig.AsObject;
+  static toObject(includeInstance: boolean, msg: ExtraConfig): ExtraConfig.AsObject;
+  static serializeBinaryToWriter(message: ExtraConfig, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ExtraConfig;
+  static deserializeBinaryFromReader(message: ExtraConfig, reader: jspb.BinaryReader): ExtraConfig;
+}
+
+export namespace ExtraConfig {
+  export type AsObject = {
+    extractText: boolean,
+    createScreenshot: boolean,
   }
 }
 
 export class CrawlScheduleConfig extends jspb.Message {
-  getId(): string;
-  setId(value: string): void;
-
-  getMeta(): Meta | undefined;
-  setMeta(value?: Meta): void;
-  hasMeta(): boolean;
-  clearMeta(): void;
-
   getCronExpression(): string;
   setCronExpression(value: string): void;
 
@@ -264,8 +387,6 @@ export class CrawlScheduleConfig extends jspb.Message {
 
 export namespace CrawlScheduleConfig {
   export type AsObject = {
-    id: string,
-    meta?: Meta.AsObject,
     cronExpression: string,
     validFrom?: google_protobuf_timestamp_pb.Timestamp.AsObject,
     validTo?: google_protobuf_timestamp_pb.Timestamp.AsObject,
@@ -317,14 +438,6 @@ export namespace CrawlLimitsConfig {
 }
 
 export class BrowserConfig extends jspb.Message {
-  getId(): string;
-  setId(value: string): void;
-
-  getMeta(): Meta | undefined;
-  setMeta(value?: Meta): void;
-  hasMeta(): boolean;
-  clearMeta(): void;
-
   getUserAgent(): string;
   setUserAgent(value: string): void;
 
@@ -342,10 +455,10 @@ export class BrowserConfig extends jspb.Message {
   clearScriptSelectorList(): void;
   addScriptSelector(value: string, index?: number): void;
 
-  getScriptIdList(): Array<string>;
-  setScriptIdList(value: Array<string>): void;
-  clearScriptIdList(): void;
-  addScriptId(value: string, index?: number): void;
+  getScriptRefList(): Array<ConfigRef>;
+  setScriptRefList(value: Array<ConfigRef>): void;
+  clearScriptRefList(): void;
+  addScriptRef(value?: ConfigRef, index?: number): ConfigRef;
 
   getHeadersMap(): jspb.Map<string, string>;
   clearHeadersMap(): void;
@@ -353,8 +466,8 @@ export class BrowserConfig extends jspb.Message {
   getScriptParametersMap(): jspb.Map<string, string>;
   clearScriptParametersMap(): void;
 
-  getSleepAfterPageloadMs(): number;
-  setSleepAfterPageloadMs(value: number): void;
+  getMaxInactivityTimeMs(): number;
+  setMaxInactivityTimeMs(value: number): void;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): BrowserConfig.AsObject;
@@ -366,29 +479,19 @@ export class BrowserConfig extends jspb.Message {
 
 export namespace BrowserConfig {
   export type AsObject = {
-    id: string,
-    meta?: Meta.AsObject,
     userAgent: string,
     windowWidth: number,
     windowHeight: number,
     pageLoadTimeoutMs: number,
     scriptSelectorList: Array<string>,
-    scriptIdList: Array<string>,
+    scriptRefList: Array<ConfigRef.AsObject>,
     headersMap: Array<[string, string]>,
     scriptParametersMap: Array<[string, string]>,
-    sleepAfterPageloadMs: number,
+    maxInactivityTimeMs: number,
   }
 }
 
 export class PolitenessConfig extends jspb.Message {
-  getId(): string;
-  setId(value: string): void;
-
-  getMeta(): Meta | undefined;
-  setMeta(value?: Meta): void;
-  hasMeta(): boolean;
-  clearMeta(): void;
-
   getRobotsPolicy(): PolitenessConfig.RobotsPolicy;
   setRobotsPolicy(value: PolitenessConfig.RobotsPolicy): void;
 
@@ -431,8 +534,6 @@ export class PolitenessConfig extends jspb.Message {
 
 export namespace PolitenessConfig {
   export type AsObject = {
-    id: string,
-    meta?: Meta.AsObject,
     robotsPolicy: PolitenessConfig.RobotsPolicy,
     minimumRobotsValidityDurationS: number,
     customRobots: string,
@@ -449,45 +550,21 @@ export namespace PolitenessConfig {
     OBEY_ROBOTS = 0,
     IGNORE_ROBOTS = 1,
     CUSTOM_ROBOTS = 2,
-  }
-}
-
-export class ExtraConfig extends jspb.Message {
-  getExtractText(): boolean;
-  setExtractText(value: boolean): void;
-
-  getCreateSnapshot(): boolean;
-  setCreateSnapshot(value: boolean): void;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): ExtraConfig.AsObject;
-  static toObject(includeInstance: boolean, msg: ExtraConfig): ExtraConfig.AsObject;
-  static serializeBinaryToWriter(message: ExtraConfig, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): ExtraConfig;
-  static deserializeBinaryFromReader(message: ExtraConfig, reader: jspb.BinaryReader): ExtraConfig;
-}
-
-export namespace ExtraConfig {
-  export type AsObject = {
-    extractText: boolean,
-    createSnapshot: boolean,
+    OBEY_ROBOTS_CLASSIC = 3,
+    CUSTOM_ROBOTS_CLASSIC = 4,
+    CUSTOM_IF_MISSING = 5,
+    CUSTOM_IF_MISSING_CLASSIC = 6,
   }
 }
 
 export class BrowserScript extends jspb.Message {
-  getId(): string;
-  setId(value: string): void;
-
-  getMeta(): Meta | undefined;
-  setMeta(value?: Meta): void;
-  hasMeta(): boolean;
-  clearMeta(): void;
-
   getScript(): string;
   setScript(value: string): void;
 
-  getUrlRegexp(): string;
-  setUrlRegexp(value: string): void;
+  getUrlRegexpList(): Array<string>;
+  setUrlRegexpList(value: Array<string>): void;
+  clearUrlRegexpList(): void;
+  addUrlRegexp(value: string, index?: number): void;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): BrowserScript.AsObject;
@@ -499,22 +576,12 @@ export class BrowserScript extends jspb.Message {
 
 export namespace BrowserScript {
   export type AsObject = {
-    id: string,
-    meta?: Meta.AsObject,
     script: string,
-    urlRegexp: string,
+    urlRegexpList: Array<string>,
   }
 }
 
 export class CrawlHostGroupConfig extends jspb.Message {
-  getId(): string;
-  setId(value: string): void;
-
-  getMeta(): Meta | undefined;
-  setMeta(value?: Meta): void;
-  hasMeta(): boolean;
-  clearMeta(): void;
-
   getIpRangeList(): Array<CrawlHostGroupConfig.IpRange>;
   setIpRangeList(value: Array<CrawlHostGroupConfig.IpRange>): void;
   clearIpRangeList(): void;
@@ -530,8 +597,6 @@ export class CrawlHostGroupConfig extends jspb.Message {
 
 export namespace CrawlHostGroupConfig {
   export type AsObject = {
-    id: string,
-    meta?: Meta.AsObject,
     ipRangeList: Array<CrawlHostGroupConfig.IpRange.AsObject>,
   }
 
@@ -557,6 +622,146 @@ export namespace CrawlHostGroupConfig {
     }
   }
 
+}
+
+export class ApiKey extends jspb.Message {
+  getToken(): string;
+  setToken(value: string): void;
+
+  getValiduntil(): google_protobuf_timestamp_pb.Timestamp | undefined;
+  setValiduntil(value?: google_protobuf_timestamp_pb.Timestamp): void;
+  hasValiduntil(): boolean;
+  clearValiduntil(): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ApiKey.AsObject;
+  static toObject(includeInstance: boolean, msg: ApiKey): ApiKey.AsObject;
+  static serializeBinaryToWriter(message: ApiKey, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ApiKey;
+  static deserializeBinaryFromReader(message: ApiKey, reader: jspb.BinaryReader): ApiKey;
+}
+
+export namespace ApiKey {
+  export type AsObject = {
+    token: string,
+    validuntil?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+  }
+}
+
+export class RoleMapping extends jspb.Message {
+  getApiKey(): ApiKey | undefined;
+  setApiKey(value?: ApiKey): void;
+  hasApiKey(): boolean;
+  clearApiKey(): void;
+
+  getEmail(): string;
+  setEmail(value: string): void;
+
+  getGroup(): string;
+  setGroup(value: string): void;
+
+  getRoleList(): Array<Role>;
+  setRoleList(value: Array<Role>): void;
+  clearRoleList(): void;
+  addRole(value: Role, index?: number): void;
+
+  getEmailOrGroupCase(): RoleMapping.EmailOrGroupCase;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RoleMapping.AsObject;
+  static toObject(includeInstance: boolean, msg: RoleMapping): RoleMapping.AsObject;
+  static serializeBinaryToWriter(message: RoleMapping, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RoleMapping;
+  static deserializeBinaryFromReader(message: RoleMapping, reader: jspb.BinaryReader): RoleMapping;
+}
+
+export namespace RoleMapping {
+  export type AsObject = {
+    apiKey?: ApiKey.AsObject,
+    email: string,
+    group: string,
+    roleList: Array<Role>,
+  }
+
+  export enum EmailOrGroupCase { 
+    EMAIL_OR_GROUP_NOT_SET = 0,
+    API_KEY = 1,
+    EMAIL = 2,
+    GROUP = 3,
+  }
+}
+
+export class Collection extends jspb.Message {
+  getCollectionDedupPolicy(): Collection.RotationPolicy;
+  setCollectionDedupPolicy(value: Collection.RotationPolicy): void;
+
+  getFileRotationPolicy(): Collection.RotationPolicy;
+  setFileRotationPolicy(value: Collection.RotationPolicy): void;
+
+  getCompress(): boolean;
+  setCompress(value: boolean): void;
+
+  getFileSize(): number;
+  setFileSize(value: number): void;
+
+  getSubCollectionsList(): Array<Collection.SubCollection>;
+  setSubCollectionsList(value: Array<Collection.SubCollection>): void;
+  clearSubCollectionsList(): void;
+  addSubCollections(value?: Collection.SubCollection, index?: number): Collection.SubCollection;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Collection.AsObject;
+  static toObject(includeInstance: boolean, msg: Collection): Collection.AsObject;
+  static serializeBinaryToWriter(message: Collection, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Collection;
+  static deserializeBinaryFromReader(message: Collection, reader: jspb.BinaryReader): Collection;
+}
+
+export namespace Collection {
+  export type AsObject = {
+    collectionDedupPolicy: Collection.RotationPolicy,
+    fileRotationPolicy: Collection.RotationPolicy,
+    compress: boolean,
+    fileSize: number,
+    subCollectionsList: Array<Collection.SubCollection.AsObject>,
+  }
+
+  export class SubCollection extends jspb.Message {
+    getType(): Collection.SubCollectionType;
+    setType(value: Collection.SubCollectionType): void;
+
+    getName(): string;
+    setName(value: string): void;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): SubCollection.AsObject;
+    static toObject(includeInstance: boolean, msg: SubCollection): SubCollection.AsObject;
+    static serializeBinaryToWriter(message: SubCollection, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): SubCollection;
+    static deserializeBinaryFromReader(message: SubCollection, reader: jspb.BinaryReader): SubCollection;
+  }
+
+  export namespace SubCollection {
+    export type AsObject = {
+      type: Collection.SubCollectionType,
+      name: string,
+    }
+  }
+
+
+  export enum RotationPolicy { 
+    NONE = 0,
+    HOURLY = 1,
+    DAILY = 2,
+    MONTHLY = 3,
+    YEARLY = 4,
+  }
+
+  export enum SubCollectionType { 
+    UNDEFINED = 0,
+    SCREENSHOT = 1,
+    DNS = 2,
+  }
 }
 
 export class LogLevels extends jspb.Message {
@@ -614,52 +819,26 @@ export namespace LogLevels {
   }
 }
 
-export class RoleMapping extends jspb.Message {
-  getId(): string;
-  setId(value: string): void;
-
-  getEmail(): string;
-  setEmail(value: string): void;
-  hasEmail(): boolean;
-
-  getGroup(): string;
-  setGroup(value: string): void;
-  hasGroup(): boolean;
-
-  getRoleList(): Array<Role>;
-  setRoleList(value: Array<Role>): void;
-  clearRoleList(): void;
-  addRole(value: Role, index?: number): void;
-
-  getEmailOrGroupCase(): RoleMapping.EmailOrGroupCase;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): RoleMapping.AsObject;
-  static toObject(includeInstance: boolean, msg: RoleMapping): RoleMapping.AsObject;
-  static serializeBinaryToWriter(message: RoleMapping, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): RoleMapping;
-  static deserializeBinaryFromReader(message: RoleMapping, reader: jspb.BinaryReader): RoleMapping;
+export enum Kind { 
+  UNDEFINED = 0,
+  CRAWLENTITY = 5,
+  SEED = 6,
+  CRAWLJOB = 7,
+  CRAWLCONFIG = 8,
+  CRAWLSCHEDULECONFIG = 9,
+  BROWSERCONFIG = 10,
+  POLITENESSCONFIG = 11,
+  BROWSERSCRIPT = 12,
+  CRAWLHOSTGROUPCONFIG = 13,
+  ROLEMAPPING = 14,
+  COLLECTION = 15,
 }
-
-export namespace RoleMapping {
-  export type AsObject = {
-    id: string,
-    email: string,
-    group: string,
-    roleList: Array<Role>,
-  }
-
-  export enum EmailOrGroupCase { 
-    EMAIL_OR_GROUP_NOT_SET = 0,
-    EMAIL = 2,
-    GROUP = 3,
-  }
-}
-
 export enum Role { 
   ANY_USER = 0,
   ANY = 1,
   ADMIN = 2,
   CURATOR = 3,
   READONLY = 4,
+  OPERATOR = 5,
+  SYSTEM = 6,
 }
